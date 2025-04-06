@@ -132,12 +132,6 @@ bool lerCmd(char cmd, char *arg, GAME *game)
     }
 
     TABELA t = malloc(sizeof(struct Tabela));
-    if (!t)
-    {
-        fprintf(stderr, "Erro ao alocar memória para o tabuleiro\n");
-        fclose(file);
-        return false;
-    }
 
     initTabela(t, linhas, colunas);
 

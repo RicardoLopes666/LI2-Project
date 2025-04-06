@@ -1,96 +1,209 @@
 #include <CUnit/CUnit.h>
 #include <CUnit/Basic.h>
-#include "parte1.h"
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include "parte1.h" // Certifica-te que este header contém as declarações das funções e tipos usados
 
-// Teste para a função pintarBranco
-void testarPintarBranco()
+// Testa a função pintarBranco
+void test_pintarBranco(void)
 {
     TABELA t = malloc(sizeof(struct Tabela));
     initTabela(t, 3, 3);
 
-    // Pinta a célula (1, 1) de branco
-    bool resultado = pintarBranco(t, 1, 1);
-    CU_ASSERT_TRUE(resultado);
-    CU_ASSERT_EQUAL(t->tabela[1][1], ' ');
+    // Coloca um caractere minúsculo para ser convertido
+    t->tabela[1][1] = 'a';
+    CU_ASSERT_TRUE(pintarBranco(t, 1, 1));
+    CU_ASSERT_EQUAL(t->tabela[1][1], 'A');
 
     // Testa índices fora dos limites
-    resultado = pintarBranco(t, -1, 1);
-    CU_ASSERT_FALSE(resultado);
-
-    resultado = pintarBranco(t, 3, 3);
-    CU_ASSERT_FALSE(resultado);
+    CU_ASSERT_FALSE(pintarBranco(t, -1, 1));
+    CU_ASSERT_FALSE(pintarBranco(t, 3, 3));
 
     freeTabela(t);
 }
 
-// Teste para a função riscar
-void testarRiscar()
+// Testa a função riscar
+void test_riscar(void)
 {
     TABELA t = malloc(sizeof(struct Tabela));
     initTabela(t, 3, 3);
 
-    // Risca a célula (0, 0)
-    bool resultado = riscar(t, 0, 0);
-    CU_ASSERT_TRUE(resultado);
+    // Risca a célula (0,0)
+    CU_ASSERT_TRUE(riscar(t, 0, 0));
     CU_ASSERT_EQUAL(t->tabela[0][0], '#');
 
-    // Testa índices fora dos limites
-    resultado = riscar(t, -1, 0);
-    CU_ASSERT_FALSE(resultado);
-
-    resultado = riscar(t, 3, 3);
-    CU_ASSERT_FALSE(resultado);
+    // Testa índices inválidos
+    CU_ASSERT_FALSE(riscar(t, -1, 0));
+    CU_ASSERT_FALSE(riscar(t, 3, 3));
 
     freeTabela(t);
 }
 
-// Teste para a função mostrarTabela
-void testarMostrarTabela()
+// Testa a função mostrarTabela, incluindo o caso em que a tabela é NULL
+void test_mostrarTabela(void)
 {
     TABELA t = malloc(sizeof(struct Tabela));
     initTabela(t, 3, 3);
 
-    // Preenche o tabuleiro com valores
     t->tabela[0][0] = 'A';
     t->tabela[1][1] = 'B';
     t->tabela[2][2] = 'C';
 
-    // Mostra o tabuleiro (não há asserts aqui, apenas visualização)
-    printf("Tabuleiro esperado:\n");
+    // Chamada normal
     mostrarTabela(t);
+    // Chamada com NULL (deve imprimir "Tabuleiro não inicializado.")
+    mostrarTabela(NULL);
 
     freeTabela(t);
 }
 
-// Teste para a função lerFicheiro
-void testarLerFicheiro()
+// Testa a função coordenadaParaIndice
+void test_coordenadaParaIndice(void)
 {
-    TABELA t = lerFicheiro("testes.txt");
-    CU_ASSERT_PTR_NOT_NULL(t);
+    int linha, coluna;
+    // Caso válido
+    CU_ASSERT_TRUE(coordenadaParaIndice("a1", &linha, &coluna));
+    CU_ASSERT_EQUAL(linha, 0);
+    CU_ASSERT_EQUAL(coluna, 0);
 
-    // Verifica as dimensões do tabuleiro
-    CU_ASSERT_EQUAL(t->l, 3);
-    CU_ASSERT_EQUAL(t->c, 3);
+    CU_ASSERT_TRUE(coordenadaParaIndice("c3", &linha, &coluna));
+    CU_ASSERT_EQUAL(linha, 2);
+    CU_ASSERT_EQUAL(coluna, 2);
 
-    // Verifica o conteúdo do tabuleiro
-    CU_ASSERT_EQUAL(t->tabela[0][0], 'A');
-    CU_ASSERT_EQUAL(t->tabela[1][1], 'B');
-    CU_ASSERT_EQUAL(t->tabela[2][2], 'C');
-
-    freeTabela(t);
+    // Caso inválido: string com comprimento insuficiente
+    CU_ASSERT_FALSE(coordenadaParaIndice("a", &linha, &coluna));
 }
 
-int main()
+// Testa o comando sair
+void test_sair(void)
 {
-    // Inicializa o registro de testes
-    if (CUE_SUCCESS != CU_initialize_registry())
+    GAME game;
+    game.tab = NULL;
+    game.estado.looping = true;
+
+    // Se o argumento não for NULL, a função deve retornar false
+    CU_ASSERT_FALSE(sair('s', "arg", &game));
+
+    // Caso correto: sem argumento e comando 's'
+    CU_ASSERT_TRUE(sair('s', NULL, &game));
+    CU_ASSERT_FALSE(game.estado.looping);
+}
+
+// Testa o comando gravar
+void test_gravar(void)
+{
+    const char *filename = "temp_test_gravar.txt";
+    GAME game;
+    game.estado.looping = true;
+
+    // --- Bloco 1: gravação válida ---
+    game.tab = malloc(sizeof(struct Tabela));
+    initTabela(game.tab, 2, 2);
+    game.tab->tabela[0][0] = 'A';
+    game.tab->tabela[0][1] = 'B';
+    game.tab->tabela[1][0] = 'C';
+    game.tab->tabela[1][1] = 'D';
+
+    CU_ASSERT_TRUE(gravar('g', (char *)filename, &game));
+
+    FILE *f = fopen(filename, "r");
+    CU_ASSERT_PTR_NOT_NULL(f);
+
+    int l, c;
+    if (fscanf(f, "%d %d", &l, &c) == 2)
     {
-        return CU_get_error();
+        CU_ASSERT_EQUAL(l, 2);
+        CU_ASSERT_EQUAL(c, 2);
     }
+    char buffer[LINE_SIZE];
+    if (fscanf(f, "%s", buffer) == 1)
+        CU_ASSERT_STRING_EQUAL(buffer, "AB");
+    if (fscanf(f, "%s", buffer) == 1)
+        CU_ASSERT_STRING_EQUAL(buffer, "CD");
 
-    // Cria o conjunto de testes
+    fclose(f);
+    remove(filename);
+    freeTabela(game.tab);
+
+    // --- Bloco 2: argumento NULL ---
+    game.tab = malloc(sizeof(struct Tabela));
+    initTabela(game.tab, 2, 2);
+    CU_ASSERT_FALSE(gravar('g', NULL, &game));
+    freeTabela(game.tab);
+
+    // --- Bloco 3: tabuleiro NULL ---
+    game.tab = NULL;
+    CU_ASSERT_FALSE(gravar('g', "teste.txt", &game));
+
+    // --- Bloco 4: erro ao abrir ficheiro (nome inválido) ---
+    game.tab = malloc(sizeof(struct Tabela));
+    initTabela(game.tab, 1, 1);
+    CU_ASSERT_FALSE(gravar('g', "/caminho/impossivel/ficheiro.txt", &game));
+    freeTabela(game.tab);
+
+    // --- Bloco 5: comando inválido (diferente de 'g') ---
+    CU_ASSERT_FALSE(gravar('x', "teste.txt", &game));
+}
+
+// Testa o comando lerCmd
+void test_lerCmd(void)
+{
+    GAME game;
+    game.estado.looping = true;
+    game.tab = NULL;
+    const char *filename = "temp_test_ler.txt";
+    FILE *f;
+
+    // --- Bloco 1: caso válido ---
+    f = fopen(filename, "w");
+    CU_ASSERT_PTR_NOT_NULL(f);
+    fprintf(f, "2 2\n");
+    fprintf(f, "EF\n");
+    fprintf(f, "GH\n");
+    fclose(f);
+
+    CU_ASSERT_TRUE(lerCmd('l', (char *)filename, &game));
+    CU_ASSERT_PTR_NOT_NULL(game.tab);
+    CU_ASSERT_EQUAL(game.tab->l, 2);
+    CU_ASSERT_EQUAL(game.tab->c, 2);
+    CU_ASSERT_EQUAL(game.tab->tabela[0][0], 'E');
+    CU_ASSERT_EQUAL(game.tab->tabela[0][1], 'F');
+    CU_ASSERT_EQUAL(game.tab->tabela[1][0], 'G');
+    CU_ASSERT_EQUAL(game.tab->tabela[1][1], 'H');
+    freeTabela(game.tab);
+    game.tab = NULL;
+    remove(filename);
+
+    // --- Bloco 2: ficheiro não existe ---
+    CU_ASSERT_FALSE(lerCmd('l', "ficheiro_inexistente.txt", &game));
+
+    // --- Bloco 3: ficheiro com dimensões inválidas ---
+    f = fopen(filename, "w");
+    CU_ASSERT_PTR_NOT_NULL(f);
+    fprintf(f, "duas palavras\n"); // não são números válidos
+    fclose(f);
+
+    CU_ASSERT_FALSE(lerCmd('l', (char *)filename, &game));
+    remove(filename);
+
+    // --- Bloco 4: conteúdo incompleto ---
+    f = fopen(filename, "w");
+    CU_ASSERT_PTR_NOT_NULL(f);
+    fprintf(f, "2 2\n"); // dimensões corretas
+    fprintf(f, "A\n");   // conteúdo incompleto
+    fclose(f);
+
+    CU_ASSERT_FALSE(lerCmd('l', (char *)filename, &game));
+    remove(filename);
+}
+
+int main(void)
+{
+    if (CUE_SUCCESS != CU_initialize_registry())
+        return CU_get_error();
+
     CU_pSuite suite = CU_add_suite("Testes para parte1.c", NULL, NULL);
     if (NULL == suite)
     {
@@ -98,21 +211,20 @@ int main()
         return CU_get_error();
     }
 
-    // Adiciona os testes ao conjunto
-    if ((NULL == CU_add_test(suite, "Teste de pintarBranco", testarPintarBranco)) ||
-        (NULL == CU_add_test(suite, "Teste de riscar", testarRiscar)) ||
-        (NULL == CU_add_test(suite, "Teste de mostrarTabela", testarMostrarTabela)) ||
-        (NULL == CU_add_test(suite, "Teste de lerFicheiro", testarLerFicheiro)))
+    if ((NULL == CU_add_test(suite, "Teste pintarBranco", test_pintarBranco)) ||
+        (NULL == CU_add_test(suite, "Teste riscar", test_riscar)) ||
+        (NULL == CU_add_test(suite, "Teste mostrarTabela", test_mostrarTabela)) ||
+        (NULL == CU_add_test(suite, "Teste coordenadaParaIndice", test_coordenadaParaIndice)) ||
+        (NULL == CU_add_test(suite, "Teste sair", test_sair)) ||
+        (NULL == CU_add_test(suite, "Teste gravar", test_gravar)) ||
+        (NULL == CU_add_test(suite, "Teste lerCmd", test_lerCmd)))
     {
         CU_cleanup_registry();
         return CU_get_error();
     }
 
-    // Executa os testes usando a interface básica
     CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();
-
-    // Limpa o registro de testes
     CU_cleanup_registry();
     return CU_get_error();
 }
