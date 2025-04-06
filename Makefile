@@ -1,33 +1,34 @@
 # Nome do executável principal
-EXEC = programa
+EXEC = jogo
 
 # Nome do executável de testes
-TEST_EXEC = testesparte1
+TEST_EXEC = testes
 
 # Ficheiros fonte
-SRC = parte1.c main.c
+SRC = main.c parte1.c
 TEST_SRC = testesparte1.c parte1.c
 
 # Ficheiros de cabeçalho
 HEADERS = parte1.h
 
 # Flags do compilador
-CFLAGS = -Wall -Wextra -std=c99
-LDFLAGS = -lcunit
+CFLAGS = -Wall -Wextra -pedantic -O1 -fsanitize=address -fno-omit-frame-pointer -g
+LDFLAGS = -lcunit -fsanitize=address
 
-# Alvo padrão (compila tudo)
+.PHONY: all clean clean-all test
+
 all: $(EXEC) $(TEST_EXEC)
 
-# Compila o programa principal
-$(EXEC): main.c parte1.c $(HEADERS)
-	@gcc $(CFLAGS) -o $(EXEC) main.c parte1.c
+# Compila o jogo principal
+$(EXEC): $(SRC) $(HEADERS)
+	@gcc $(CFLAGS) $(SRC) -o $(EXEC) 
 
-# Compila o programa de testes
-$(TEST_EXEC): testesparte1.c parte1.c $(HEADERS)
-	@gcc $(CFLAGS) -o $(TEST_EXEC) testesparte1.c parte1.c $(LDFLAGS)
+# Compila os testes
+$(TEST_EXEC): $(TEST_SRC) $(HEADERS)
+	@gcc $(CFLAGS) $(TEST_SRC) -o $(TEST_EXEC) $(LDFLAGS)
 
 # Executa os testes
-test: $(TEST_EXEC)
+testar: $(TEST_EXEC)
 	@./$(TEST_EXEC)
 
 # Limpa os ficheiros gerados

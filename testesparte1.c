@@ -34,7 +34,7 @@ void testarRiscar()
     // Risca a célula (0, 0)
     bool resultado = riscar(t, 0, 0);
     CU_ASSERT_TRUE(resultado);
-    CU_ASSERT_EQUAL(t->tabela[0][0], 'X');
+    CU_ASSERT_EQUAL(t->tabela[0][0], '#');
 
     // Testa índices fora dos limites
     resultado = riscar(t, -1, 0);

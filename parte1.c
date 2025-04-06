@@ -191,32 +191,31 @@ bool lerCmd(char cmd, char *arg, GAME *game)
 // Converte coordenada do formato "a3" para índices numéricos (linha e coluna)
 bool coordenadaParaIndice(const char *coord, int *linha, int *coluna)
 {
-    if (coord == NULL || strlen(coord) < 2)
+    if (strlen(coord) < 2)
         return false;
-
-    *linha = coord[1] - '1';  // Converte o número da linha
-    *coluna = coord[0] - 'A'; // Converte a letra da coluna
-
-    return (*linha >= 0 && *coluna >= 0);
-}
-
-// Pinta de branco (transforma para espaço em branco)
-bool pintarBranco(TABELA t, int linha, int coluna)
-{
-    if (linha < 0 || linha >= t->l || coluna < 0 || coluna >= t->c)
-        return false;
-
-    t->tabela[linha][coluna] = ' '; // Pinta a célula de branco
+    *coluna = coord[0] - 'a';     // 'a' corresponde à coluna 0
+    *linha = atoi(coord + 1) - 1; // atoi (ascii to integer):  atoi -> converte uma string para um int   NOTA (coord + 1) é para comecar na segunda letra da string, e tirmaos 1, por causa do indice zero
     return true;
 }
 
-// Risca a casa (substitui por 'X')
+// Pinta de branco (transforma para maiuscula)
+bool pintarBranco(TABELA t, int linha, int coluna)
+{
+    if (linha >= 0 && linha < t->l && coluna >= 0 && coluna < t->c)
+    {
+        t->tabela[linha][coluna] = toupper(t->tabela[linha][coluna]);
+        return true;
+    }
+    return false;
+}
+
+// Risca a casa (substitui por '#')
 bool riscar(TABELA t, int linha, int coluna)
 {
     if (linha < 0 || linha >= t->l || coluna < 0 || coluna >= t->c)
         return false;
 
-    t->tabela[linha][coluna] = 'X'; // Marca a célula com 'X'
+    t->tabela[linha][coluna] = '#'; // Marca a célula com '#'
     return true;
 }
 
