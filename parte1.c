@@ -148,7 +148,7 @@ bool coordenadaParaIndice(const char *coord, int *linha, int *coluna)
     if (strlen(coord) < 2)
         return false;
     *coluna = coord[0] - 'a';     // 'a' corresponde à coluna 0
-    *linha = atoi(coord + 1) - 1; // // se os números forem 1-indexados, atoi -> converte uma string para um int   NOTA (coord + 1) é para comecar na segunda letra da string, e tirmaos 1, por causa do indice zero
+    *linha = atoi(coord + 1) - 1; // atoi (ascii to integer):  atoi -> converte uma string para um int   NOTA (coord + 1) é para comecar na segunda letra da string, e tirmaos 1, por causa do indice zero
     return true;
 }
 
@@ -204,7 +204,7 @@ int main()
     while (game.estado.looping)
     {
         char line[LINE_SIZE] = {0};
-        printf("\n> ");
+        printf("\n> "); // seta para dar ideia de terminal
         if (fgets(line, LINE_SIZE, stdin) == NULL)
         {
             game.estado.looping = false;
@@ -234,7 +234,7 @@ int main()
             comandoProcessado = comandos[i](cmd[0], (num_args >= 2) ? arg : NULL, &game);
         }
 
-        // Processa os comandos de modificação do tabuleiro: 'b' (pintar) e 'r' (riscar)
+        // Executa os comandos de modificação do tabuleiro: 'b' (pintar) e 'r' (riscar)
         if (!comandoProcessado)
         {
             if (cmd[0] == 'b' || cmd[0] == 'r')
