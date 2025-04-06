@@ -27,6 +27,9 @@ typedef struct
     TABELA tab;
 } GAME;
 
+// Tipo de funções
+typedef bool (*COMANDO)(char cmd, char *arg, GAME *game);
+
 // Declarações de funções
 void initTabela(TABELA t, int l, int c);
 void freeTabela(TABELA t);
