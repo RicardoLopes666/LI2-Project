@@ -35,10 +35,13 @@ void initTabela(TABELA t, int l, int c)
     t->tabela = malloc(l * sizeof(char *));
     for (int i = 0; i < l; i++)
     {
-        t->tabela[i] = malloc(c * sizeof(char));
-        for (int j = 0; j < c; j++)
+        t->tabela[i] = malloc((c + 1) * sizeof(char));
+        for (int j = 0; j <= c; j++)
         {
-            t->tabela[i][j] = ' '; // Inicializa com espaços
+            if (j == c)
+                t->tabela[i][j] = '\0';
+            else
+                t->tabela[i][j] = ' '; // Inicializa com espaços
         }
     }
 }
@@ -56,59 +59,12 @@ void freeTabela(TABELA t)
     free(t);
 }
 
-// Função que lê um ficheiro e cria um novo tabuleiro a partir dele
-TABELA lerFicheiro(const char *nome)
-{
-    FILE *f = fopen(nome, "r");
-    if (f == NULL)
-    {
-        fprintf(stderr, "Erro ao abrir o ficheiro %s para leitura\n", nome);
-        return NULL;
-    }
-
-    int l, c;
-    if (fscanf(f, "%d %d", &l, &c) != 2)
-    {
-        fprintf(stderr, "Erro na leitura das dimensões do tabuleiro\n");
-        fclose(f);
-        return NULL;
-    }
-
-    TABELA nova = malloc(sizeof(struct Tabela));
-    if (nova == NULL)
-    {
-        fprintf(stderr, "Erro na alocação da estrutura Tabela\n");
-        fclose(f);
-        return NULL;
-    }
-
-    initTabela(nova, l, c);
-
-    for (int i = 0; i < l; i++)
-    {
-        for (int j = 0; j < c; j++)
-        {
-            if (fscanf(f, " %c", &nova->tabela[i][j]) != 1)
-            {
-                fprintf(stderr, "Erro na leitura do conteúdo do tabuleiro\n");
-                freeTabela(nova);
-                fclose(f);
-                return NULL;
-            }
-        }
-    }
-
-    fclose(f);
-    return nova;
-}
-
 // Tipo de função para comandos. Agora os comandos recebem um GAME* para acessar o estado e o tabuleiro.
 typedef bool (*COMANDO)(char cmd, char *arg, GAME *game);
 
-// Comando para gravar (exemplo simplificado)
+// Comando para gravar o estado do jogo num ficheiro
 bool gravar(char cmd, char *arg, GAME *game)
 {
-    (void)game; // Não é necessário para este exemplo
     if (cmd == 'g')
     {
         if (arg == NULL)
@@ -116,10 +72,27 @@ bool gravar(char cmd, char *arg, GAME *game)
             fprintf(stderr, "Erro: o comando gravar precisa de um argumento!\n");
             return false;
         }
-        printf("Gravando em %s\n", arg);
-        // Aqui podes implementar a funcionalidade de gravação
+        if (game->tab == NULL)
+        {
+            fprintf(stderr, "Erro: a tabela não ser nula antes de a gravar!\n");
+            return false;
+        }
+        FILE *f = fopen(arg, "w"); // Abre o ficheiro (caso existe o que estiver lá escrito vai ser sobrescrito)
+        if (f == NULL)
+        {
+            fprintf(stderr, "Erro a abrir o ficheiro");
+            return false;
+        }
+        fprintf(f, "%d %d\n", game->tab->l, game->tab->c);
+        for (int i = 0; i < game->tab->l; i++)
+        {
+            fprintf(f, "%s\n", game->tab->tabela[i]);
+        }
+        fclose(f);
+        printf("Gravado em %s\n", arg);
         return true;
     }
+
     return false;
 }
 
@@ -142,7 +115,7 @@ bool lerCmd(char cmd, char *arg, GAME *game)
     if (cmd != 'l' || arg == NULL)
         return false;
 
-    FILE *file = fopen(arg, "r");
+    FILE *file = fopen(arg, "r"); // r é para leitura
     if (!file)
     {
         fprintf(stderr, "Erro ao abrir o ficheiro %s para leitura\n", arg);
@@ -168,7 +141,7 @@ bool lerCmd(char cmd, char *arg, GAME *game)
 
     initTabela(t, linhas, colunas);
 
-    // Lê o conteúdo do tabuleiro
+    // Lê o conteúdo do tabuleiro do ficheiro e passa-o para t
     for (int i = 0; i < linhas; i++)
     {
         for (int j = 0; j < colunas; j++)
