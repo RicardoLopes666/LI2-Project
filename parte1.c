@@ -4,28 +4,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h> // para toupper
+#include "parte1.h"
 #define LINE_SIZE 1024
-
-// Struct para controlar o estado do programa (se ele deve continuar ou parar)
-typedef struct estado
-{
-    bool looping;
-} ESTADO;
-
-// Struct que representa o tabuleiro
-typedef struct Tabela
-{
-    int l;
-    int c;
-    char **tabela;
-} *TABELA;
-
-// Estrutura que agrupa o estado do jogo e o tabuleiro
-typedef struct
-{
-    ESTADO estado;
-    TABELA tab;
-} GAME;
 
 // Função que cria e aloca o tabuleiro com as dimensões fornecidas
 void initTabela(TABELA t, int l, int c)
