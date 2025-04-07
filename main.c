@@ -1,4 +1,4 @@
-#include "parte1.h"
+#include "parte1/parte1.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>

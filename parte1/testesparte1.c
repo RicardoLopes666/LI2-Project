@@ -98,7 +98,7 @@ void test_gravar(void)
     GAME game;
     game.estado.looping = true;
 
-    // --- Bloco 1: gravação válida ---
+    // gravação válida
     game.tab = malloc(sizeof(struct Tabela));
     initTabela(game.tab, 2, 2);
     game.tab->tabela[0][0] = 'A';
@@ -127,23 +127,23 @@ void test_gravar(void)
     remove(filename);
     freeTabela(game.tab);
 
-    // --- Bloco 2: argumento NULL ---
+    // argumento NULL
     game.tab = malloc(sizeof(struct Tabela));
     initTabela(game.tab, 2, 2);
     CU_ASSERT_FALSE(gravar('g', NULL, &game));
     freeTabela(game.tab);
 
-    // --- Bloco 3: tabuleiro NULL ---
+    // tabuleiro NULL
     game.tab = NULL;
     CU_ASSERT_FALSE(gravar('g', "teste.txt", &game));
 
-    // --- Bloco 4: erro ao abrir ficheiro (nome inválido) ---
+    // erro ao abrir ficheiro (nome inválido)
     game.tab = malloc(sizeof(struct Tabela));
     initTabela(game.tab, 1, 1);
-    CU_ASSERT_FALSE(gravar('g', "/caminho/impossivel/ficheiro.txt", &game));
+    CU_ASSERT_FALSE(gravar('g', "/csdfsdfsdf/ficheiro.txt", &game));
     freeTabela(game.tab);
 
-    // --- Bloco 5: comando inválido (diferente de 'g') ---
+    // comando inválido (diferente de 'g')
     CU_ASSERT_FALSE(gravar('x', "teste.txt", &game));
 }
 

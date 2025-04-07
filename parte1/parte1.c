@@ -35,7 +35,7 @@ void initTabela(TABELA t, int l, int c)
     t->tabela = malloc(l * sizeof(char *));
     for (int i = 0; i < l; i++)
     {
-        t->tabela[i] = malloc((c + 1) * sizeof(char));
+        t->tabela[i] = malloc((c + 1) * sizeof(char)); // + 1 para colocar o '\0'
         for (int j = 0; j <= c; j++)
         {
             if (j == c)
@@ -74,7 +74,7 @@ bool gravar(char cmd, char *arg, GAME *game)
         }
         if (game->tab == NULL)
         {
-            fprintf(stderr, "Erro: a tabela não ser nula antes de a gravar!\n");
+            fprintf(stderr, "Erro: a tabela não deve ser nula antes de a gravar!\n");
             return false;
         }
         FILE *f = fopen(arg, "w"); // Abre o ficheiro (caso existe o que estiver lá escrito vai ser sobrescrito)
@@ -131,6 +131,9 @@ bool lerCmd(char cmd, char *arg, GAME *game)
         return false;
     }
 
+    if (game->tab != NULL)
+        freeTabela(game->tab);
+
     TABELA t = malloc(sizeof(struct Tabela));
 
     initTabela(t, linhas, colunas);
@@ -155,7 +158,7 @@ bool lerCmd(char cmd, char *arg, GAME *game)
     return true;
 }
 
-// Converte coordenada do formato "a3" para índices numéricos (linha e coluna)
+// Converte coordenada do formato "a3" para  coordenadas (linha e coluna)
 bool coordenadaParaIndice(const char *coord, int *linha, int *coluna)
 {
     if (strlen(coord) < 2)
