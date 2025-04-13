@@ -5,11 +5,11 @@ EXEC = jogo
 TEST_EXEC = testes
 
 # Ficheiros fonte
-SRC = main.c parte1/parte1.c
+SRC = main.c parte1/parte1.c parte2/parte2.c
 TEST_SRC = parte1/testesparte1.c parte1/parte1.c
 
 # Ficheiros de cabeçalho
-HEADERS = parte1/parte1.h
+HEADERS = parte1/parte1.h parte2/parte2.h
 
 # Flags do compilador
 CFLAGS = -Wall -Wextra -pedantic -O1 -fsanitize=address -fno-omit-frame-pointer -g 

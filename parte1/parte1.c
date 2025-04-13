@@ -3,29 +3,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include "../tipos.h"
 #include <ctype.h> // Para toupper
+#include "../parte2/parte2.h"
 #define LINE_SIZE 1024
-
-// Struct para controlar o estado do programa (se ele deve continuar ou parar)
-typedef struct estado
-{
-    bool looping;
-} ESTADO;
-
-// Struct que representa o tabuleiro
-typedef struct Tabela
-{
-    int l;         // Número de linhas
-    int c;         // Número de colunas
-    char **tabela; // Ponteiro para o tabuleiro (array bidimensional)
-} *TABELA;
-
-// Estrutura que agrupa o estado do jogo e o tabuleiro
-typedef struct
-{
-    ESTADO estado; // Estado do programa
-    TABELA tab;    // Tabuleiro do jogo
-} GAME;
 
 // Função que cria e aloca o tabuleiro com as dimensões fornecidas
 void initTabela(TABELA t, int l, int c)
@@ -118,7 +99,7 @@ bool lerCmd(char cmd, char *arg, GAME *game)
     FILE *file = fopen(arg, "r"); // r é para leitura
     if (!file)
     {
-        fprintf(stderr, "Erro ao abrir o ficheiro %s para leitura\n", arg);
+        fprintf(stderr, "Erro: ao abrir o ficheiro %s para leitura\n", arg);
         return false;
     }
 
@@ -126,7 +107,7 @@ bool lerCmd(char cmd, char *arg, GAME *game)
     // Tenta ler as dimensões do tabuleiro
     if (fscanf(file, "%d %d", &linhas, &colunas) != 2)
     {
-        fprintf(stderr, "Erro na leitura das dimensões do tabuleiro\n");
+        fprintf(stderr, "Erro: na leitura das dimensões do tabuleiro\n");
         fclose(file);
         return false;
     }
@@ -145,16 +126,27 @@ bool lerCmd(char cmd, char *arg, GAME *game)
         {
             if (fscanf(file, " %c", &t->tabela[i][j]) != 1)
             {
-                fprintf(stderr, "Erro na leitura do conteúdo do tabuleiro\n");
+                fprintf(stderr, "Erro: na leitura do conteúdo do tabuleiro\n");
                 freeTabela(t);
                 fclose(file);
                 return false;
             }
         }
     }
-
     fclose(file);
+
+    freeStackTabs(game->stackTabs);
+    STACKTABS s = malloc(sizeof(struct StackTabs));
+    initStackTabs(s);
+    game->stackTabs = s;
     game->tab = t;
+    TABELA temp = copiarTabela(t);
+    if (temp == NULL)
+    {
+        fprintf(stderr, "Erro: falha ao copiar o tabuleiro");
+        return false;
+    }
+    insereTabela(game->stackTabs, temp);
     return true;
 }
 

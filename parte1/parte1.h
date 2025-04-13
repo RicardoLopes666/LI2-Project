@@ -2,30 +2,10 @@
 #define PARTE1_H
 
 #include <stdbool.h>
+#include "../tipos.h"
 
 // Constantes
 #define LINE_SIZE 1024
-
-// Struct para controlar o estado do programa (se ele deve continuar ou parar)
-typedef struct estado
-{
-    bool looping;
-} ESTADO;
-
-// Struct que representa o tabuleiro
-typedef struct Tabela
-{
-    int l;
-    int c;
-    char **tabela;
-} *TABELA;
-
-// Estrutura que agrupa o estado do jogo e o tabuleiro
-typedef struct
-{
-    ESTADO estado;
-    TABELA tab;
-} GAME;
 
 // Tipo de funções
 typedef bool (*COMANDO)(char cmd, char *arg, GAME *game);
