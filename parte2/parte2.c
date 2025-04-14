@@ -2,6 +2,8 @@
 #include <stdbool.h>
 #include "../tipos.h"
 #include "../parte1/parte1.h"
+#include <ctype.h> // Para usar a função isupper
+#include <stdio.h>
 
 void initStackTabs(STACKTABS s)
 {
@@ -87,4 +89,84 @@ void freeStackTabs(STACKTABS s)
     }
     free(s->tabelas);
     free(s);
+}
+
+// Função auxiliar para verificar se uma célula está dentro dos limites do tabuleiro
+bool dentroDosLimites(TABELA t, int linha, int coluna)
+{
+    return linha >= 0 && linha < t->l && coluna >= 0 && coluna < t->c;
+}
+
+// Função que verifica se todas as casas ao redor de uma casa riscada estão pintadas de branco
+// Retorna o número de restrições quebradas e preenche o array `restricoes` com as coordenadas
+int verificaRiscadaVizinhasBrancas(TABELA t, int linha, int coluna, int restricoes[][2])
+{
+    if (!dentroDosLimites(t, linha, coluna) || t->tabela[linha][coluna] != '#')
+    {
+        return 0; // A célula não é uma casa riscada
+    }
+
+    int direcoes[4][2] = {
+        {-1, 0}, // Cima
+        {1, 0},  // Baixo
+        {0, -1}, // Esquerda
+        {0, 1}   // Direita
+    };
+
+    int count = 0; // Contador de restrições quebradas
+
+    for (int i = 0; i < 4; i++)
+    {
+        int novaLinha = linha + direcoes[i][0];
+        int novaColuna = coluna + direcoes[i][1];
+
+        if (dentroDosLimites(t, novaLinha, novaColuna))
+        {
+            if (!isupper(t->tabela[novaLinha][novaColuna]))
+            {
+                // Adiciona a coordenada da restrição quebrada ao array
+                restricoes[count][0] = novaLinha;
+                restricoes[count][1] = novaColuna;
+                count++;
+            }
+        }
+    }
+
+    return count; // Retorna o número de restrições quebradas
+}
+
+// Função que imprime as restrições do jogo caso estas existam
+bool verificaRestrições(TABELA t)
+{
+    bool temRestricoes = false;
+
+    // Percorre todas as células do tabuleiro
+    for (int i = 0; i < t->l; i++)
+    {
+        for (int j = 0; j < t->c; j++)
+        {
+            if (t->tabela[i][j] == '#')
+            {                         // Verifica apenas casas riscadas
+                int restricoes[4][2]; // Máximo de 4 vizinhos
+                int numRestricoes = verificaRiscadaVizinhasBrancas(t, i, j, restricoes);
+
+                if (numRestricoes > 0)
+                {
+                    temRestricoes = true;
+                    printf("Casa riscada em (%c%d) tem restrições quebradas (apenas deveria ter casas brancas na sua vizinhança) nas seguintes coordenadas:\n", 'a' + j, i + 1);
+                    for (int k = 0; k < numRestricoes; k++)
+                    {
+                        printf("  - Coluna: %c, Linha: %d\n", 'a' + restricoes[k][1], restricoes[k][0] + 1);
+                    }
+                }
+            }
+        }
+    }
+
+    if (!temRestricoes)
+    {
+        printf("Nenhuma restrição foi quebrada no tabuleiro.\n");
+    }
+
+    return temRestricoes;
 }

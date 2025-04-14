@@ -4,12 +4,18 @@
 
 void initStackTabs(STACKTABS s);
 
-int insereTabela(STACKTABS s, TABELA tab);
+bool insereTabela(STACKTABS s, TABELA tab);
 
-int deleteTabela(GAME *game);
+bool deleteTabela(GAME *game);
 
 TABELA copiarTabela(TABELA t);
 
 void freeStackTabs(STACKTABS s);
 
-#endif // PARTE2_H
+bool dentroDosLimites(TABELA t, int linha, int coluna);
+
+int verificaRiscadaVizinhasBrancas(TABELA t, int linha, int coluna, int restricoes[][2]);
+
+bool verificaRestrições(TABELA t);
+
+#endif // PARTE2_Hs

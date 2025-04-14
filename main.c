@@ -108,6 +108,23 @@ int main()
                 }
             }
         }
+
+        // Executa o comando de verificar restrições: 'v'
+        if (cmd[0] == 'v' && continuar)
+        {
+            if (game.tab == NULL)
+            {
+                fprintf(stderr, "Erro: tabuleiro não carregado.\n");
+                continuar = false;
+            }
+            else
+            {
+                printf("Verificando restrições do tabuleiro...\n");
+                verificaRestrições(game.tab);
+                comandoProcessado = true;
+            }
+        }
+
         // Executa o comando de voltar atrás
         if (cmd[0] == 'd' && continuar)
         {
