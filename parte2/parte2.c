@@ -135,6 +135,38 @@ int verificaRiscadaVizinhasBrancas(TABELA t, int linha, int coluna, int restrico
     return count; // Retorna o número de restrições quebradas
 }
 
+// Função que verifica se existe alguma letra igual (maiúscula ou minúscula) na mesma linha ou coluna de uma casa branca
+bool verificaLetraIgualLinhaColuna(TABELA t, int linha, int coluna)
+{
+    if (!dentroDosLimites(t, linha, coluna) || !isupper(t->tabela[linha][coluna]))
+    {
+        return false; // A célula não é uma casa branca
+    }
+
+    char letraMaiuscula = t->tabela[linha][coluna];
+    char letraMinuscula = tolower(letraMaiuscula); // Converte a letra para minúscula
+
+    // Verifica a linha
+    for (int j = 0; j < t->c; j++)
+    {
+        if (j != coluna && (t->tabela[linha][j] == letraMaiuscula || t->tabela[linha][j] == letraMinuscula))
+        {
+            return true; // Encontrou uma letra igual (maiúscula ou minúscula) na mesma linha
+        }
+    }
+
+    // Verifica a coluna
+    for (int i = 0; i < t->l; i++)
+    {
+        if (i != linha && (t->tabela[i][coluna] == letraMaiuscula || t->tabela[i][coluna] == letraMinuscula))
+        {
+            return true; // Encontrou uma letra igual (maiúscula ou minúscula) na mesma coluna
+        }
+    }
+
+    return false; // Não encontrou letras iguais (maiúsculas ou minúsculas) na mesma linha ou coluna
+}
+
 // Função que imprime as restrições do jogo caso estas existam
 bool verificaRestrições(TABELA t)
 {
@@ -145,8 +177,9 @@ bool verificaRestrições(TABELA t)
     {
         for (int j = 0; j < t->c; j++)
         {
+            // Verifica restrições para casas riscadas
             if (t->tabela[i][j] == '#')
-            {                         // Verifica apenas casas riscadas
+            {
                 int restricoes[4][2]; // Máximo de 4 vizinhos
                 int numRestricoes = verificaRiscadaVizinhasBrancas(t, i, j, restricoes);
 
@@ -158,6 +191,16 @@ bool verificaRestrições(TABELA t)
                     {
                         printf("  - Coluna: %c, Linha: %d\n", 'a' + restricoes[k][1], restricoes[k][0] + 1);
                     }
+                }
+            }
+
+            // Verifica restrições para casas brancas
+            if (isupper(t->tabela[i][j]))
+            {
+                if (verificaLetraIgualLinhaColuna(t, i, j))
+                {
+                    temRestricoes = true;
+                    printf("Casa branca em (%c%d) tem restrições quebradas (letra repetida na mesma linha ou coluna).\n", 'a' + j, i + 1);
                 }
             }
         }
