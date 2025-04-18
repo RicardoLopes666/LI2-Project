@@ -1,5 +1,6 @@
 {
   "files.associations": {
-    "parte1.h": "c"
+    "parte1.h": "c",
+    "ctype.h": "c"
   }
 }

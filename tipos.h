@@ -1,5 +1,6 @@
 #ifndef TIPOS_H
 #define TIPOS_H
+#include <stdbool.h>
 
 // Struct para controlar o estado do programa (se ele deve continuar ou parar)
 typedef struct estado

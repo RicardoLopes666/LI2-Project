@@ -5,6 +5,7 @@
 #include <string.h>
 #include <ctype.h>
 #include "parte1.h" // Certifica-te que este header contém as declarações das funções e tipos usados
+#include "../parte2/parte2.h"
 
 // Testa a função pintarBranco
 void test_pintarBranco(void)
@@ -154,6 +155,7 @@ void test_lerCmd(void)
     game.estado.looping = true;
     game.tab = NULL;
     const char *filename = "temp_test_ler.txt";
+    game.stackTabs = NULL;
     FILE *f;
 
     // --- Bloco 1: caso válido ---
@@ -173,7 +175,9 @@ void test_lerCmd(void)
     CU_ASSERT_EQUAL(game.tab->tabela[1][0], 'G');
     CU_ASSERT_EQUAL(game.tab->tabela[1][1], 'H');
     freeTabela(game.tab);
+    freeStackTabs(game.stackTabs);
     game.tab = NULL;
+    game.stackTabs = NULL;
     remove(filename);
 
     // --- Bloco 2: ficheiro não existe ---
@@ -197,34 +201,4 @@ void test_lerCmd(void)
 
     CU_ASSERT_FALSE(lerCmd('l', (char *)filename, &game));
     remove(filename);
-}
-
-int main(void)
-{
-    if (CUE_SUCCESS != CU_initialize_registry())
-        return CU_get_error();
-
-    CU_pSuite suite = CU_add_suite("Testes para parte1.c", NULL, NULL);
-    if (NULL == suite)
-    {
-        CU_cleanup_registry();
-        return CU_get_error();
-    }
-
-    if ((NULL == CU_add_test(suite, "Teste pintarBranco", test_pintarBranco)) ||
-        (NULL == CU_add_test(suite, "Teste riscar", test_riscar)) ||
-        (NULL == CU_add_test(suite, "Teste mostrarTabela", test_mostrarTabela)) ||
-        (NULL == CU_add_test(suite, "Teste coordenadaParaIndice", test_coordenadaParaIndice)) ||
-        (NULL == CU_add_test(suite, "Teste sair", test_sair)) ||
-        (NULL == CU_add_test(suite, "Teste gravar", test_gravar)) ||
-        (NULL == CU_add_test(suite, "Teste lerCmd", test_lerCmd)))
-    {
-        CU_cleanup_registry();
-        return CU_get_error();
-    }
-
-    CU_basic_set_mode(CU_BRM_VERBOSE);
-    CU_basic_run_tests();
-    CU_cleanup_registry();
-    return CU_get_error();
 }

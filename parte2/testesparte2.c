@@ -1,5 +1,5 @@
 #include <CUnit/Basic.h>
-#include "parte2.c" // Inclui o ficheiro com as funções a testar
+#include "parte2.h" // Inclui o ficheiro com as funções a testar
 #include <stdlib.h>
 
 // Função auxiliar para testar se uma tabela foi alocada corretamente
@@ -127,25 +127,4 @@ void test_verificaRestrições()
 
     free(t->tabela);
     free(t);
-}
-
-int main()
-{
-    CU_initialize_registry();
-
-    CU_pSuite suite = CU_add_suite("Testes da parte 2", 0, 0);
-
-    CU_add_test(suite, "Teste initStackTabs", test_initStackTabs);
-    CU_add_test(suite, "Teste insereTabela", test_insereTabela);
-    CU_add_test(suite, "Teste deleteTabela", test_deleteTabela);
-    CU_add_test(suite, "Teste copiarTabela", test_copiarTabela);
-    CU_add_test(suite, "Teste freeStackTabs", test_freeStackTabs);
-    CU_add_test(suite, "Teste dentroDosLimites", test_dentroDosLimites);
-    CU_add_test(suite, "Teste verificaRiscadaVizinhasBrancas", test_verificaRiscadaVizinhasBrancas);
-    CU_add_test(suite, "Teste verificaRestrições", test_verificaRestrições);
-
-    CU_basic_run_tests();
-    CU_cleanup_registry();
-
-    return 0;
 }

@@ -5,11 +5,16 @@
 #include <ctype.h> // Para usar a função isupper
 #include <stdio.h>
 
-void initStackTabs(STACKTABS s)
+// _________ Funções utilizadas para voltar atrás -> comando 'd' ____________
+
+bool initStackTabs(STACKTABS s)
 {
     s->capacidade = 0;
     s->comprimento = 0;
     s->tabelas = malloc(sizeof(TABELA) * 3);
+    if (s->tabelas == NULL)
+        return false;
+    return true;
 }
 
 // Função que insere uma tabela ao array de tabelas
@@ -83,13 +88,18 @@ TABELA copiarTabela(TABELA t)
 // Liberta a memória alocada para a lista de tabuleiros
 void freeStackTabs(STACKTABS s)
 {
-    for (int i = 0; i < s->comprimento; i++)
+    if (s != NULL)
     {
-        freeTabela(s->tabelas[i]);
+        for (int i = 0; i < s->comprimento; i++)
+        {
+            freeTabela(s->tabelas[i]);
+        }
+        free(s->tabelas);
+        free(s);
     }
-    free(s->tabelas);
-    free(s);
 }
+
+// _____ Funçãoes utilizadas para verificar as restrições -> comando 'v'______
 
 // Função auxiliar para verificar se uma célula está dentro dos limites do tabuleiro
 bool dentroDosLimites(TABELA t, int linha, int coluna)
@@ -98,7 +108,7 @@ bool dentroDosLimites(TABELA t, int linha, int coluna)
 }
 
 // Função que verifica se todas as casas ao redor de uma casa riscada estão pintadas de branco
-// Retorna o número de restrições quebradas e preenche o array `restricoes` com as coordenadas
+// Retorna o número de restrições violadas e preenche o array `restricoes` com as coordenadas
 int verificaRiscadaVizinhasBrancas(TABELA t, int linha, int coluna, int restricoes[][2])
 {
     if (!dentroDosLimites(t, linha, coluna) || t->tabela[linha][coluna] != '#')
@@ -113,7 +123,7 @@ int verificaRiscadaVizinhasBrancas(TABELA t, int linha, int coluna, int restrico
         {0, 1}   // Direita
     };
 
-    int count = 0; // Contador de restrições quebradas
+    int count = 0; // Contador de restrições violadas
 
     for (int i = 0; i < 4; i++)
     {
@@ -124,7 +134,7 @@ int verificaRiscadaVizinhasBrancas(TABELA t, int linha, int coluna, int restrico
         {
             if (!isupper(t->tabela[novaLinha][novaColuna]))
             {
-                // Adiciona a coordenada da restrição quebrada ao array
+                // Adiciona a coordenada da restrição violada ao array
                 restricoes[count][0] = novaLinha;
                 restricoes[count][1] = novaColuna;
                 count++;
@@ -132,7 +142,7 @@ int verificaRiscadaVizinhasBrancas(TABELA t, int linha, int coluna, int restrico
         }
     }
 
-    return count; // Retorna o número de restrições quebradas
+    return count; // Retorna o número de restrições violadas
 }
 
 // Função que verifica se existe alguma letra igual (maiúscula ou minúscula) na mesma linha ou coluna de uma casa branca
@@ -186,7 +196,7 @@ bool verificaRestrições(TABELA t)
                 if (numRestricoes > 0)
                 {
                     temRestricoes = true;
-                    printf("Casa riscada em (%c%d) tem restrições quebradas (apenas deveria ter casas brancas na sua vizinhança) nas seguintes coordenadas:\n", 'a' + j, i + 1);
+                    printf("Casa riscada em (%c%d) tem restrições violadas (apenas deveria ter casas brancas na sua vizinhança) nas seguintes coordenadas:\n", 'a' + j, i + 1);
                     for (int k = 0; k < numRestricoes; k++)
                     {
                         printf("  - Coluna: %c, Linha: %d\n", 'a' + restricoes[k][1], restricoes[k][0] + 1);
@@ -200,7 +210,7 @@ bool verificaRestrições(TABELA t)
                 if (verificaLetraIgualLinhaColuna(t, i, j))
                 {
                     temRestricoes = true;
-                    printf("Casa branca em (%c%d) tem restrições quebradas (letra repetida na mesma linha ou coluna).\n", 'a' + j, i + 1);
+                    printf("Casa branca em (%c%d) tem restrições violadas (letra repetida na mesma linha ou coluna).\n", 'a' + j, i + 1);
                 }
             }
         }
@@ -208,7 +218,7 @@ bool verificaRestrições(TABELA t)
 
     if (!temRestricoes)
     {
-        printf("Nenhuma restrição foi quebrada no tabuleiro.\n");
+        printf("Nenhuma restrição foi violada no tabuleiro.\n");
     }
 
     return temRestricoes;

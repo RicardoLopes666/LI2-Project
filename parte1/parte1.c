@@ -137,16 +137,31 @@ bool lerCmd(char cmd, char *arg, GAME *game)
 
     freeStackTabs(game->stackTabs);
     STACKTABS s = malloc(sizeof(struct StackTabs));
-    initStackTabs(s);
+    if (!initStackTabs(s))
+    {
+        freeStackTabs(s);
+        freeTabela(t);
+        fprintf(stderr, "Erro: ao iniciar a nova Stack de tabuleiros");
+        return false;
+    }
     game->stackTabs = s;
     game->tab = t;
     TABELA temp = copiarTabela(t);
     if (temp == NULL)
     {
+        freeStackTabs(s);
+        freeTabela(t);
         fprintf(stderr, "Erro: falha ao copiar o tabuleiro");
         return false;
     }
-    insereTabela(game->stackTabs, temp);
+    if (!insereTabela(game->stackTabs, temp))
+    {
+        freeTabela(temp);
+        freeStackTabs(s);
+        freeTabela(t);
+        fprintf(stderr, "Erro: ao colocar o novo tabuleiro na stack");
+        return false;
+    }
     return true;
 }
 

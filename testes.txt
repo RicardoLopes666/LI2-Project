@@ -1,4 +1,0 @@
-3 3
-A B C
-D B F
-G H C

@@ -1,8 +1,9 @@
 #ifndef PARTE2_H
 #define PARTE2_H
 #include "../tipos.h"
+#include <stdbool.h>
 
-void initStackTabs(STACKTABS s);
+bool initStackTabs(STACKTABS s);
 
 bool insereTabela(STACKTABS s, TABELA tab);
 
