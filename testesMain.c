@@ -31,24 +31,27 @@ int main()
         return CU_get_error();
     }
 
-    CU_basic_set_mode(CU_BRM_VERBOSE);
-    CU_basic_run_tests();
-    CU_cleanup_registry();
-    return CU_get_error();
-
     // Testes parte 2
-    CU_initialize_registry();
 
     CU_pSuite suite2 = CU_add_suite("Testes da parte 2", 0, 0);
+    if (NULL == suite2)
+    {
+        CU_cleanup_registry();
+        return CU_get_error();
+    }
 
-    CU_add_test(suite2, "Teste initStackTabs", test_initStackTabs);
-    CU_add_test(suite2, "Teste insereTabela", test_insereTabela);
-    CU_add_test(suite2, "Teste deleteTabela", test_deleteTabela);
-    CU_add_test(suite2, "Teste copiarTabela", test_copiarTabela);
-    CU_add_test(suite2, "Teste freeStackTabs", test_freeStackTabs);
-    CU_add_test(suite2, "Teste dentroDosLimites", test_dentroDosLimites);
-    CU_add_test(suite2, "Teste verificaRiscadaVizinhasBrancas", test_verificaRiscadaVizinhasBrancas);
-    CU_add_test(suite2, "Teste verificaRestrições", test_verificaRestrições);
+    if (CU_add_test(suite2, "Teste initStackTabs", test_initStackTabs) ||
+        CU_add_test(suite2, "Teste insereTabela", test_insereTabela) ||
+        CU_add_test(suite2, "Teste deleteTabela", test_deleteTabela) ||
+        CU_add_test(suite2, "Teste copiarTabela", test_copiarTabela) ||
+        CU_add_test(suite2, "Teste freeStackTabs", test_freeStackTabs) ||
+        CU_add_test(suite2, "Teste dentroDosLimites", test_dentroDosLimites) ||
+        CU_add_test(suite2, "Teste verificaRiscadaVizinhasBrancas", test_verificaRiscadaVizinhasBrancas) ||
+        CU_add_test(suite2, "Teste verificaRestrições", test_verificaRestrições))
+    {
+        CU_cleanup_registry();
+        return CU_get_error();
+    }
 
     CU_basic_run_tests();
     CU_cleanup_registry();

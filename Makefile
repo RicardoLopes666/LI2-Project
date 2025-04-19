@@ -5,13 +5,13 @@ EXEC = jogo
 TEST_EXEC = testes
 
 # Ficheiros fonte
-SRC = main.c parte1/parte1.c parte2/parte2.c
-TEST_SRC = testesMain.c parte1/testesparte1.c parte2/testesparte2.c
-LIB_SRC = parte1/parte1.c parte2/parte2.c #sem o main.c para não existirem dois main nos testes
+SRC = main.c parte1/parte1.c parte2/parte2.c parte3/parte3.c
+TEST_SRC = testesMain.c parte1/testesparte1.c parte2/testesparte2.c 
+LIB_SRC = parte1/parte1.c parte2/parte2.c parte3/parte3.c #sem o main.c para não existirem dois main nos testes
 
 
 # Ficheiros de cabeçalho
-HEADERS = parte1/parte1.h parte2/parte2.h
+HEADERS = parte1/parte1.h parte2/parte2.h parte3/parte3.h
 TEST_HEADERS = parte1/testesparte1.h parte2/testesparte2.h 
 
 # Flags do compilador

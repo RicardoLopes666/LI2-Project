@@ -4,6 +4,7 @@
 #include "../parte1/parte1.h"
 #include <ctype.h> // Para usar a função isupper
 #include <stdio.h>
+#include "../parte3/parte3.h"
 
 // _________ Funções utilizadas para voltar atrás -> comando 'd' ____________
 
@@ -181,7 +182,7 @@ bool verificaLetraIgualLinhaColuna(TABELA t, int linha, int coluna)
 bool verificaRestrições(TABELA t)
 {
     bool temRestricoes = false;
-
+    int contaRestricoes = 0;
     // Percorre todas as células do tabuleiro
     for (int i = 0; i < t->l; i++)
     {
@@ -196,11 +197,13 @@ bool verificaRestrições(TABELA t)
                 if (numRestricoes > 0)
                 {
                     temRestricoes = true;
+                    printf("\n---- Restrição nº %d ----\n", contaRestricoes + 1);
                     printf("Casa riscada em (%c%d) tem restrições violadas (apenas deveria ter casas brancas na sua vizinhança) nas seguintes coordenadas:\n", 'a' + j, i + 1);
                     for (int k = 0; k < numRestricoes; k++)
                     {
                         printf("  - Coluna: %c, Linha: %d\n", 'a' + restricoes[k][1], restricoes[k][0] + 1);
                     }
+                    contaRestricoes++;
                 }
             }
 
@@ -210,10 +213,18 @@ bool verificaRestrições(TABELA t)
                 if (verificaLetraIgualLinhaColuna(t, i, j))
                 {
                     temRestricoes = true;
+                    printf("\n---- Restrição nº %d ----\n", contaRestricoes + 1);
                     printf("Casa branca em (%c%d) tem restrições violadas (letra repetida na mesma linha ou coluna).\n", 'a' + j, i + 1);
+                    contaRestricoes++;
                 }
             }
         }
+    }
+
+    // Função que chama as funções auxiliares necessarias para verificar se existem caminhos ortogonais e trata as resppetivas mensagens no terminal
+    if (!trataCaminhoOrtogonal(t, &contaRestricoes, &temRestricoes))
+    {
+        return false;
     }
 
     if (!temRestricoes)

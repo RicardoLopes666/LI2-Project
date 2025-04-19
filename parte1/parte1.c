@@ -119,7 +119,7 @@ bool lerCmd(char cmd, char *arg, GAME *game)
 
     initTabela(t, linhas, colunas);
 
-    // Lê o conteúdo do tabuleiro do ficheiro e passa-o para t
+    // Lê o conteúdo do tabuleiro do ficheiro e passa-o para a tabela t
     for (int i = 0; i < linhas; i++)
     {
         for (int j = 0; j < colunas; j++)

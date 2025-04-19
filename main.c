@@ -27,18 +27,21 @@ int main()
             game.estado.looping = false;
             continuar = false;
         }
-        assert(line[strlen(line) - 1] == '\n');
+        if (continuar && line[strlen(line) - 1] != '\n')
+            continuar = false;
 
         char cmd[LINE_SIZE] = {0};
         char arg[LINE_SIZE] = {0};
         char resto[LINE_SIZE] = {0};
-        int num_args = sscanf(line, "%s %s %[^\n]", cmd, arg, resto);
-        if (strlen(cmd) != 1)
+        int num_args;
+        if (continuar)
+            num_args = sscanf(line, "%s %s %[^\n]", cmd, arg, resto);
+        if (continuar && strlen(cmd) != 1)
         {
             fprintf(stderr, "Erro: comando %s não é válido!\n", cmd);
             continuar = false;
         }
-        if (num_args == 3)
+        if (continuar && num_args == 3)
         { // Se houver argumentos extras
             fprintf(stderr, "Erro: comando %s foi invocado com argumentos extra: %s\n", cmd, resto);
             continuar = false;
@@ -119,7 +122,7 @@ int main()
             }
             else
             {
-                printf("Verificando restrições do tabuleiro...\n");
+                printf("Verificando as restrições do tabuleiro...\n");
                 verificaRestrições(game.tab);
                 comandoProcessado = true;
             }
@@ -137,7 +140,7 @@ int main()
 
         if (!comandoProcessado && continuar)
         {
-            fprintf(stderr, "Comando não reconhecido!\n");
+            fprintf(stderr, "Erro: Comando não reconhecido!\n");
         }
 
         printf("\nEstado atual do tabuleiro:\n");

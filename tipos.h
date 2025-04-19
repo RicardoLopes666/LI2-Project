@@ -31,4 +31,18 @@ typedef struct
     STACKTABS stackTabs;
 } GAME;
 
+typedef struct Coordenada
+{
+    int l;
+    int c;
+} *COORDENADA;
+
+typedef struct CQueue
+{
+    int tamanho;
+    int capacidade;
+    int front; // Indice do proximo elemento a sair
+    COORDENADA *list;
+} *CQUEUE; // Queue de coordenadas
+
 #endif // TIPOS_H
