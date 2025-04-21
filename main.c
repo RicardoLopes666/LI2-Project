@@ -123,7 +123,7 @@ int main()
             else
             {
                 printf("Verificando as restrições do tabuleiro...\n");
-                verificaRestrições(game.tab);
+                verificaRestricoes(game.tab);
                 comandoProcessado = true;
             }
         }

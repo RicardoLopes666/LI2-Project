@@ -1,49 +1,58 @@
 # Nome do executável principal
 EXEC = jogo
-
 # Nome do executável de testes
 TEST_EXEC = testes
 
 # Ficheiros fonte
 SRC = main.c parte1/parte1.c parte2/parte2.c parte3/parte3.c
-TEST_SRC = testesMain.c parte1/testesparte1.c parte2/testesparte2.c 
-LIB_SRC = parte1/parte1.c parte2/parte2.c parte3/parte3.c #sem o main.c para não existirem dois main nos testes
+TEST_SRC = testesMain.c parte1/testesparte1.c parte2/testesparte2.c parte3/testesparte3.c
+LIB_SRC = parte1/parte1.c parte2/parte2.c parte3/parte3.c
 
-
-# Ficheiros de cabeçalho
+# Headers
 HEADERS = parte1/parte1.h parte2/parte2.h parte3/parte3.h
-TEST_HEADERS = parte1/testesparte1.h parte2/testesparte2.h 
+TEST_HEADERS = parte1/testesparte1.h parte2/testesparte2.h parte3/testesparte3.h
 
-# Flags do compilador
-CFLAGS = -Wall -Wextra -pedantic -O1 -fsanitize=address -fno-omit-frame-pointer -g 
-COVERAGE_FLAGS = -fprofile-arcs -ftest-coverage
-LDFLAGS = -lcunit -fsanitize=address
-TEST_LDFLAGS = $(LDFLAGS) -lgcov
+# Flags de compilação e ligação
+CC = gcc
+CFLAGS = -Wall -Wextra -pedantic -O1 -fsanitize=address -fno-omit-frame-pointer -g
+COVERAGE_FLAGS = --coverage
+LDFLAGS = -fsanitize=address -lcunit
+TEST_LDFLAGS = -lgcov
 
 .PHONY: all clean clean-all testar coverage
 
 all: $(EXEC) $(TEST_EXEC)
 
-# Compila o jogo principal
+# Rodar o jogo
 $(EXEC): $(SRC) $(HEADERS)
-	@gcc $(CFLAGS) $(SRC) -o $(EXEC)
+	$(CC) $(CFLAGS) $(SRC) -o $@
 
-# Compila os testes com cobertura
-$(TEST_EXEC): $(TEST_SRC)  $(LIB_SRC) $(HEADERS) $(TEST_HEADERS)
-	@gcc $(CFLAGS) $(COVERAGE_FLAGS) $(TEST_SRC) $(LIB_SRC) -o $(TEST_EXEC) $(TEST_LDFLAGS)
+# Obter os paths para os objetos dos testes
+TEST_OBJ = $(TEST_SRC:.c=.o)
+LIB_OBJ = $(LIB_SRC:.c=.o)
+
+# Regra para compilar os arquivos de teste com cobertura
+%.o: %.c
+	$(CC) $(CFLAGS) $(COVERAGE_FLAGS) -c $< -o $@
+
+# Gera binário de testes
+$(TEST_EXEC): $(TEST_OBJ) $(LIB_OBJ)
+	$(CC) $^ -o $@ $(LDFLAGS) $(TEST_LDFLAGS)
 
 # Executa os testes
 testar: $(TEST_EXEC)
-	@./$(TEST_EXEC)
+	./$(TEST_EXEC)
 
-# Informação sobre cobertura com gcov
+# Testar a cobertura do código
 coverage: testar
-	@gcov -o parte1/  parte1/parte1.c
+	gcov -o parte1 parte1/parte1.c
+	gcov -o parte2 parte2/parte2.c
+	gcov -o parte3 parte3/parte3.c
 
-# Limpa os ficheiros gerados
+# Limpeza básica
 clean:
-	@rm -f $(EXEC) $(TEST_EXEC)
+	rm -rf $(EXEC) $(TEST_EXEC) $(TEST_OBJ) $(LIB_OBJ)
 
-# Limpa tudo, incluindo ficheiros temporários e cobertura
+# Limpeza total (inclui coverage)
 clean-all: clean
-	@rm -f *.o *.gcno *.gcda *.gcov
+	find . -type f \( -name '*.gcda' -o -name '*.gcno' -o -name '*.gcov' \) -delete

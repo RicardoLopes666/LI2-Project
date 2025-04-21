@@ -40,19 +40,20 @@ int main()
         return CU_get_error();
     }
 
-    if (CU_add_test(suite2, "Teste initStackTabs", test_initStackTabs) ||
-        CU_add_test(suite2, "Teste insereTabela", test_insereTabela) ||
-        CU_add_test(suite2, "Teste deleteTabela", test_deleteTabela) ||
-        CU_add_test(suite2, "Teste copiarTabela", test_copiarTabela) ||
-        CU_add_test(suite2, "Teste freeStackTabs", test_freeStackTabs) ||
-        CU_add_test(suite2, "Teste dentroDosLimites", test_dentroDosLimites) ||
-        CU_add_test(suite2, "Teste verificaRiscadaVizinhasBrancas", test_verificaRiscadaVizinhasBrancas) ||
-        CU_add_test(suite2, "Teste verificaRestrições", test_verificaRestricoes))
+    if (CU_add_test(suite2, "Teste initStackTabs", test_initStackTabs) == NULL ||
+        CU_add_test(suite2, "Teste insereTabela", test_insereTabela) == NULL ||
+        CU_add_test(suite2, "Teste deleteTabela", test_deleteTabela) == NULL ||
+        CU_add_test(suite2, "Teste copiarTabela", test_copiarTabela) == NULL ||
+        CU_add_test(suite2, "Teste freeStackTabs", test_freeStackTabs) == NULL ||
+        CU_add_test(suite2, "Teste dentroDosLimites", test_dentroDosLimites) == NULL ||
+        CU_add_test(suite2, "Teste verificaRiscadaVizinhasBrancas", test_verificaRiscadaVizinhasBrancas) == NULL ||
+        CU_add_test(suite2, "Teste verificaRestrições", test_verificaRestricoes) == NULL)
     {
         CU_cleanup_registry();
         return CU_get_error();
     }
 
+    CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();
     CU_cleanup_registry();
 

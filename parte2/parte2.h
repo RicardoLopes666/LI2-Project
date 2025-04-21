@@ -11,7 +11,9 @@ bool deleteTabela(GAME *game);
 
 TABELA copiarTabela(TABELA t);
 
-void freeTabela(TABELA t); // Adiciona esta linha
+void freeTabela(TABELA t);
+
+bool verificaLetraIgualLinhaColuna(TABELA t, int linha, int coluna);
 
 void freeStackTabs(STACKTABS s);
 

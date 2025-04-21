@@ -15,6 +15,6 @@ void test_copiarTabela(void);
 void test_freeStackTabs(void);
 void test_dentroDosLimites(void);
 void test_verificaRiscadaVizinhasBrancas(void);
-void test_verificaRestrições(void);
+void test_verificaRestricoes(void);
 
 #endif // TESTES_PARTE2_H
