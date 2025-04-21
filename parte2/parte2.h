@@ -11,12 +11,14 @@ bool deleteTabela(GAME *game);
 
 TABELA copiarTabela(TABELA t);
 
+void freeTabela(TABELA t); // Adiciona esta linha
+
 void freeStackTabs(STACKTABS s);
 
 bool dentroDosLimites(TABELA t, int linha, int coluna);
 
 int verificaRiscadaVizinhasBrancas(TABELA t, int linha, int coluna, int restricoes[][2]);
 
-bool verificaRestrições(TABELA t);
+bool verificaRestricoes(TABELA t);
 
-#endif // PARTE2_Hs
+#endif // PARTE2_H

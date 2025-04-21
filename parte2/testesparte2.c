@@ -1,8 +1,9 @@
 #include <CUnit/Basic.h>
-#include "parte2.h" // Inclui o ficheiro com as funções a testar
+#include "parte2.h"
 #include <stdlib.h>
+#include <string.h>
 
-// Função auxiliar para testar se uma tabela foi alocada corretamente
+// Função auxiliar para criar uma tabela
 TABELA criarTabela(int l, int c)
 {
     TABELA t = malloc(sizeof(struct Tabela));
@@ -20,8 +21,8 @@ TABELA criarTabela(int l, int c)
 void test_initStackTabs()
 {
     STACKTABS s = malloc(sizeof(struct StackTabs));
-    initStackTabs(s);
-    CU_ASSERT_EQUAL(s->capacidade, 3);
+    CU_ASSERT_TRUE(initStackTabs(s));
+    CU_ASSERT_EQUAL(s->capacidade, 0); // começa com 0
     CU_ASSERT_EQUAL(s->comprimento, 0);
     freeStackTabs(s);
 }
@@ -33,49 +34,52 @@ void test_insereTabela()
     initStackTabs(s);
 
     TABELA t1 = criarTabela(3, 3);
-    CU_ASSERT_TRUE(insereTabela(s, t1)); // Inserir primeira tabela
+    CU_ASSERT_TRUE(insereTabela(s, t1));
 
     TABELA t2 = criarTabela(4, 4);
-    CU_ASSERT_TRUE(insereTabela(s, t2)); // Inserir segunda tabela
+    CU_ASSERT_TRUE(insereTabela(s, t2));
 
-    CU_ASSERT_EQUAL(s->comprimento, 2); // Verifica se o comprimento aumentou para 2
+    CU_ASSERT_EQUAL(s->comprimento, 2);
 
     freeStackTabs(s);
-    free(t1);
-    free(t2);
-}
-
-// Teste da função deleteTabela
-void test_deleteTabela()
-{
-    GAME game;
-    game.stackTabs = malloc(sizeof(STACKTABS));
-    initStackTabs(game.stackTabs);
-
-    TABELA t1 = criarTabela(3, 3);
-    insereTabela(game.stackTabs, t1);
-
-    CU_ASSERT_TRUE(deleteTabela(&game)); // Verifica se a tabela pode ser deletada
-
-    freeStackTabs(game.stackTabs);
-    free(t1);
 }
 
 // Teste da função copiarTabela
 void test_copiarTabela()
 {
     TABELA t1 = criarTabela(3, 3);
-    t1->tabela[0][0] = 'X'; // Altera um valor para testar a cópia
+    t1->tabela[0][0] = 'X';
 
     TABELA t2 = copiarTabela(t1);
 
-    CU_ASSERT_PTR_NOT_NULL(t2);             // Verifica se a cópia foi bem-sucedida
-    CU_ASSERT_EQUAL(t2->tabela[0][0], 'X'); // Verifica se o valor foi copiado corretamente
+    CU_ASSERT_PTR_NOT_NULL(t2);
+    CU_ASSERT_EQUAL(t2->l, t1->l);
+    CU_ASSERT_EQUAL(t2->c, t1->c);
+    CU_ASSERT_EQUAL(t2->tabela[0][0], 'X');
 
-    free(t1->tabela);
-    free(t1);
-    free(t2->tabela);
-    free(t2);
+    freeTabela(t1);
+    freeTabela(t2);
+}
+
+// Teste da função deleteTabela
+void test_deleteTabela()
+{
+    GAME g;
+    g.stackTabs = malloc(sizeof(struct StackTabs));
+    initStackTabs(g.stackTabs);
+
+    TABELA t1 = criarTabela(2, 2);
+    insereTabela(g.stackTabs, t1);
+
+    g.tab = copiarTabela(t1);
+    CU_ASSERT_FALSE(deleteTabela(&g)); // Só uma tabela, não pode apagar
+
+    TABELA t2 = criarTabela(2, 2);
+    insereTabela(g.stackTabs, t2);
+    CU_ASSERT_TRUE(deleteTabela(&g)); // Agora já pode
+
+    freeStackTabs(g.stackTabs);
+    freeTabela(g.tab);
 }
 
 // Teste da função freeStackTabs
@@ -83,48 +87,59 @@ void test_freeStackTabs()
 {
     STACKTABS s = malloc(sizeof(struct StackTabs));
     initStackTabs(s);
-
-    TABELA t1 = criarTabela(3, 3);
-    insereTabela(s, t1);
-
-    freeStackTabs(s); // Verifica se a memória é libertada sem erros
+    TABELA t = criarTabela(2, 2);
+    insereTabela(s, t);
+    freeStackTabs(s);
 }
 
 // Teste da função dentroDosLimites
 void test_dentroDosLimites()
 {
     TABELA t = criarTabela(3, 3);
-    CU_ASSERT_TRUE(dentroDosLimites(t, 1, 1));  // Dentro dos limites
-    CU_ASSERT_FALSE(dentroDosLimites(t, 3, 3)); // Fora dos limites
-
-    free(t->tabela);
-    free(t);
+    CU_ASSERT_TRUE(dentroDosLimites(t, 2, 2));
+    CU_ASSERT_FALSE(dentroDosLimites(t, 3, 3));
+    freeTabela(t);
 }
 
 // Teste da função verificaRiscadaVizinhasBrancas
 void test_verificaRiscadaVizinhasBrancas()
 {
     TABELA t = criarTabela(3, 3);
-    t->tabela[1][1] = '#'; // Casa riscada no meio
+    t->tabela[1][1] = '#';
+    t->tabela[0][1] = 'A';
+    t->tabela[2][1] = 'B';
+    t->tabela[1][0] = 'C';
+    t->tabela[1][2] = 'd'; // violação
 
     int restricoes[4][2] = {{0}};
-    int numRestricoes = verificaRiscadaVizinhasBrancas(t, 1, 1, restricoes);
+    int num = verificaRiscadaVizinhasBrancas(t, 1, 1, restricoes);
 
-    CU_ASSERT_EQUAL(numRestricoes, 4);    // Verifica se há 4 vizinhos
-    CU_ASSERT_EQUAL(restricoes[0][0], 0); // Verifica se as coordenadas estão corretas
-
-    free(t->tabela);
-    free(t);
+    CU_ASSERT_EQUAL(num, 1);
+    CU_ASSERT_EQUAL(restricoes[0][0], 1);
+    CU_ASSERT_EQUAL(restricoes[0][1], 2);
+    freeTabela(t);
 }
 
-// Teste da função verificaRestrições
-void test_verificaRestrições()
+// Teste da função verificaLetraIgualLinhaColuna
+void test_verificaLetraIgualLinhaColuna()
 {
     TABELA t = criarTabela(3, 3);
-    t->tabela[0][0] = '#'; // Casa riscada
+    t->tabela[0][0] = 'A';
+    t->tabela[0][1] = 'a'; // mesma letra em minúscula na linha
 
-    CU_ASSERT_TRUE(verificaRestrições(t)); // Verifica se há restrições
+    CU_ASSERT_TRUE(verificaLetraIgualLinhaColuna(t, 0, 0));
+    freeTabela(t);
+}
 
-    free(t->tabela);
-    free(t);
+// Teste da função verificaRestricoes
+void test_verificaRestricoes()
+{
+    TABELA t = criarTabela(3, 3);
+    t->tabela[0][0] = '#';
+    t->tabela[0][1] = 'a'; // vizinho inválido
+    t->tabela[1][1] = 'B';
+    t->tabela[1][2] = 'b'; // letra repetida em linha
+
+    CU_ASSERT_TRUE(verificaRestricoes(t));
+    freeTabela(t);
 }
