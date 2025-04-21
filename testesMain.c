@@ -47,7 +47,7 @@ int main()
         CU_add_test(suite2, "Teste freeStackTabs", test_freeStackTabs) ||
         CU_add_test(suite2, "Teste dentroDosLimites", test_dentroDosLimites) ||
         CU_add_test(suite2, "Teste verificaRiscadaVizinhasBrancas", test_verificaRiscadaVizinhasBrancas) ||
-        CU_add_test(suite2, "Teste verificaRestrições", test_verificaRestrições))
+        CU_add_test(suite2, "Teste verificaRestrições", test_verificaRestricoes))
     {
         CU_cleanup_registry();
         return CU_get_error();

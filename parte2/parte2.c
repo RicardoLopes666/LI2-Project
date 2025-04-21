@@ -179,7 +179,7 @@ bool verificaLetraIgualLinhaColuna(TABELA t, int linha, int coluna)
 }
 
 // Função que imprime as restrições do jogo caso estas existam
-bool verificaRestrições(TABELA t)
+bool verificaRestricoes(TABELA t)
 {
     bool temRestricoes = false;
     int contaRestricoes = 0;
