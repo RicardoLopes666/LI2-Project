@@ -4,7 +4,7 @@ EXEC = jogo
 TEST_EXEC = testes
 
 # Ficheiros fonte
-SRC = main.c parte1/parte1.c parte2/parte2.c parte3/parte3.c
+SRC = main.c parte1/parte1.c parte2/parte2.c parte3/parte3.c parte4/parte4.c
 TEST_SRC = testesMain.c parte1/testesparte1.c parte2/testesparte2.c parte3/testesparte3.c
 LIB_SRC = parte1/parte1.c parte2/parte2.c parte3/parte3.c
 

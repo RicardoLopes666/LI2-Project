@@ -1,5 +1,6 @@
 #include "parte1/parte1.h"
 #include "parte2/parte2.h"
+#include "parte4/parte4.h"
 #include "tipos.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -122,12 +123,52 @@ int main()
             }
             else
             {
-                printf("Verificando as restrições do tabuleiro...\n");
+                printf("A verificar as restrições do tabuleiro...\n");
                 verificaRestricoes(game.tab);
                 comandoProcessado = true;
             }
         }
+        // executa o comando de ajuda
+        // executa o comando de ajuda
+        if (cmd[0] == 'a' && continuar)
+        {
+            if (game.tab == NULL)
+            {
+                fprintf(stderr, "Erro: tabuleiro não carregado.\n");
+                continuar = false;
+            }
+            else
+            {
+                printf("A executar o comando de ajuda...\n");
 
+                // Chama a função ajuda e substitui o tabuleiro atual pelo tabuleiro auxiliar retornado
+                TABELA aux = ajuda(game.tab);
+                if (aux == NULL)
+                {
+                    fprintf(stderr, "Erro: falha ao executar o comando de ajuda.\n");
+                    continuar = false;
+                }
+                else
+                {
+                    // Libera o tabuleiro atual e substitui pelo auxiliar
+                    freeTabela(game.tab);
+                    game.tab = aux;
+
+                    // Cria uma cópia do novo tabuleiro e insere na pilha de estados
+                    TABELA new = copiarTabela(game.tab);
+                    if (new == NULL)
+                    {
+                        fprintf(stderr, "Erro: falha ao copiar o tabuleiro.\n");
+                        continuar = false;
+                    }
+                    else
+                    {
+                        insereTabela(game.stackTabs, new);
+                        comandoProcessado = true;
+                    }
+                }
+            }
+        }
         // Executa o comando de voltar atrás
         if (cmd[0] == 'd' && continuar)
         {
