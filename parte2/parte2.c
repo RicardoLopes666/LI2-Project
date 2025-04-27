@@ -147,6 +147,7 @@ int verificaRiscadaVizinhasBrancas(TABELA t, int linha, int coluna, int restrico
 }
 
 // Função que verifica se existe alguma letra igual (maiúscula ou minúscula) na mesma linha ou coluna de uma casa branca
+// Função que verifica se existem duas casas brancas iguais na mesma linha ou coluna
 bool verificaLetraIgualLinhaColuna(TABELA t, int linha, int coluna)
 {
     if (!dentroDosLimites(t, linha, coluna) || !isupper(t->tabela[linha][coluna]))
@@ -155,27 +156,26 @@ bool verificaLetraIgualLinhaColuna(TABELA t, int linha, int coluna)
     }
 
     char letraMaiuscula = t->tabela[linha][coluna];
-    char letraMinuscula = tolower(letraMaiuscula); // Converte a letra para minúscula
 
     // Verifica a linha
     for (int j = 0; j < t->c; j++)
     {
-        if (j != coluna && (t->tabela[linha][j] == letraMaiuscula || t->tabela[linha][j] == letraMinuscula))
+        if (j != coluna && t->tabela[linha][j] == letraMaiuscula)
         {
-            return true; // Encontrou uma letra igual (maiúscula ou minúscula) na mesma linha
+            return true; // Encontrou outra casa branca igual na mesma linha
         }
     }
 
     // Verifica a coluna
     for (int i = 0; i < t->l; i++)
     {
-        if (i != linha && (t->tabela[i][coluna] == letraMaiuscula || t->tabela[i][coluna] == letraMinuscula))
+        if (i != linha && t->tabela[i][coluna] == letraMaiuscula)
         {
-            return true; // Encontrou uma letra igual (maiúscula ou minúscula) na mesma coluna
+            return true; // Encontrou outra casa branca igual na mesma coluna
         }
     }
 
-    return false; // Não encontrou letras iguais (maiúsculas ou minúsculas) na mesma linha ou coluna
+    return false; // Não encontrou casas brancas iguais na mesma linha ou coluna
 }
 
 // Função que imprime as restrições do jogo caso estas existam
