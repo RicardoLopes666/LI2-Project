@@ -18,7 +18,7 @@ void initQueue(CQUEUE q);
 int insertQueue(CQUEUE q, COORDENADA *coordenadas, int coordSize);
 
 // Remove o primeiro elemento da queue
-void deleteQueue(CQUEUE q, COORDENADA *removido);
+void deleteQueue(CQUEUE q, COORDENADA *pos);
 
 // Verifica se existe um caminho ortogonal entre casas válidas
 int existeCaminhoOrtogonal(CQUEUE q, TABELA t, int **visited, int *count);

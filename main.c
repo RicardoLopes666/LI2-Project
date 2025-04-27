@@ -129,7 +129,6 @@ int main()
             }
         }
         // executa o comando de ajuda
-        // executa o comando de ajuda
         if (cmd[0] == 'a' && continuar)
         {
             if (game.tab == NULL)

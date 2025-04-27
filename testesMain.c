@@ -2,9 +2,11 @@
 #include <CUnit/Basic.h>
 #include "parte1/testesparte1.h"
 #include "parte2/testesparte2.h"
+#include "parte3/testesparte3.h"
 #include <ctype.h>
 #include "parte1/parte1.h"
 #include "parte2/parte2.h"
+#include "parte3/parte3.h"
 
 int main()
 {
@@ -54,6 +56,21 @@ int main()
     }
 
     CU_basic_set_mode(CU_BRM_VERBOSE);
+    CU_basic_run_tests();
+    CU_cleanup_registry();
+
+    // Testes parte 3
+
+    CU_initialize_registry();
+
+    CU_pSuite suite = CU_add_suite("Testes Parte 3", NULL, NULL);
+
+    CU_add_test(suite, "Teste devolvePrimeroNRiscado", test_devolvePrimeroNRiscado);
+    CU_add_test(suite, "Teste initVisited", test_initVisited);
+    CU_add_test(suite, "Teste insertQueue", test_insertQueue);
+    CU_add_test(suite, "Teste deleteQueue", test_deleteQueue);
+    CU_add_test(suite, "Teste existeCaminhoOrtogonal", test_existeCaminhoOrtogonal);
+
     CU_basic_run_tests();
     CU_cleanup_registry();
 

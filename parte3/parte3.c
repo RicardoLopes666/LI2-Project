@@ -75,12 +75,13 @@ int insertQueue(CQUEUE q, COORDENADA *coordenadas, int coordSize)
     return 1;
 }
 
-void deleteQueue(CQUEUE q, COORDENADA pos)
+void deleteQueue(CQUEUE q, COORDENADA *pos)
 {
+    if (q->tamanho == 0) // garantia extra
+        return;
+    // retira o elemento da frente, mas não o free — testa vai fazê-lo
     COORDENADA temp = q->list[q->front];
-    pos->c = temp->c;
-    pos->l = temp->l;
-    free(temp);
+    *pos = temp;
     q->list[q->front] = NULL;
     q->front = (q->front + 1) % q->capacidade;
     q->tamanho--;
@@ -118,8 +119,8 @@ int existeCaminhoOrtogonal(CQUEUE q, TABELA t, int **visited, int *count)
     };
     while (q->tamanho > 0)
     {
-        COORDENADA atual = malloc(sizeof(struct Coordenada));
-        deleteQueue(q, atual); // Não da erro uma vez que ja tem a verificação do while a garantir que q->tamanho>0
+        COORDENADA atual = NULL;
+        deleteQueue(q, &atual); // passa o endereço de 'atual' (COORDENADA*)
 
         visited[atual->l][atual->c] = 1; // Visitamos a atual;
         (*count)++;
