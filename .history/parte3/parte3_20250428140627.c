@@ -180,12 +180,10 @@ bool trataCaminhoOrtogonal(TABELA t, int *contaRestricoes, bool *temRestrições
         }
         int length = t->c * t->l - count;
         COORDENADA *naoVisitados = devolveNaoVisitados(visited, t->l, t->c, length);
-        if (escreve)
-            printf("Por exemplo, começando da casa (%c%d) não existe um caminho ortogonal que passe nas casas:\n", colunaI + 'a', linhaI + 1);
+        printf("Por exemplo, começando da casa (%c%d) não existe um caminho ortogonal que passe nas casas:\n", colunaI + 'a', linhaI + 1);
         for (int i = 0; i < length; i++)
         {
-            if (escreve)
-                printf("  - Coluna: %c, Linha: %d\n", naoVisitados[i]->c + 'a', naoVisitados[i]->l + 1);
+            printf("  - Coluna: %c, Linha: %d\n", naoVisitados[i]->c + 'a', naoVisitados[i]->l + 1);
             free(naoVisitados[i]);
         }
         free(naoVisitados);
