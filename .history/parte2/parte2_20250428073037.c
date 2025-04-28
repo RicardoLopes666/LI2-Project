@@ -10,7 +10,7 @@
 
 bool initStackTabs(STACKTABS s)
 {
-    s->capacidade = 3;
+    s->capacidade = 0;
     s->comprimento = 0;
     s->tabelas = malloc(sizeof(TABELA) * 3);
     if (s->tabelas == NULL)
@@ -221,7 +221,7 @@ bool verificaRestricoes(TABELA t)
         }
     }
 
-    // Função que chama as funções auxiliares necessarias para verificar se existem caminhos ortogonais e trata as respetivas mensagens no terminal
+    // Função que chama as funções auxiliares necessarias para verificar se existem caminhos ortogonais e trata as resppetivas mensagens no terminal
     if (!trataCaminhoOrtogonal(t, &contaRestricoes, &temRestricoes))
     {
         return false;

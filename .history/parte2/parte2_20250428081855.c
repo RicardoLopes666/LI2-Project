@@ -221,7 +221,7 @@ bool verificaRestricoes(TABELA t)
         }
     }
 
-    // Função que chama as funções auxiliares necessarias para verificar se existem caminhos ortogonais e trata as respetivas mensagens no terminal
+    // Função que chama as funções auxiliares necessarias para verificar se existem caminhos ortogonais e trata as resppetivas mensagens no terminal
     if (!trataCaminhoOrtogonal(t, &contaRestricoes, &temRestricoes))
     {
         return false;
