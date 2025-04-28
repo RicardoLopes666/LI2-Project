@@ -217,12 +217,9 @@ bool verificaRestricoes(TABELA t, bool escreve)
                 if (verificaLetraIgualLinhaColuna(t, i, j))
                 {
                     temRestricoes = true;
-                    if (escreve)
-                    {
-                        printf("\n---- Restrição nº %d ----\n", contaRestricoes + 1);
-                        printf("Casa branca em (%c%d) tem restrições violadas (letra repetida na mesma linha ou coluna).\n", 'a' + j, i + 1);
-                        contaRestricoes++;
-                    }
+                    printf("\n---- Restrição nº %d ----\n", contaRestricoes + 1);
+                    printf("Casa branca em (%c%d) tem restrições violadas (letra repetida na mesma linha ou coluna).\n", 'a' + j, i + 1);
+                    contaRestricoes++;
                 }
             }
         }
@@ -236,8 +233,7 @@ bool verificaRestricoes(TABELA t, bool escreve)
 
     if (!temRestricoes)
     {
-        if (escreve)
-            printf("Nenhuma restrição foi violada no tabuleiro.\n");
+        printf("Nenhuma restrição foi violada no tabuleiro.\n");
     }
 
     return temRestricoes;

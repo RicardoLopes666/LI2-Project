@@ -21,6 +21,6 @@ bool dentroDosLimites(TABELA t, int linha, int coluna);
 
 int verificaRiscadaVizinhasBrancas(TABELA t, int linha, int coluna, int restricoes[][2]);
 
-bool verificaRestricoes(TABELA t, bool escreve);
+bool verificaRestricoes(TABELA t);
 
 #endif // PARTE2_H

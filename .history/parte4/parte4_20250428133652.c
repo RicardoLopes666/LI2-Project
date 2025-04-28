@@ -5,32 +5,8 @@
 #include "../parte2/parte2.h" // Inclui a declaração de copiarTabela
 #include "../parte1/parte1.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <ctype.h>
-#include "../tipos.h"
-#include "../parte2/parte2.h" // Inclui a declaração de copiarTabela
-#include "../parte1/parte1.h"
-#include "../parte3/parte3.h"
-
-void verificaSeQuebraCaminho(TABELA aux, int l, int c, bool *changed)
-{
-    char caracter = aux->tabela[l][c];
-    aux->tabela[l][c] = '#';
-    int contaRestricoes = 0;
-    trataCaminhoOrtogonal(aux, &contaRestricoes, changed, false);
-    if (contaRestricoes > 0)
-    {
-        aux->tabela[l][c] = toupper(caracter);
-        printf("A pintar a célula %c%d de branco por isolar as restantes casas ao ser riscada .\n", c + 'a', l + 1);
-        *changed = true;
-    }
-    else
-        aux->tabela[l][c] = caracter;
-}
-
 // ---- Codigo para o comando 'a' ----
-TABELA ajuda(TABELA t, bool escreve, bool *changed)
+TABELA ajuda(TABELA t, int escreve, int *changed)
 {
     // Cria uma tabela auxiliar como cópia da tabela original
     TABELA aux = copiarTabela(t);
@@ -54,7 +30,7 @@ TABELA ajuda(TABELA t, bool escreve, bool *changed)
                         if (escreve)
                             printf("A riscar a célula %c%d com letra '%c' devido à repetição na linha.\n", 'a' + k, i + 1, t->tabela[i][k]);
                         aux->tabela[i][k] = '#'; // Risca a célula na tabela auxiliar
-                        *changed = true;
+                        (*changed)++;
                     }
                 }
 
@@ -66,7 +42,7 @@ TABELA ajuda(TABELA t, bool escreve, bool *changed)
                         if (escreve)
                             printf("A riscar célula %c%d com letra '%c' devido à repetição na coluna.\n", 'a' + j, k + 1, t->tabela[k][j]);
                         aux->tabela[k][j] = '#'; // Risca a célula na tabela auxiliar
-                        *changed = true;
+                        (*changed)++;
                     }
                 }
             }
@@ -96,15 +72,11 @@ TABELA ajuda(TABELA t, bool escreve, bool *changed)
                                 printf("A pintar a célula %c%d de branco devido à casa riscada em %c%d.\n",
                                        'a' + novaColuna, novaLinha + 1, 'a' + j, i + 1);
                             aux->tabela[novaLinha][novaColuna] = toupper(t->tabela[novaLinha][novaColuna]); // Pinta de branco na tabela auxiliar
-                            *changed = true;
+                            (*changed)++;
                         }
                     }
                 }
             }
-
-            // verifica se a casa ao ser riscada introduzia a restrição de não existir caminho entre casas ortogonais e nesse caso pinta-a
-            if (islower(t->tabela[i][j]))
-                verificaSeQuebraCaminho(aux, i, j, changed);
         }
     }
 
