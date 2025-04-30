@@ -101,7 +101,7 @@ int main()
                 {
 
                     printf("A executar o comando de ajuda...\n");
-                    int changed = 0;
+                    bool changed = 0;
                     // Chama a função ajuda e substitui o tabuleiro atual pelo tabuleiro auxiliar retornado
                     TABELA aux = ajuda(game.tab, true, &changed); // 1 para escrever no terminal as mudanças que foram feitas
                     if (changed == 0)
@@ -125,7 +125,7 @@ int main()
                 if (cmd[0] == 'R' && continuar)
                 {
                     printf("A executar o comando de resolver o jogo...\n");
-                    TABELA aux = resolve(game.tab);
+                    TABELA aux = resolve(game.tab, &continuar);
                     if (aux != NULL)
                     {
                         freeTabela(game.tab);

@@ -63,7 +63,7 @@ int main()
                 fprintf(stderr, "Erro: tabuleiro não carregado.\n");
                 continuar = false;
             }
-            if (cmd[0] == 'b' || cmd[0] == 'r' || cmd[0] == 'a' || cmd[0] == 'R')
+            if (cmd[0] == 'b' || cmd[0] == 'r' || cmd[0] == 'a' || cmd[0] == 'R' || cmd[0] == 'A')
             {
                 if (cmd[0] == 'b' || cmd[0] == 'r')
                 {
@@ -101,7 +101,7 @@ int main()
                 {
 
                     printf("A executar o comando de ajuda...\n");
-                    int changed = 0;
+                    bool changed = 0;
                     // Chama a função ajuda e substitui o tabuleiro atual pelo tabuleiro auxiliar retornado
                     TABELA aux = ajuda(game.tab, true, &changed); // 1 para escrever no terminal as mudanças que foram feitas
                     if (changed == 0)
@@ -122,10 +122,16 @@ int main()
                     }
                 }
 
-                if (cmd[0] == 'R' && continuar)
+                else if (cmd[0] == 'A' && continuar)
+                {
+                    printf("A executar o comando de ajuda acumulada...\n");
+                    comandoA(&game.tab);
+                }
+
+                else if (cmd[0] == 'R' && continuar)
                 {
                     printf("A executar o comando de resolver o jogo...\n");
-                    TABELA aux = resolve(game.tab);
+                    TABELA aux = resolve(game.stackTabs[0]); // Recebe a primeira tabela carregada (em principio so com letras minusculas)
                     if (aux != NULL)
                     {
                         freeTabela(game.tab);

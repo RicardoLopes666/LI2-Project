@@ -105,33 +105,6 @@ TABELA ajuda(TABELA t, bool escreve, bool *changed)
     return aux; // Retorna a tabela auxiliar com as alterações aplicadas
 }
 
-// Código do comando A
-// Aplica o comando "a" até não haver alterações. Retorna > 0 caso haja mundanças e 0 caso não haja
-int aplicaA(TABELA *aux)
-{
-    int mudancas = 0;
-    bool changed = true;
-    while (changed)
-    {
-        changed = false;
-        TABELA temp = *aux;
-        *aux = ajuda(temp, false, &changed);
-        if (changed == true)
-            mudancas++;
-        freeTabela(temp);
-    }
-    return mudancas;
-}
-
-void comandoA(TABELA *aux)
-{
-    int mudou = aplicaA(aux);
-    if (!mudou)
-        printf("O tabuleiro não sofreu alterações.\n");
-    else
-        printf("Tabuleiro alterado.\n");
-}
-
 // --- Codigo para o comando R ---
 
 void trataAA_A_NasLinhas(TABELA aux)
@@ -217,6 +190,19 @@ void riscaABA(TABELA aux)
 {
     trataABA_colunas(aux);
     trataABA_linhas(aux);
+}
+
+// Aplica o comando "a" até não haver alterações
+void aplicaA(TABELA *aux)
+{
+    bool changed = true;
+    while (changed)
+    {
+        changed = false;
+        TABELA temp = *aux;
+        *aux = ajuda(temp, false, &changed);
+        freeTabela(temp);
+    }
 }
 
 int existemMinusculas(TABELA t)
@@ -377,6 +363,7 @@ TABELA resolve(TABELA t)
     }
     else
     {
+
         printf("Tabuleiro não pode ser resolvido.\n");
         freeTabela(aux);
         return NULL;

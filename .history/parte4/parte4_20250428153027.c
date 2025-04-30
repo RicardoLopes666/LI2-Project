@@ -4,9 +4,16 @@
 #include "../tipos.h"
 #include "../parte2/parte2.h" // Inclui a declaração de copiarTabela
 #include "../parte1/parte1.h"
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include "../tipos.h"
+#include "../parte2/parte2.h" // Inclui a declaração de copiarTabela
+#include "../parte1/parte1.h"
 #include "../parte3/parte3.h"
 
-void verificaSeQuebraCaminho(TABELA aux, int l, int c, bool *changed, bool escreve)
+void verificaSeQuebraCaminho(TABELA aux, int l, int c, bool *changed)
 {
     char caracter = aux->tabela[l][c];
     aux->tabela[l][c] = '#';
@@ -15,8 +22,7 @@ void verificaSeQuebraCaminho(TABELA aux, int l, int c, bool *changed, bool escre
     if (contaRestricoes > 0)
     {
         aux->tabela[l][c] = toupper(caracter);
-        if (escreve)
-            printf("A pintar a célula %c%d de branco por isolar as restantes casas ao ser riscada .\n", c + 'a', l + 1);
+        printf("A pintar a célula %c%d de branco por isolar as restantes casas ao ser riscada .\n", c + 'a', l + 1);
         *changed = true;
     }
     else
@@ -98,38 +104,11 @@ TABELA ajuda(TABELA t, bool escreve, bool *changed)
 
             // verifica se a casa ao ser riscada introduzia a restrição de não existir caminho entre casas ortogonais e nesse caso pinta-a
             if (islower(t->tabela[i][j]))
-                verificaSeQuebraCaminho(aux, i, j, changed, escreve);
+                verificaSeQuebraCaminho(aux, i, j, changed);
         }
     }
 
     return aux; // Retorna a tabela auxiliar com as alterações aplicadas
-}
-
-// Código do comando A
-// Aplica o comando "a" até não haver alterações. Retorna > 0 caso haja mundanças e 0 caso não haja
-int aplicaA(TABELA *aux)
-{
-    int mudancas = 0;
-    bool changed = true;
-    while (changed)
-    {
-        changed = false;
-        TABELA temp = *aux;
-        *aux = ajuda(temp, false, &changed);
-        if (changed == true)
-            mudancas++;
-        freeTabela(temp);
-    }
-    return mudancas;
-}
-
-void comandoA(TABELA *aux)
-{
-    int mudou = aplicaA(aux);
-    if (!mudou)
-        printf("O tabuleiro não sofreu alterações.\n");
-    else
-        printf("Tabuleiro alterado.\n");
 }
 
 // --- Codigo para o comando R ---
@@ -219,6 +198,19 @@ void riscaABA(TABELA aux)
     trataABA_linhas(aux);
 }
 
+// Aplica o comando "a" até não haver alterações
+void aplicaA(TABELA *aux)
+{
+    bool changed = true;
+    while (changed)
+    {
+        changed = false;
+        TABELA temp = *aux;
+        *aux = ajuda(temp, false, &changed);
+        freeTabela(temp);
+    }
+}
+
 int existemMinusculas(TABELA t)
 {
     for (int i = 0; i < t->l; i++)
@@ -242,33 +234,33 @@ int jogoResolvido(TABELA aux)
 // Função que tenta pintar para as duas casas que tem iguais e ve se em alguns dos casos se obtem o jogo resolvido ou ent alguma restrição
 void tentaRiscarColunas(int l, int c1, int c2, TABELA *t, bool *continuar)
 {
-
+    TABELA tentativa = copiarTabela(*t);
     int cs[2] = {c1, c2};
-    int keepGoing = 1; // variavel utilizada para parar o loop em caso de o tabuleiro estar resolvido
+    int keepGoing = 1;
     for (int i = 0; keepGoing && i < 2; i++)
     {
-        TABELA tentativa = copiarTabela(*t);
         int linha = l;
         int coluna = cs[i];
-        char letra = (*t)->tabela[linha][coluna];
-        tentativa->tabela[linha][coluna] = toupper(letra);
+        tentativa->tabela[linha][coluna] = toupper((*t)->tabela[linha][coluna]);
         aplicaA(&tentativa);
         if (jogoResolvido(tentativa))
         {
             *continuar = false;
             keepGoing = 0;
-            TABELA temp = *t;
+            free(*t);
             *t = copiarTabela(tentativa);
-            freeTabela(temp);
         }
-        else if (verificaRestricoes(tentativa, false)) // Caso assim existam restrições eu mudo ja na tabela original porque sei que tem de ser da outra forma
+        else if (verificaRestricoes(tentativa, false))
         {
             keepGoing = 0;
-            (*t)->tabela[linha][coluna] = '#';
-            (*t)->tabela[linha][i == 0 ? c2 : c1] = toupper(letra);
+            if (i == 0)
+            {
+                (*t)->tabela[linha][coluna] = '#';
+                (*t)->tabela[linha][i == 0 ? c2 : c1] = toupper((*t)->tabela[linha][coluna]);
+            }
         }
-        freeTabela(tentativa);
     }
+    freeTabela(tentativa);
 }
 
 // Função que vai a cada linha e verifica elementos iguas minusculos e tenta pintar um deles para ver se se consegue chegar à resposta
@@ -276,13 +268,13 @@ void tentaRiscarColunas(int l, int c1, int c2, TABELA *t, bool *continuar)
 bool tentaColunas(TABELA *t)
 {
     bool continuar = true;
-    for (int i = 0; continuar && i < (*t)->l; i++)
+    for (int i = 0; i < (*t)->l; i++)
     {
-        for (int j = 0; continuar && j < (*t)->c; j++)
+        for (int j = 0; j < (*t)->c; j++)
         {
             if (islower((*t)->tabela[i][j]))
             {
-                for (int k = 0; continuar && k < (*t)->c; k++)
+                for (int k = 0; k < (*t)->c; k++)
                 {
                     if (k != j && (*t)->tabela[i][k] == (*t)->tabela[i][j])
                     {
@@ -302,33 +294,33 @@ bool tentaColunas(TABELA *t)
 // Função que tenta pintar para as duas casas que tem iguais e ve se em alguns dos casos se obtem o jogo resolvido ou ent alguma restrição
 void tentaRiscarLinhas(int c, int l1, int l2, TABELA *t, bool *continuar)
 {
-
+    TABELA tentativa = copiarTabela(*t);
     int ls[2] = {l1, l2};
     int keepGoing = 1;
     for (int i = 0; keepGoing && i < 2; i++)
     {
-        TABELA tentativa = copiarTabela(*t);
         int linha = ls[i];
         int coluna = c;
-        char letra = (*t)->tabela[linha][coluna];
-        tentativa->tabela[linha][coluna] = toupper(letra);
+        tentativa->tabela[linha][coluna] = toupper((*t)->tabela[linha][coluna]);
         aplicaA(&tentativa);
         if (jogoResolvido(tentativa))
         {
             *continuar = false;
             keepGoing = 0;
-            TABELA temp = *t;
+            free(*t);
             *t = copiarTabela(tentativa);
-            freeTabela(temp);
         }
-        else if (verificaRestricoes(tentativa, false)) // Caso assim existam restrições eu mudo ja na tabela original porque sei que tem de ser da outra forma
+        else if (verificaRestricoes(tentativa, false))
         {
             keepGoing = 0;
-            (*t)->tabela[linha][coluna] = '#';
-            (*t)->tabela[i == 0 ? l2 : l1][coluna] = toupper(letra); // uso letra porque ambas as posições tem a mesma letra minuscula la
+            if (i == 0)
+            {
+                (*t)->tabela[linha][coluna] = '#';
+                (*t)->tabela[i == 0 ? l2 : l1][coluna] = toupper((*t)->tabela[linha][coluna]);
+            }
         }
-        freeTabela(tentativa);
     }
+    freeTabela(tentativa);
 }
 
 // Função que vai a cada coluna e verifica elementos iguas minusculos e tenta pintar um deles para ver se se consegue chegar à resposta
@@ -336,13 +328,13 @@ void tentaRiscarLinhas(int c, int l1, int l2, TABELA *t, bool *continuar)
 bool tentaLinhas(TABELA *t)
 {
     bool continuar = true;
-    for (int i = 0; continuar && i < (*t)->l; i++)
+    for (int i = 0; i < (*t)->l; i++)
     {
-        for (int j = 0; continuar && j < (*t)->c; j++)
+        for (int j = 0; j < (*t)->c; j++)
         {
             if (islower((*t)->tabela[j][i]))
             {
-                for (int k = 0; continuar && k < (*t)->l; k++)
+                for (int k = 0; k < (*t)->l; k++)
                 {
                     if (k != j && (*t)->tabela[k][i] == (*t)->tabela[j][i])
                     {
@@ -361,25 +353,37 @@ bool tentaLinhas(TABELA *t)
 
 // Função que recebe a tabela inicial de quando o jogo foi carregado e tenta resolver o jogo -> Comando R
 // Coloca ainda o aux a null null e o continuar a false caso não seja possivel resolver o tabuleiro
-TABELA resolve(TABELA t)
+TABELA resolve(TABELA t, bool *continuar)
 {
-    TABELA aux = copiarTabela(t);
 
+    TABELA aux = copiarTabela(t);
+    mostrarTabela(aux);
+    putchar('\n');
     // Funções que riscam as casas que se tem a certeza que tem de ser riscadas
     riscaABA(aux);
+    mostrarTabela(aux);
+    putchar('\n');
     risca_AA_A(aux);
-
+    mostrarTabela(aux);
+    putchar('\n');
     // Aplica-se o comando 'a' repetidamente até ele não fazer mais alterações
     aplicaA(&aux);
-    if (jogoResolvido(aux) || tentaColunas(&aux) || tentaLinhas(&aux))
+    mostrarTabela(aux);
+    putchar('\n');
+    if (!jogoResolvido(aux))
     {
-        printf("Tabuleiro resolvido.\n");
-    }
-    else
-    {
-        printf("Tabuleiro não pode ser resolvido.\n");
-        freeTabela(aux);
-        return NULL;
+        if (!tentaColunas(&aux))
+        {
+            if (!tentaLinhas(&aux))
+            {
+                printf("Tabuleiro não pode ser resolvido\n");
+                *continuar = false;
+                freeTabela(aux);
+                return NULL;
+            }
+
+            printf("Aqui está o tabuleiro resolvido.\n");
+        }
     }
     return aux;
 }

@@ -69,7 +69,7 @@ TABELA copiarTabela(TABELA t)
         {
             for (int j = 0; j < i; j++)
             {
-                free(new->tabela[j]);
+                free(t->tabela[i]);
             }
             free(new->tabela);
             free(new);
@@ -229,7 +229,7 @@ bool verificaRestricoes(TABELA t, bool escreve)
     }
 
     // Função que chama as funções auxiliares necessarias para verificar se existem caminhos ortogonais e trata as resppetivas mensagens no terminal
-    if (!trataCaminhoOrtogonal(t, &contaRestricoes, &temRestricoes, escreve))
+    if (!trataCaminhoOrtogonal(t, &contaRestricoes, &temRestricoes, true))
     {
         return false;
     }

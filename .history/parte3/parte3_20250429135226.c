@@ -178,7 +178,7 @@ bool trataCaminhoOrtogonal(TABELA t, int *contaRestricoes, bool *temRestrições
             printf("\n---- Restrição nº %d ----\n", *contaRestricoes + 1);
             printf("Não existe um caminho ortogonal entre todas as casas que não estão riscadas\n");
         }
-        (*contaRestricoes)++;
+        contaRestricoes++;
         int length = t->c * t->l - count;
         COORDENADA *naoVisitados = devolveNaoVisitados(visited, t->l, t->c, length);
         if (escreve)

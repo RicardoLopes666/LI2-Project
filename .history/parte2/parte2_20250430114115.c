@@ -70,6 +70,7 @@ TABELA copiarTabela(TABELA t)
             for (int j = 0; j < i; j++)
             {
                 free(new->tabela[j]);
+                free(t->tabela[j]);
             }
             free(new->tabela);
             free(new);

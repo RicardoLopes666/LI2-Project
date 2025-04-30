@@ -377,6 +377,7 @@ TABELA resolve(TABELA t)
     }
     else
     {
+
         printf("Tabuleiro não pode ser resolvido.\n");
         freeTabela(aux);
         return NULL;

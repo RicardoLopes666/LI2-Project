@@ -125,11 +125,6 @@ int aplicaA(TABELA *aux)
 
 void comandoA(TABELA *aux)
 {
-    int mudou = aplicaA(aux);
-    if (!mudou)
-        printf("O tabuleiro não sofreu alterações.\n");
-    else
-        printf("Tabuleiro alterado.\n");
 }
 
 // --- Codigo para o comando R ---
@@ -377,6 +372,7 @@ TABELA resolve(TABELA t)
     }
     else
     {
+
         printf("Tabuleiro não pode ser resolvido.\n");
         freeTabela(aux);
         return NULL;

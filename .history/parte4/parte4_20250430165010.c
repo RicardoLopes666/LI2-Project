@@ -361,7 +361,7 @@ bool tentaLinhas(TABELA *t)
 
 // Função que recebe a tabela inicial de quando o jogo foi carregado e tenta resolver o jogo -> Comando R
 // Coloca ainda o aux a null null e o continuar a false caso não seja possivel resolver o tabuleiro
-TABELA resolve(TABELA t)
+TABELA resolve(TABELA t, TABELA a) // Recebe a tabela inicial e a atual
 {
     TABELA aux = copiarTabela(t);
 
@@ -377,6 +377,7 @@ TABELA resolve(TABELA t)
     }
     else
     {
+
         printf("Tabuleiro não pode ser resolvido.\n");
         freeTabela(aux);
         return NULL;

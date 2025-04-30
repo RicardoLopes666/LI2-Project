@@ -23,6 +23,6 @@ void tentaRiscarColunas(int l, int c1, int c2, TABELA *t, bool *continuar);
 bool tentaColunas(TABELA *t);
 void tentaRiscarLinhas(int c, int l1, int l2, TABELA *t, bool *continuar);
 bool tentaLinhas(TABELA *t);
-TABELA resolve(TABELA t);
+TABELA resolve(TABELA t, TABELA a);
 
 #endif // PARTE4_H

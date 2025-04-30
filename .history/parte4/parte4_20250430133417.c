@@ -105,33 +105,6 @@ TABELA ajuda(TABELA t, bool escreve, bool *changed)
     return aux; // Retorna a tabela auxiliar com as alterações aplicadas
 }
 
-// Código do comando A
-// Aplica o comando "a" até não haver alterações. Retorna > 0 caso haja mundanças e 0 caso não haja
-int aplicaA(TABELA *aux)
-{
-    int mudancas = 0;
-    bool changed = true;
-    while (changed)
-    {
-        changed = false;
-        TABELA temp = *aux;
-        *aux = ajuda(temp, false, &changed);
-        if (changed == true)
-            mudancas++;
-        freeTabela(temp);
-    }
-    return mudancas;
-}
-
-void comandoA(TABELA *aux)
-{
-    int mudou = aplicaA(aux);
-    if (!mudou)
-        printf("O tabuleiro não sofreu alterações.\n");
-    else
-        printf("Tabuleiro alterado.\n");
-}
-
 // --- Codigo para o comando R ---
 
 void trataAA_A_NasLinhas(TABELA aux)
@@ -217,6 +190,19 @@ void riscaABA(TABELA aux)
 {
     trataABA_colunas(aux);
     trataABA_linhas(aux);
+}
+
+// Aplica o comando "a" até não haver alterações
+void aplicaA(TABELA *aux)
+{
+    bool changed = true;
+    while (changed)
+    {
+        changed = false;
+        TABELA temp = *aux;
+        *aux = ajuda(temp, false, &changed);
+        freeTabela(temp);
+    }
 }
 
 int existemMinusculas(TABELA t)
@@ -310,8 +296,7 @@ void tentaRiscarLinhas(int c, int l1, int l2, TABELA *t, bool *continuar)
         TABELA tentativa = copiarTabela(*t);
         int linha = ls[i];
         int coluna = c;
-        char letra = (*t)->tabela[linha][coluna];
-        tentativa->tabela[linha][coluna] = toupper(letra);
+        tentativa->tabela[linha][coluna] = toupper((*t)->tabela[linha][coluna]);
         aplicaA(&tentativa);
         if (jogoResolvido(tentativa))
         {
@@ -325,7 +310,7 @@ void tentaRiscarLinhas(int c, int l1, int l2, TABELA *t, bool *continuar)
         {
             keepGoing = 0;
             (*t)->tabela[linha][coluna] = '#';
-            (*t)->tabela[i == 0 ? l2 : l1][coluna] = toupper(letra); // uso letra porque ambas as posições tem a mesma letra minuscula la
+            (*t)->tabela[i == 0 ? l2 : l1][coluna] = toupper((*t)->tabela[linha][coluna]);
         }
         freeTabela(tentativa);
     }
@@ -363,6 +348,7 @@ bool tentaLinhas(TABELA *t)
 // Coloca ainda o aux a null null e o continuar a false caso não seja possivel resolver o tabuleiro
 TABELA resolve(TABELA t)
 {
+
     TABELA aux = copiarTabela(t);
 
     // Funções que riscam as casas que se tem a certeza que tem de ser riscadas
@@ -371,14 +357,17 @@ TABELA resolve(TABELA t)
 
     // Aplica-se o comando 'a' repetidamente até ele não fazer mais alterações
     aplicaA(&aux);
+    mostrarTabela(aux);
+    putchar('\n');
     if (jogoResolvido(aux) || tentaColunas(&aux) || tentaLinhas(&aux))
     {
         printf("Tabuleiro resolvido.\n");
     }
     else
     {
+        mostrarTabela(aux);
+        putchar('\n');
         printf("Tabuleiro não pode ser resolvido.\n");
-        freeTabela(aux);
         return NULL;
     }
     return aux;
