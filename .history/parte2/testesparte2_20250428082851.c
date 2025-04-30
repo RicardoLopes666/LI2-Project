@@ -140,6 +140,6 @@ void test_verificaRestricoes()
     t->tabela[1][1] = 'B';
     t->tabela[1][2] = 'b'; // letra repetida em linha
 
-    CU_ASSERT_TRUE(verificaRestricoes(t, false));
+    CU_ASSERT_TRUE(verificaRestricoes(t));
     freeTabela(t);
 }

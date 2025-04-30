@@ -22,7 +22,7 @@ void test_initStackTabs()
 {
     STACKTABS s = malloc(sizeof(struct StackTabs));
     CU_ASSERT_TRUE(initStackTabs(s));
-    CU_ASSERT_EQUAL(s->capacidade, 3); // começa com 3
+    CU_ASSERT_EQUAL(s->capacidade, 0); // começa com 0
     CU_ASSERT_EQUAL(s->comprimento, 0);
     freeStackTabs(s);
 }
@@ -140,6 +140,6 @@ void test_verificaRestricoes()
     t->tabela[1][1] = 'B';
     t->tabela[1][2] = 'b'; // letra repetida em linha
 
-    CU_ASSERT_TRUE(verificaRestricoes(t, false));
+    CU_ASSERT_TRUE(verificaRestricoes(t));
     freeTabela(t);
 }

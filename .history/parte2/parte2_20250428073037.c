@@ -10,7 +10,7 @@
 
 bool initStackTabs(STACKTABS s)
 {
-    s->capacidade = 3;
+    s->capacidade = 0;
     s->comprimento = 0;
     s->tabelas = malloc(sizeof(TABELA) * 3);
     if (s->tabelas == NULL)
@@ -69,7 +69,7 @@ TABELA copiarTabela(TABELA t)
         {
             for (int j = 0; j < i; j++)
             {
-                free(new->tabela[j]);
+                free(t->tabela[i]);
             }
             free(new->tabela);
             free(new);
@@ -179,7 +179,7 @@ bool verificaLetraIgualLinhaColuna(TABELA t, int linha, int coluna)
 }
 
 // Função que imprime as restrições do jogo caso estas existam
-bool verificaRestricoes(TABELA t, bool escreve)
+bool verificaRestricoes(TABELA t)
 {
     bool temRestricoes = false;
     int contaRestricoes = 0;
@@ -197,15 +197,11 @@ bool verificaRestricoes(TABELA t, bool escreve)
                 if (numRestricoes > 0)
                 {
                     temRestricoes = true;
-                    if (escreve)
+                    printf("\n---- Restrição nº %d ----\n", contaRestricoes + 1);
+                    printf("Casa riscada em (%c%d) tem restrições violadas (apenas deveria ter casas brancas na sua vizinhança) nas seguintes coordenadas:\n", 'a' + j, i + 1);
+                    for (int k = 0; k < numRestricoes; k++)
                     {
-                        printf("\n---- Restrição nº %d ----\n", contaRestricoes + 1);
-                        printf("Casa riscada em (%c%d) tem restrições violadas (apenas deveria ter casas brancas na sua vizinhança) nas seguintes coordenadas:\n", 'a' + j, i + 1);
-
-                        for (int k = 0; k < numRestricoes; k++)
-                        {
-                            printf("  - Coluna: %c, Linha: %d\n", 'a' + restricoes[k][1], restricoes[k][0] + 1);
-                        }
+                        printf("  - Coluna: %c, Linha: %d\n", 'a' + restricoes[k][1], restricoes[k][0] + 1);
                     }
                     contaRestricoes++;
                 }
@@ -217,11 +213,8 @@ bool verificaRestricoes(TABELA t, bool escreve)
                 if (verificaLetraIgualLinhaColuna(t, i, j))
                 {
                     temRestricoes = true;
-                    if (escreve)
-                    {
-                        printf("\n---- Restrição nº %d ----\n", contaRestricoes + 1);
-                        printf("Casa branca em (%c%d) tem restrições violadas (letra repetida na mesma linha ou coluna).\n", 'a' + j, i + 1);
-                    }
+                    printf("\n---- Restrição nº %d ----\n", contaRestricoes + 1);
+                    printf("Casa branca em (%c%d) tem restrições violadas (letra repetida na mesma linha ou coluna).\n", 'a' + j, i + 1);
                     contaRestricoes++;
                 }
             }
@@ -229,15 +222,14 @@ bool verificaRestricoes(TABELA t, bool escreve)
     }
 
     // Função que chama as funções auxiliares necessarias para verificar se existem caminhos ortogonais e trata as resppetivas mensagens no terminal
-    if (!trataCaminhoOrtogonal(t, &contaRestricoes, &temRestricoes, escreve))
+    if (!trataCaminhoOrtogonal(t, &contaRestricoes, &temRestricoes))
     {
         return false;
     }
 
     if (!temRestricoes)
     {
-        if (escreve)
-            printf("Nenhuma restrição foi violada no tabuleiro.\n");
+        printf("Nenhuma restrição foi violada no tabuleiro.\n");
     }
 
     return temRestricoes;

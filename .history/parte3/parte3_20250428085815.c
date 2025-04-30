@@ -75,12 +75,11 @@ int insertQueue(CQUEUE q, COORDENADA *coordenadas, int coordSize)
     return 1;
 }
 
-// Função que remove o elemento da frente da queue
 void deleteQueue(CQUEUE q, COORDENADA *pos)
 {
     if (q->tamanho == 0)
         return;
-    // retira o elemento da frente, mas não o free — é mais tarde na existeCaminhoOrtogonal
+    // retira o elemento da frente, mas não o free — testa vai fazê-lo
     COORDENADA temp = q->list[q->front];
     *pos = temp;
     q->list[q->front] = NULL;
@@ -121,7 +120,7 @@ int existeCaminhoOrtogonal(CQUEUE q, TABELA t, int **visited, int *count)
     while (q->tamanho > 0)
     {
         COORDENADA atual = NULL;
-        deleteQueue(q, &atual); // passa o endereço de 'atual' (COORDENADA*) -> e pegamos no elemento que esta na frente da fila
+        deleteQueue(q, &atual); // passa o endereço de 'atual' (COORDENADA*)
 
         visited[atual->l][atual->c] = 1; // Visitamos a atual;
         (*count)++;
@@ -151,7 +150,7 @@ int existeCaminhoOrtogonal(CQUEUE q, TABELA t, int **visited, int *count)
     return 0;
 }
 
-bool trataCaminhoOrtogonal(TABELA t, int *contaRestricoes, bool *temRestrições, bool escreve)
+bool trataCaminhoOrtogonal(TABELA t, int *contaRestricoes, bool *temRestrições)
 {
     CQUEUE queue = malloc(sizeof(struct CQueue));
     initQueue(queue);
@@ -166,7 +165,7 @@ bool trataCaminhoOrtogonal(TABELA t, int *contaRestricoes, bool *temRestrições
     int linhaI = inicial->l;
     int colunaI = inicial->c;
 
-    COORDENADA *primeiro = malloc(sizeof(COORDENADA)); // Array do com o primeiro elemento a queue já ter elementos antes de se chamar existeCaminhoOrtogonal
+    COORDENADA *primeiro = malloc(sizeof(COORDENADA));
     primeiro[0] = inicial;
     insertQueue(queue, primeiro, 1);
 
@@ -175,20 +174,14 @@ bool trataCaminhoOrtogonal(TABELA t, int *contaRestricoes, bool *temRestrições
     if (!existeCaminhoOrtogonal(queue, t, visited, &count))
     {
         *temRestrições = true;
-        if (escreve)
-        {
-            printf("\n---- Restrição nº %d ----\n", *contaRestricoes + 1);
-            printf("Não existe um caminho ortogonal entre todas as casas que não estão riscadas\n");
-        }
-        (*contaRestricoes)++;
+        printf("\n---- Restrição nº %d ----\n", (*contaRestricoes)++ + 1);
+        printf("Não existe um caminho ortogonal entre todas as casas que não estão riscadas\n");
         int length = t->c * t->l - count;
         COORDENADA *naoVisitados = devolveNaoVisitados(visited, t->l, t->c, length);
-        if (escreve)
-            printf("Por exemplo, começando da casa (%c%d) não existe um caminho ortogonal que passe nas casas:\n", colunaI + 'a', linhaI + 1);
+        printf("Por exemplo, começando da casa (%c%d) não existe um caminho ortogonal que passe nas casas:\n", colunaI + 'a', linhaI + 1);
         for (int i = 0; i < length; i++)
         {
-            if (escreve)
-                printf("  - Coluna: %c, Linha: %d\n", naoVisitados[i]->c + 'a', naoVisitados[i]->l + 1);
+            printf("  - Coluna: %c, Linha: %d\n", naoVisitados[i]->c + 'a', naoVisitados[i]->l + 1);
             free(naoVisitados[i]);
         }
         free(naoVisitados);
