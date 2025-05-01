@@ -108,7 +108,7 @@ bool dentroDosLimites(TABELA t, int linha, int coluna)
     return linha >= 0 && linha < t->l && coluna >= 0 && coluna < t->c;
 }
 
-// Função que verifica se todas as casas ao redor de uma casa riscada estão pintadas de branco
+// Função que verifica a vizinhança de uma casa riscada e caso tenha alguma casa riscada conta como restrição
 // Retorna o número de restrições violadas e preenche o array `restricoes` com as coordenadas
 int verificaRiscadaVizinhasBrancas(TABELA t, int linha, int coluna, int restricoes[][2])
 {
@@ -133,9 +133,9 @@ int verificaRiscadaVizinhasBrancas(TABELA t, int linha, int coluna, int restrico
 
         if (dentroDosLimites(t, novaLinha, novaColuna))
         {
-            if (!isupper(t->tabela[novaLinha][novaColuna]))
+            if (t->tabela[novaLinha][novaColuna] == '#')
             {
-                // Adiciona a coordenada da restrição violada ao array
+                // Se encontrar uma casa riscada na vizinhança, adiciona como restrição
                 restricoes[count][0] = novaLinha;
                 restricoes[count][1] = novaColuna;
                 count++;
@@ -146,7 +146,6 @@ int verificaRiscadaVizinhasBrancas(TABELA t, int linha, int coluna, int restrico
     return count; // Retorna o número de restrições violadas
 }
 
-// Função que verifica se existe alguma letra igual (maiúscula ou minúscula) na mesma linha ou coluna de uma casa branca
 // Função que verifica se existem duas casas brancas iguais na mesma linha ou coluna
 bool verificaLetraIgualLinhaColuna(TABELA t, int linha, int coluna)
 {
