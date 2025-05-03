@@ -16,7 +16,7 @@ void trataABA_linhas(TABELA aux);
 void trataABA_colunas(TABELA aux);
 void riscaABA(TABELA aux);
 int aplicaA(TABELA *aux);
-void comandoA(TABELA *aux);
+void comandoA(TABELA *aux, bool *continuar);
 int existemMinusculas(TABELA t);
 int jogoResolvido(TABELA aux);
 void tentaRiscarColunas(int l, int c1, int c2, TABELA *t, bool *continuar);

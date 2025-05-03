@@ -151,7 +151,29 @@ int existeCaminhoOrtogonal(CQUEUE q, TABELA t, int **visited, int *count)
     return 0;
 }
 
-bool trataCaminhoOrtogonal(TABELA t, int *contaRestricoes, bool *temRestrições, bool escreve)
+void escreveInexistenciaCaminho(bool *temRestricoes, bool escreve, int *contaRestricoes, TABELA t, int **visited, int colunaI, int linhaI, int count)
+{
+    *temRestricoes = true;
+    if (escreve)
+    {
+        printf("\n---- Restrição nº %d ----\n", *contaRestricoes + 1);
+        printf("Não existe um caminho ortogonal entre todas as casas que não estão riscadas\n");
+    }
+    (*contaRestricoes)++;
+    int length = t->c * t->l - count;
+    COORDENADA *naoVisitados = devolveNaoVisitados(visited, t->l, t->c, length);
+    if (escreve)
+        printf("Por exemplo, começando da casa (%c%d) não existe um caminho ortogonal que passe nas casas:\n", colunaI + 'a', linhaI + 1);
+    for (int i = 0; i < length; i++)
+    {
+        if (escreve)
+            printf("  - Coluna: %c, Linha: %d\n", naoVisitados[i]->c + 'a', naoVisitados[i]->l + 1);
+        free(naoVisitados[i]);
+    }
+    free(naoVisitados);
+}
+
+bool trataCaminhoOrtogonal(TABELA t, int *contaRestricoes, bool *temRestricoes, bool escreve)
 {
     CQUEUE queue = malloc(sizeof(struct CQueue));
     initQueue(queue);
@@ -174,24 +196,7 @@ bool trataCaminhoOrtogonal(TABELA t, int *contaRestricoes, bool *temRestrições
     int **visited = initVisited(t, &count);
     if (!existeCaminhoOrtogonal(queue, t, visited, &count))
     {
-        *temRestrições = true;
-        if (escreve)
-        {
-            printf("\n---- Restrição nº %d ----\n", *contaRestricoes + 1);
-            printf("Não existe um caminho ortogonal entre todas as casas que não estão riscadas\n");
-        }
-        (*contaRestricoes)++;
-        int length = t->c * t->l - count;
-        COORDENADA *naoVisitados = devolveNaoVisitados(visited, t->l, t->c, length);
-        if (escreve)
-            printf("Por exemplo, começando da casa (%c%d) não existe um caminho ortogonal que passe nas casas:\n", colunaI + 'a', linhaI + 1);
-        for (int i = 0; i < length; i++)
-        {
-            if (escreve)
-                printf("  - Coluna: %c, Linha: %d\n", naoVisitados[i]->c + 'a', naoVisitados[i]->l + 1);
-            free(naoVisitados[i]);
-        }
-        free(naoVisitados);
+        escreveInexistenciaCaminho(temRestricoes, escreve, contaRestricoes, t, visited, colunaI, linhaI, count);
     }
 
     free(primeiro);

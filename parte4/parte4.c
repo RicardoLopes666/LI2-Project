@@ -6,6 +6,7 @@
 #include "../parte1/parte1.h"
 #include "../parte3/parte3.h"
 
+// Função que deteta as casas que se riscadas impediam um caminho ortogonal entre casas e nesse caso pinta-as
 void verificaSeQuebraCaminho(TABELA aux, int l, int c, bool *changed, bool escreve)
 {
     char caracter = aux->tabela[l][c];
@@ -123,17 +124,21 @@ int aplicaA(TABELA *aux)
     return mudancas;
 }
 
-void comandoA(TABELA *aux)
+void comandoA(TABELA *aux, bool *continuar)
 {
     int mudou = aplicaA(aux);
     if (!mudou)
+    {
         printf("O tabuleiro não sofreu alterações.\n");
+        *continuar = false; // Coloca -se a falso para não se fazer uma cópia do tabuleiro neste caso
+    }
     else
         printf("Tabuleiro alterado.\n");
 }
 
 // --- Codigo para o comando R ---
 
+// Função que detatas na linhas os grupos do tipo XX_ X e risca o que esta isolado
 void trataAA_A_NasLinhas(TABELA aux)
 {
     for (int i = 0; i < aux->l; i++)
@@ -154,6 +159,7 @@ void trataAA_A_NasLinhas(TABELA aux)
     }
 }
 
+// Função que detatas na colunas os grupos do tipo XX_ X e risca o que esta isolado
 void trataAA_A_NasColunas(TABELA aux)
 {
     for (int j = 0; j < aux->c; j++)
@@ -174,7 +180,7 @@ void trataAA_A_NasColunas(TABELA aux)
     }
 }
 
-// Função que identifica grupos do tipo xx .... x e devolve as coordenadas dos elementos que devem ser riscados  (neste caso o x)
+// Função que identifica grupos do tipo xx .... x e trata de riscar o x isolado
 void risca_AA_A(TABELA aux)
 {
     trataAA_A_NasColunas(aux);
@@ -213,6 +219,7 @@ void trataABA_colunas(TABELA aux)
     }
 }
 
+// Detetar grupos ABA
 void riscaABA(TABELA aux)
 {
     trataABA_colunas(aux);

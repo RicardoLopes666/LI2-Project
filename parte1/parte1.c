@@ -43,6 +43,17 @@ void freeTabela(TABELA t)
 // Tipo de função para comandos. Agora os comandos recebem um GAME* para acessar o estado e o tabuleiro.
 typedef bool (*COMANDO)(char cmd, char *arg, GAME *game);
 
+// Função responsável por escrever no ficheiro o conteúdo de uma tabela
+void escreveTabela(TABELA tabela, FILE *f)
+{
+    fprintf(f, "%d %d\n", tabela->l, tabela->c);
+    for (int i = 0; i < tabela->l; i++)
+    {
+        fprintf(f, "%s\n", tabela->tabela[i]);
+    }
+    putchar('\n');
+}
+
 // Comando para gravar o estado do jogo num ficheiro
 bool gravar(char cmd, char *arg, GAME *game)
 {
@@ -64,10 +75,9 @@ bool gravar(char cmd, char *arg, GAME *game)
             fprintf(stderr, "Erro a abrir o ficheiro");
             return false;
         }
-        fprintf(f, "%d %d\n", game->tab->l, game->tab->c);
-        for (int i = 0; i < game->tab->l; i++)
+        for (int i = 0; i < game->stackTabs->comprimento; i++)
         {
-            fprintf(f, "%s\n", game->tab->tabela[i]);
+            escreveTabela(game->stackTabs->tabelas[i], f);
         }
         fclose(f);
         printf("Gravado em %s\n", arg);
@@ -90,6 +100,37 @@ bool sair(char cmd, char *arg, GAME *game)
     return false;
 }
 
+bool leTabuleiro(TABELA *t, int linhas, int colunas, FILE *file)
+{
+    for (int i = 0; i < linhas; i++)
+    {
+        for (int j = 0; j < colunas; j++)
+        {
+            if (fscanf(file, " %c", &(*t)->tabela[i][j]) != 1)
+            {
+                fprintf(stderr, "Erro: na leitura do conteúdo do tabuleiro\n");
+                freeTabela(*t);
+                fclose(file);
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+bool colocaTabelaNaStack(GAME *game, TABELA tabela)
+{
+    if (!insereTabela(game->stackTabs, tabela))
+    {
+        if (tabela)
+            freeTabela(tabela);
+        freeStackTabs(game->stackTabs);
+        fprintf(stderr, "Erro: na criação da stack de tabuleiros");
+        return false;
+    }
+    return true;
+}
+
 // Comando para ler o tabuleiro de um ficheiro
 bool lerCmd(char cmd, char *arg, GAME *game)
 {
@@ -103,65 +144,40 @@ bool lerCmd(char cmd, char *arg, GAME *game)
         return false;
     }
 
-    int linhas, colunas;
-    // Tenta ler as dimensões do tabuleiro
-    if (fscanf(file, "%d %d", &linhas, &colunas) != 2)
-    {
-        fprintf(stderr, "Erro: na leitura das dimensões do tabuleiro\n");
-        fclose(file);
-        return false;
-    }
-
-    if (game->tab != NULL)
-        freeTabela(game->tab);
-
-    TABELA t = malloc(sizeof(struct Tabela));
-
-    initTabela(t, linhas, colunas);
-
-    // Lê o conteúdo do tabuleiro do ficheiro e passa-o para a tabela t
-    for (int i = 0; i < linhas; i++)
-    {
-        for (int j = 0; j < colunas; j++)
-        {
-            if (fscanf(file, " %c", &t->tabela[i][j]) != 1)
-            {
-                fprintf(stderr, "Erro: na leitura do conteúdo do tabuleiro\n");
-                freeTabela(t);
-                fclose(file);
-                return false;
-            }
-        }
-    }
-    fclose(file);
-
     freeStackTabs(game->stackTabs);
     STACKTABS s = malloc(sizeof(struct StackTabs));
     if (!initStackTabs(s))
     {
-        freeStackTabs(s);
-        freeTabela(t);
-        fprintf(stderr, "Erro: ao iniciar a nova Stack de tabuleiros");
+        free(s);
         return false;
     }
     game->stackTabs = s;
-    game->tab = t;
-    TABELA temp = copiarTabela(t);
-    if (temp == NULL)
+
+    int linhas, colunas;
+    // Loop que le os vários tabuleiros enquanto o ficheiro não estiver vazio e coloca-os da stackTabs
+    while (fscanf(file, "%d %d", &linhas, &colunas) == 2)
     {
-        freeStackTabs(s);
-        freeTabela(t);
-        fprintf(stderr, "Erro: falha ao copiar o tabuleiro");
-        return false;
+        TABELA t = malloc(sizeof(struct Tabela));
+
+        initTabela(t, linhas, colunas);
+
+        // Lê o conteúdo do tabuleiro do ficheiro e passa-o para a tabela t
+        if (!leTabuleiro(&t, linhas, colunas, file) || !colocaTabelaNaStack(game, t))
+        {
+            free(t);
+            freeStackTabs(s);
+            fclose(file);
+            return false;
+        }
     }
-    if (!insereTabela(game->stackTabs, temp))
-    {
-        freeTabela(temp);
-        freeStackTabs(s);
-        freeTabela(t);
-        fprintf(stderr, "Erro: ao colocar o novo tabuleiro na stack");
+    fclose(file);
+    if (game->tab != NULL)
+        freeTabela(game->tab);
+    TABELA temp = copiarTabela(game->stackTabs->tabelas[game->stackTabs->comprimento - 1]);
+    if (temp != NULL)
+        game->tab = temp;
+    else
         return false;
-    }
     return true;
 }
 
@@ -199,6 +215,7 @@ bool riscar(TABELA t, int linha, int coluna)
 // Função que mostra o tabuleiro
 void mostrarTabela(TABELA t)
 {
+    printf("\nEstado atual do tabuleiro:\n");
     if (t == NULL)
     {
         printf("Tabuleiro não inicializado.\n");
