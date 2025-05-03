@@ -158,9 +158,37 @@ void comandovd(bool *continuar, char comando, GAME *game, bool *comandoProcessad
     mostrarTabela((*game).tab);
 }
 
+// Função que imprime os comandos possíveis
+void mostrarAjuda()
+{
+    printf("\nComandos disponíveis:\n");
+    printf("g <jogo>       - grava o estado atual do jogo num ficheiro\n");
+    printf("l <jogo>       - lê o estado do jogo de um ficheiro\n");
+    printf("<coordenada>   - no formato <letra minúscula><número> onde a letra corresponde a uma coluna e o número a uma linha\n");
+    printf("b <coordenada> - colocar a letra da casa correspondente à coordenada em maiúsculas\n");
+    printf("r <coordenada> - colocar um # no local da letra\n");
+    printf("v              - verificar o estado do jogo e apontar todas as restrições violadas\n");
+    printf("a              - ajudar mudando o estado de todas as casas que se conseguem inferir através do estado atual do tabuleiro\n");
+    printf("A              - invocar o comando 'a' enquanto o jogo sofrer alterações\n");
+    printf("R              - resolver o jogo\n");
+    printf("d              - desfazer o último comando executado\n");
+    printf("s              - sair do programa\n\n");
+}
+
+void comandoAjuda(char comando, bool *comandoProcessado)
+{
+    if (comando == '?')
+    {
+        mostrarAjuda();
+        *comandoProcessado = true;
+    }
+}
+
 // Função principal responsável por rodar o jogo
 int main()
 {
+    printf("\nUtilize '?' para ver os comandos disponíveis\n"); // Mensagem inicial
+
     GAME game;
     game.estado.looping = true;
     game.tab = NULL;                                   // Inicialmente, nenhum tabuleiro está carregado
@@ -182,6 +210,10 @@ int main()
         leArgumentosEValida(line, cmd, arg, resto, &continuar, &game, &num_args);
 
         bool comandoProcessado = false;
+
+        // Processa o comando de ajuda '?'
+        comandoAjuda(cmd[0], &comandoProcessado);
+
         // Processa os comandos padrão (s, l, g)
         for (int i = 0; continuar && !comandoProcessado && comandos[i] != NULL; i++)
             comandoProcessado = comandos[i](cmd[0], (num_args >= 2) ? arg : NULL, &game);
