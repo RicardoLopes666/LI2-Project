@@ -109,6 +109,8 @@ bool leTabuleiro(TABELA *t, int linhas, int colunas, FILE *file)
             if (fscanf(file, " %c", &(*t)->tabela[i][j]) != 1)
             {
                 fprintf(stderr, "Erro: na leitura do conteúdo do tabuleiro\n");
+                freeTabela(*t);
+                fclose(file);
                 return false;
             }
         }
@@ -162,19 +164,12 @@ bool lerCmd(char cmd, char *arg, GAME *game)
         // Lê o conteúdo do tabuleiro do ficheiro e passa-o para a tabela t
         if (!leTabuleiro(&t, linhas, colunas, file) || !colocaTabelaNaStack(game, t))
         {
-            freeTabela(t);
+            free(t);
             freeStackTabs(s);
             fclose(file);
             return false;
         }
     }
-    if (game->stackTabs->comprimento == 0)
-    {
-        printf("Erro: tabuleiro não contem nenhum tabuleiro");
-        fclose(file);
-        return false;
-    }
-
     fclose(file);
     if (game->tab != NULL)
         freeTabela(game->tab);

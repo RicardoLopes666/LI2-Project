@@ -33,15 +33,9 @@ int main()
         return CU_get_error();
     }
 
-    CU_basic_set_mode(CU_BRM_VERBOSE);
-    CU_basic_run_tests();
-    CU_cleanup_registry();
-
     // Testes parte 2
 
-    CU_initialize_registry();
-
-    CU_pSuite suite2 = CU_add_suite("Testes da parte 2", NULL, NULL);
+    CU_pSuite suite2 = CU_add_suite("Testes da parte 2", 0, 0);
     if (NULL == suite2)
     {
         CU_cleanup_registry();
@@ -77,7 +71,6 @@ int main()
     CU_add_test(suite, "Teste deleteQueue", test_deleteQueue);
     CU_add_test(suite, "Teste existeCaminhoOrtogonal", test_existeCaminhoOrtogonal);
 
-    CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();
     CU_cleanup_registry();
 

@@ -218,7 +218,7 @@ int main()
         for (int i = 0; continuar && !comandoProcessado && comandos[i] != NULL; i++)
             comandoProcessado = comandos[i](cmd[0], (num_args >= 2) ? arg : NULL, &game);
 
-        if (game.tab == NULL && !comandoProcessado) // Para não ser incluido quando usado o comando '?'
+        if (game.tab == NULL && !comandoProcessado)
         {
             fprintf(stderr, "Erro: tabuleiro não carregado.\n");
             continuar = false;

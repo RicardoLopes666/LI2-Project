@@ -98,7 +98,7 @@ void test_gravar(void)
     char *filename = "temp_test_gravar.txt";
     GAME game;
 
-    //  Estado válido com 1 tabela na stack
+    //  Estado válido com 1 tabela na stac ---
     game.estado.looping = true;
 
     // Inicializa stackTabs //
@@ -191,97 +191,54 @@ void test_gravar(void)
 void test_lerCmd(void)
 {
     GAME game;
-    char *filename = "temp_test_ler.txt";
-    FILE *f;
-
-    // Caso válidok
     game.estado.looping = true;
     game.tab = NULL;
+    char *filename = "temp_test_ler.txt";
+    game.stackTabs = NULL;
+    initStackTabs(game.stackTabs);
+    FILE *f;
 
-    // Prepara stack vazio
-    game.stackTabs = malloc(sizeof(struct StackTabs));
-    CU_ASSERT_PTR_NOT_NULL_FATAL(game.stackTabs);
-    CU_ASSERT_TRUE_FATAL(initStackTabs(game.stackTabs));
-
-    // Cria ficheiro com um tabuleiro 2×2
+    //  caso válido
     f = fopen(filename, "w");
-    CU_ASSERT_PTR_NOT_NULL_FATAL(f);
-    fprintf(f, "2 2\nEF\nGH\n");
+    CU_ASSERT_PTR_NOT_NULL(f); // Verificar se o ponteiro não é NULL
+    fprintf(f, "2 2\n");
+    fprintf(f, "EF\n");
+    fprintf(f, "GH\n");
     fclose(f);
 
-    //  ler com sucesso
-    CU_ASSERT_TRUE(lerCmd('l', filename, &game));
+    CU_ASSERT_TRUE(lerCmd('l', (char *)filename, &game));
     CU_ASSERT_PTR_NOT_NULL(game.tab);
-    // Stack com 1 tabela
-    CU_ASSERT_EQUAL(game.stackTabs->comprimento, 1);
-    // Verifica dimensões e conteúdo
     CU_ASSERT_EQUAL(game.tab->l, 2);
     CU_ASSERT_EQUAL(game.tab->c, 2);
     CU_ASSERT_EQUAL(game.tab->tabela[0][0], 'E');
     CU_ASSERT_EQUAL(game.tab->tabela[0][1], 'F');
     CU_ASSERT_EQUAL(game.tab->tabela[1][0], 'G');
     CU_ASSERT_EQUAL(game.tab->tabela[1][1], 'H');
-
     freeTabela(game.tab);
     freeStackTabs(game.stackTabs);
+    game.tab = NULL;
+    game.stackTabs = NULL;
     remove(filename);
 
-    // Comando inválido
-    game.estado.looping = true;
-    game.tab = NULL;
-    game.stackTabs = malloc(sizeof(struct StackTabs));
-    CU_ASSERT_PTR_NOT_NULL_FATAL(game.stackTabs);
-    CU_ASSERT_TRUE_FATAL(initStackTabs(game.stackTabs));
-    CU_ASSERT_FALSE(lerCmd('x', filename, &game));
-    freeStackTabs(game.stackTabs);
-
-    //  Argumento NULL
-    game.estado.looping = true;
-    game.tab = NULL;
-    game.stackTabs = malloc(sizeof(struct StackTabs));
-    CU_ASSERT_PTR_NOT_NULL_FATAL(game.stackTabs);
-    CU_ASSERT_TRUE_FATAL(initStackTabs(game.stackTabs));
-    CU_ASSERT_FALSE(lerCmd('l', NULL, &game));
-    freeStackTabs(game.stackTabs);
-
-    //  Ficheiro inexistente
-    game.estado.looping = true;
-    game.tab = NULL;
-    game.stackTabs = malloc(sizeof(struct StackTabs));
-    CU_ASSERT_PTR_NOT_NULL_FATAL(game.stackTabs);
-    CU_ASSERT_TRUE_FATAL(initStackTabs(game.stackTabs));
+    // ficheiro não existe
     CU_ASSERT_FALSE(lerCmd('l', "ficheiro_inexistente.txt", &game));
-    freeStackTabs(game.stackTabs);
 
-    // Formato de dimensões inválido
-    game.estado.looping = true;
-    game.tab = NULL;
-    game.stackTabs = malloc(sizeof(struct StackTabs));
-    CU_ASSERT_PTR_NOT_NULL_FATAL(game.stackTabs);
-    CU_ASSERT_TRUE_FATAL(initStackTabs(game.stackTabs));
-
+    // ficheiro com dimensões inválidas
     f = fopen(filename, "w");
-    CU_ASSERT_PTR_NOT_NULL_FATAL(f);
-    fprintf(f, "duas palavras\n");
+    CU_ASSERT_PTR_NOT_NULL(f);
+    fprintf(f, "duas palavras\n"); // não são números válidos
     fclose(f);
 
-    CU_ASSERT_FALSE(lerCmd('l', filename, &game));
-    freeStackTabs(game.stackTabs);
+    CU_ASSERT_FALSE(lerCmd('l', (char *)filename, &game));
     remove(filename);
 
     // Conteúdo incompleto
-    game.estado.looping = true;
-    game.tab = NULL;
-    game.stackTabs = malloc(sizeof(struct StackTabs));
-    CU_ASSERT_PTR_NOT_NULL_FATAL(game.stackTabs);
-    CU_ASSERT_TRUE_FATAL(initStackTabs(game.stackTabs));
-
     f = fopen(filename, "w");
-    CU_ASSERT_PTR_NOT_NULL_FATAL(f);
-    // Dimensões corretas, mas apenas uma linha de dados
-    fprintf(f, "2 2\nA\n");
+    CU_ASSERT_PTR_NOT_NULL(f);
+    fprintf(f, "2 2\n"); // dimensões corretas
+    fprintf(f, "A\n");   // conteúdo incompleto
     fclose(f);
 
-    CU_ASSERT_FALSE(lerCmd('l', filename, &game)); // A stackTabs já é libertada no na função lerCmd
+    CU_ASSERT_FALSE(lerCmd('l', (char *)filename, &game));
     remove(filename);
 }

@@ -109,12 +109,7 @@ void test_verificaRiscadaVizinhasBrancas()
     t->tabela[0][1] = 'A';
     t->tabela[2][1] = 'B';
     t->tabela[1][0] = 'C';
-    t->tabela[1][2] = '#'; // violação
-    /*
-          A
-        B # #
-          C
-    */
+    t->tabela[1][2] = 'd'; // violação
 
     int restricoes[4][2] = {{0}};
     int num = verificaRiscadaVizinhasBrancas(t, 1, 1, restricoes);
@@ -143,12 +138,8 @@ void test_verificaRestricoes()
     t->tabela[0][0] = '#';
     t->tabela[0][1] = 'a'; // vizinho inválido
     t->tabela[1][1] = 'B';
-    t->tabela[1][2] = 'B'; // letra repetida em linha
+    t->tabela[1][2] = 'b'; // letra repetida em linha
 
-    /*
-        #a
-         Bb
-    */
     CU_ASSERT_TRUE(verificaRestricoes(t, false));
     freeTabela(t);
 }

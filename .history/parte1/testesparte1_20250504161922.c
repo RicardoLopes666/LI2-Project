@@ -257,6 +257,7 @@ void test_lerCmd(void)
     game.estado.looping = true;
     game.tab = NULL;
     game.stackTabs = malloc(sizeof(struct StackTabs));
+    initStackTabs(game.stackTabs);
     CU_ASSERT_PTR_NOT_NULL_FATAL(game.stackTabs);
     CU_ASSERT_TRUE_FATAL(initStackTabs(game.stackTabs));
 
@@ -282,6 +283,7 @@ void test_lerCmd(void)
     fprintf(f, "2 2\nA\n");
     fclose(f);
 
-    CU_ASSERT_FALSE(lerCmd('l', filename, &game)); // A stackTabs já é libertada no na função lerCmd
+    CU_ASSERT_FALSE(lerCmd('l', filename, &game));
+    freeStackTabs(game.stackTabs);
     remove(filename);
 }

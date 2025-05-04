@@ -282,6 +282,6 @@ void test_lerCmd(void)
     fprintf(f, "2 2\nA\n");
     fclose(f);
 
-    CU_ASSERT_FALSE(lerCmd('l', filename, &game)); // A stackTabs já é libertada no na função lerCmd
+    CU_ASSERT_FALSE(lerCmd('l', filename, &game)); // A stackTabs já é libertada
     remove(filename);
 }

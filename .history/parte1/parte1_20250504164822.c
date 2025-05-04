@@ -109,6 +109,7 @@ bool leTabuleiro(TABELA *t, int linhas, int colunas, FILE *file)
             if (fscanf(file, " %c", &(*t)->tabela[i][j]) != 1)
             {
                 fprintf(stderr, "Erro: na leitura do conteúdo do tabuleiro\n");
+                fclose(file);
                 return false;
             }
         }

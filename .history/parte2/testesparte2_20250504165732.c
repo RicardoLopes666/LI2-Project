@@ -143,12 +143,8 @@ void test_verificaRestricoes()
     t->tabela[0][0] = '#';
     t->tabela[0][1] = 'a'; // vizinho inválido
     t->tabela[1][1] = 'B';
-    t->tabela[1][2] = 'B'; // letra repetida em linha
+    t->tabela[1][2] = 'b'; // letra repetida em linha
 
-    /*
-        #a
-         Bb
-    */
     CU_ASSERT_TRUE(verificaRestricoes(t, false));
     freeTabela(t);
 }

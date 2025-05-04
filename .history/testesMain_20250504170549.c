@@ -77,7 +77,6 @@ int main()
     CU_add_test(suite, "Teste deleteQueue", test_deleteQueue);
     CU_add_test(suite, "Teste existeCaminhoOrtogonal", test_existeCaminhoOrtogonal);
 
-    CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();
     CU_cleanup_registry();
 

@@ -17,7 +17,7 @@ void verificaSeQuebraCaminho(TABELA aux, int l, int c, bool *changed, bool escre
     {
         aux->tabela[l][c] = toupper(caracter);
         if (escreve)
-            printf("A pintar a célula %c%d de branco por isolar as restantes casas ao ser riscada.\n", c + 'a', l + 1);
+            printf("A pintar a célula %c%d de branco por isolar as restantes casas ao ser riscada .\n", c + 'a', l + 1);
         *changed = true;
     }
     else
