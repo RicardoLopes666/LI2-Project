@@ -11,14 +11,8 @@ bddce
 #deeb
 accbb
 5 5
-ecadc
-Dcdec
-bddce
-#deeb
-accbb
-5 5
-E#AD#
-D##E#
+E#ADC
+DC#E#
 B#DCE
-#DE##
-AC###
+CDE#B
+A#CB#

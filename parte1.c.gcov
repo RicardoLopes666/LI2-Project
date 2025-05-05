@@ -32,16 +32,16 @@
        16:   28:}
         -:   29:
         -:   30:// Função para libertar a memória alocada para um tabuleiro
-       54:   31:void freeTabela(TABELA t)
+       66:   31:void freeTabela(TABELA t)
         -:   32:{
-       54:   33:    if (t == NULL)
+       66:   33:    if (t == NULL)
         -:   34:        return;
-      182:   35:    for (int i = 0; i < t->l; i++)
+      230:   35:    for (int i = 0; i < t->l; i++)
         -:   36:    {
-      128:   37:        free(t->tabela[i]);
+      164:   37:        free(t->tabela[i]);
         -:   38:    }
-       54:   39:    free(t->tabela);
-       54:   40:    free(t);
+       66:   39:    free(t->tabela);
+       66:   40:    free(t);
         -:   41:}
         -:   42:
         -:   43:// Tipo de função para comandos. Agora os comandos recebem um GAME* para acessar o estado e o tabuleiro.

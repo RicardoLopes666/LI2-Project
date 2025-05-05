@@ -2,6 +2,8 @@
   "files.associations": {
     "parte1.h": "c",
     "ctype.h": "c",
-    "tipos.h": "c"
+    "tipos.h": "c",
+    "basic.h": "c",
+    "cunit.h": "c"
   }
 }
