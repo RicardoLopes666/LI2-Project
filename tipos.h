@@ -23,7 +23,7 @@ typedef struct StackTabs
     TABELA *tabelas;
 } *STACKTABS;
 
-// Estrutura que agrupa o estado do jogo e o tabuleiro
+// Estrutura que agrupa o estado do jogo, o tabuleiro e ainda a stack de tabelas
 typedef struct
 {
     ESTADO estado;

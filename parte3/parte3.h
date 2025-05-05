@@ -24,6 +24,6 @@ void deleteQueue(CQUEUE q, COORDENADA *pos);
 int existeCaminhoOrtogonal(CQUEUE q, TABELA t, int **visited, int *count);
 
 // Trata do imprimir no terminal a restrição
-bool trataCaminhoOrtogonal(TABELA t, int *contaRestricoes, bool *temRestrições);
+bool trataCaminhoOrtogonal(TABELA t, int *contaRestricoes, bool *temRestrições, bool escreve);
 
 #endif
