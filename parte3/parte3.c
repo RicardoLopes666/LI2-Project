@@ -8,7 +8,8 @@
 COORDENADA devolvePrimeroNRiscado(TABELA t)
 {
     int i = 0;
-    while (i < (t->c * t->l) && t->tabela[i / t->c][i % t->c] == '#')
+    while (i < (t->c * t->l) && t->tabela[i / t->c][i % t->c] == '#') // i / t->c: Calcula a linha correspondente ao índice i.
+                                                                      // i % t->c: Calcula a coluna correspondente ao índice i
         i++;
     if (i >= t->c * t->l)
         return NULL;
