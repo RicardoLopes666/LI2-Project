@@ -28,7 +28,6 @@ void leArgumentosEValida(char *line, char *cmd, char *arg, char *resto, bool *co
     }
 
     *num_args = sscanf(line, "%s %s %[^\n]", cmd, arg, resto);
-    free(line);
 
     if (*continuar && strlen(cmd) != 1)
     {

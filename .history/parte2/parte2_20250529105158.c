@@ -113,13 +113,12 @@ void freeStackTabs(STACKTABS s)
 void u(GAME *game, bool *comandoProcessado)
 {
     if (game->stackTabs->indice >= game->stackTabs->comprimento)
-        fprintf(stderr, "%sErro: Não existem tabuleiros mais para a frente%s\n", ERROR_COLOR, RESET);
+        fprintf(stderr, "%sErro: não existem tabuleiros mais para a frente%s\n", ERROR_COLOR, RESET);
     else
     {
         freeTabela(game->tab);
         game->tab = copiarTabela(game->stackTabs->tabelas[game->stackTabs->indice++]);
     }
-
     *comandoProcessado = true;
 }
 
@@ -127,7 +126,7 @@ void d(GAME *game, bool *comandoProcessado)
 {
     if (!deleteTabela(game))
     {
-        fprintf(stderr, "%sErro: Não existem tabuleiros anteriores%s\n", ERROR_COLOR, RESET);
+        fprintf(stderr, "%sErro: não existem tabuleiros anteriores%s\n", ERROR_COLOR, RESET);
     }
 
     *comandoProcessado = true;

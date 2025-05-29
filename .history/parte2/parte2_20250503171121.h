@@ -15,8 +15,6 @@ void freeTabela(TABELA t);
 
 void d(GAME *game, bool *comandoProcessado);
 
-void u(GAME *game, bool *comandoProcessado);
-
 bool verificaLetraIgualLinhaColuna(TABELA t, int linha, int coluna);
 
 void freeStackTabs(STACKTABS s);

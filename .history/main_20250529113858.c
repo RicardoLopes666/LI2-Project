@@ -7,7 +7,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <string.h>
-#include <readline/readline.h> //Para se usar o readline e permitir voltar atrás com as setas
+#include <readline/readline.h>
 #include <readline/history.h>
 
 void leArgumentosEValida(char *line, char *cmd, char *arg, char *resto, bool *continuar, GAME *game, int *num_args)
@@ -21,14 +21,10 @@ void leArgumentosEValida(char *line, char *cmd, char *arg, char *resto, bool *co
     else
         add_history(line);
 
-    if (*continuar && line[strlen(line)] != '\0')
-    {
-        printf("Fiquei nul");
+    if (*continuar && line[strlen(line) - 1] != '\n')
         *continuar = false;
-    }
 
     *num_args = sscanf(line, "%s %s %[^\n]", cmd, arg, resto);
-    free(line);
 
     if (*continuar && strlen(cmd) != 1)
     {
@@ -167,6 +163,7 @@ void comandovdu(bool *continuar, char comando, GAME *game, bool *comandoProcessa
     if (!(*comandoProcessado) && (*continuar))
         fprintf(stderr, "%sErro: Comando não reconhecido!%s\n", ERROR_COLOR, RESET);
 
+    printf("1) comandoProcessado:%d  Continua:%d\n", *comandoProcessado, *continuar);
     mostrarTabela((*game).tab);
 }
 
@@ -218,7 +215,7 @@ void desenhaBemVindo()
 int main()
 {
     desenhaBemVindo();
-    using_history(); // Função para iniciar o historico das linha que imprimimos
+
     GAME game;
     game.estado.looping = true;
     game.tab = NULL;                                   // Inicialmente, nenhum tabuleiro está carregado
@@ -237,13 +234,13 @@ int main()
         char arg[LINE_SIZE] = {0};
         char resto[LINE_SIZE] = {0};
         int num_args;
+        printf("1) comandoProcessado:%d  Continua:%d\n", 0, continuar);
         leArgumentosEValida(line, cmd, arg, resto, &continuar, &game, &num_args);
 
         bool comandoProcessado = false;
-
+        printf("2) comandoProcessado:%d  Continua:%d\n", comandoProcessado, continuar);
         // Processa o comando de ajuda '?'
         comandoAjuda(cmd[0], &comandoProcessado);
-
         // Processa os comandos padrão (s, l, g)
         for (int i = 0; continuar && !comandoProcessado && comandos[i] != NULL; i++)
             comandoProcessado = comandos[i](cmd[0], (num_args >= 2) ? arg : NULL, &game);
@@ -272,7 +269,6 @@ int main()
     }
 
     libertaMemoria(game);
-    clear_history();
 
     return 0;
 }

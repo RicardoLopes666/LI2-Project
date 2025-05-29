@@ -25,7 +25,7 @@ all: $(EXEC) $(TEST_EXEC)
 
 # Rodar o jogo
 $(EXEC): $(SRC) $(HEADERS)
-	$(CC) $(CFLAGS) $(SRC) -o $@ $(LDFLAGS)
+	$(CC) $(CFLAGS) $(SRC) -o $@
 
 # Obter os paths para os objetos dos testes
 TEST_OBJ = $(TEST_SRC:.c=.o)
@@ -33,7 +33,7 @@ LIB_OBJ = $(LIB_SRC:.c=.o)
 
 # Regra para compilar os arquivos de teste com cobertura
 %.o: %.c
-	$(CC) $(CFLAGS) $(COVERAGE_FLAGS) -c $< -o $@ 
+	$(CC) $(CFLAGS) $(COVERAGE_FLAGS) -c $< -o $@
 
 # Gera binário de testes
 $(TEST_EXEC): $(TEST_OBJ) $(LIB_OBJ)

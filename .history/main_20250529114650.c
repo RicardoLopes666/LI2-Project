@@ -28,7 +28,6 @@ void leArgumentosEValida(char *line, char *cmd, char *arg, char *resto, bool *co
     }
 
     *num_args = sscanf(line, "%s %s %[^\n]", cmd, arg, resto);
-    free(line);
 
     if (*continuar && strlen(cmd) != 1)
     {
@@ -218,7 +217,7 @@ void desenhaBemVindo()
 int main()
 {
     desenhaBemVindo();
-    using_history(); // Função para iniciar o historico das linha que imprimimos
+
     GAME game;
     game.estado.looping = true;
     game.tab = NULL;                                   // Inicialmente, nenhum tabuleiro está carregado
@@ -272,7 +271,6 @@ int main()
     }
 
     libertaMemoria(game);
-    clear_history();
 
     return 0;
 }

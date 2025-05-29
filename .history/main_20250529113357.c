@@ -7,7 +7,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <string.h>
-#include <readline/readline.h> //Para se usar o readline e permitir voltar atrás com as setas
+#include <readline/readline.h>
 #include <readline/history.h>
 
 void leArgumentosEValida(char *line, char *cmd, char *arg, char *resto, bool *continuar, GAME *game, int *num_args)
@@ -21,14 +21,12 @@ void leArgumentosEValida(char *line, char *cmd, char *arg, char *resto, bool *co
     else
         add_history(line);
 
-    if (*continuar && line[strlen(line)] != '\0')
-    {
-        printf("Fiquei nul");
+    if (*continuar && line[strlen(line) - 1] != '\n')
         *continuar = false;
-    }
 
     *num_args = sscanf(line, "%s %s %[^\n]", cmd, arg, resto);
-    free(line);
+
+    printf("%s\n %s\n %s \n", cmd, arg, resto);
 
     if (*continuar && strlen(cmd) != 1)
     {
@@ -218,7 +216,7 @@ void desenhaBemVindo()
 int main()
 {
     desenhaBemVindo();
-    using_history(); // Função para iniciar o historico das linha que imprimimos
+
     GAME game;
     game.estado.looping = true;
     game.tab = NULL;                                   // Inicialmente, nenhum tabuleiro está carregado
@@ -243,7 +241,6 @@ int main()
 
         // Processa o comando de ajuda '?'
         comandoAjuda(cmd[0], &comandoProcessado);
-
         // Processa os comandos padrão (s, l, g)
         for (int i = 0; continuar && !comandoProcessado && comandos[i] != NULL; i++)
             comandoProcessado = comandos[i](cmd[0], (num_args >= 2) ? arg : NULL, &game);
@@ -272,7 +269,6 @@ int main()
     }
 
     libertaMemoria(game);
-    clear_history();
 
     return 0;
 }

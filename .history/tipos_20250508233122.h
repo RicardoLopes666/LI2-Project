@@ -19,7 +19,6 @@ typedef struct Tabela
 typedef struct StackTabs
 {
     int capacidade;
-    int indice;
     int comprimento;
     TABELA *tabelas;
 } *STACKTABS;
