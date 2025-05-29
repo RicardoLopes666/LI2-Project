@@ -1,215 +1,216 @@
         -:    0:Source:parte3/parte3.c
         -:    0:Graph:parte3/parte3.gcno
         -:    0:Data:parte3/parte3.gcda
-        -:    0:Runs:2
+        -:    0:Runs:1
         -:    1:#include <stdio.h>
         -:    2:#include <stdlib.h>
         -:    3:#include "../tipos.h"
         -:    4:#include "../parte2/parte2.h"
         -:    5:#include <ctype.h>
-        -:    6:
-        -:    7:// Função que dada uma tabela a percorre por ordem de linhas e colunas até encontrar o primeiro elemento que não estiver riscado, o qual vai ser utilizado para o bfs e devolve esse elemento como uma coordenada
-       14:    8:COORDENADA devolvePrimeroNRiscado(TABELA t)
-        -:    9:{
-       14:   10:    int i = 0;
-       20:   11:    while (i < (t->c * t->l) && t->tabela[i / t->c][i % t->c] == '#')
-        6:   12:        i++;
-       14:   13:    if (i >= t->c * t->l)
-        -:   14:        return NULL;
-       14:   15:    COORDENADA pos = malloc(sizeof(struct Coordenada));
-       14:   16:    pos->l = i / t->c;
-       14:   17:    pos->c = i % t->c;
-       14:   18:    return pos;
-        -:   19:}
-        -:   20:
-        -:   21:// Função que inicializa o array de visitados com 0 exceto nas casas que estão riscas (0 -> não visitado, 1 -> visitado)
-       16:   22:int **initVisited(TABELA t, int *count) // Count conta o número de casas visitadas
-        -:   23:{
-       16:   24:    int **visited = malloc(sizeof(int *) * t->l);
-       60:   25:    for (int i = 0; i < t->l; i++)
-        -:   26:    {
-       44:   27:        visited[i] = malloc(sizeof(int) * t->c);
-      168:   28:        for (int j = 0; j < t->c; j++)
-      124:   29:            if (t->tabela[i][j] == '#')
-        -:   30:            {
-       18:   31:                visited[i][j] = 1;
-       18:   32:                (*count)++; // Atualiza o número de casas visitadas
-        -:   33:            }
-        -:   34:            else
-      106:   35:                visited[i][j] = 0;
-        -:   36:    }
-       16:   37:    return visited;
-        -:   38:}
-        -:   39:
-       18:   40:void initQueue(CQUEUE q)
-        -:   41:{
-       18:   42:    q->capacidade = 3;
-       18:   43:    q->tamanho = 0;
-       18:   44:    q->front = 0;
-       18:   45:    q->list = malloc(sizeof(COORDENADA) * q->capacidade);
-       18:   46:}
-        -:   47:
-        -:   48:// Função responsável por inserir um array de coordenadas na queue
-       94:   49:int insertQueue(CQUEUE q, COORDENADA *coordenadas, int coordSize)
-        -:   50:{
-       94:   51:    if (coordSize < 1)
-        -:   52:        return 1;
-       56:   53:    int tam = q->tamanho + coordSize;
-       56:   54:    if (tam >= q->capacidade)
-        -:   55:    {
-        -:   56:        int oldCapacity = q->capacidade;
-       12:   57:        while (tam >= q->capacidade)
-        6:   58:            q->capacidade = q->capacidade == 0 ? 1 : q->capacidade * 2; // aumenta a capacidade até ter espaço para os novos elementos
-        6:   59:        COORDENADA *temp = realloc(q->list, sizeof(COORDENADA) * q->capacidade);
-        6:   60:        if (temp == NULL)
-        -:   61:        {
-        -:   62:            return 0;
-        -:   63:        }
-        6:   64:        q->list = temp;
-        6:   65:        int end = q->front + q->tamanho;
-        6:   66:        if (end > oldCapacity)
-    #####:   67:            for (int i = 0; i < end % oldCapacity; i++)
-    #####:   68:                q->list[i + oldCapacity] = q->list[i]; // volta a colocar a queue direita
-        -:   69:    }
-      138:   70:    for (int i = 0; i < coordSize; i++)
-        -:   71:    {
-       82:   72:        q->list[(q->front + q->tamanho) % q->capacidade] = coordenadas[i];
-       82:   73:        q->tamanho++;
-        -:   74:    }
-        -:   75:    return 1;
-        -:   76:}
-        -:   77:
-        -:   78:// Função que remove o elemento da frente da queue
-       78:   79:void deleteQueue(CQUEUE q, COORDENADA *pos)
-        -:   80:{
-       78:   81:    if (q->tamanho == 0)
-        -:   82:        return;
-        -:   83:    // retira o elemento da frente, mas não o free — é mais tarde na existeCaminhoOrtogonal
-       78:   84:    COORDENADA temp = q->list[q->front];
-       78:   85:    *pos = temp;
-       78:   86:    q->list[q->front] = NULL;
-       78:   87:    q->front = (q->front + 1) % q->capacidade;
-       78:   88:    q->tamanho--;
-        -:   89:}
-        -:   90:
-        -:   91:// Função que dado uma lista de visitados devolve um array com as posições que não foram visitadas
-        4:   92:COORDENADA *devolveNaoVisitados(int **visited, int l, int c, int length)
-        -:   93:{
-        4:   94:    COORDENADA *naoVisitados = malloc(sizeof(COORDENADA) * length);
-        4:   95:    int cont = 0;
-       14:   96:    for (int i = 0; i < l; i++)
-        -:   97:    {
-       36:   98:        for (int j = 0; j < c; j++)
-        -:   99:        {
-       26:  100:            if (visited[i][j] == 0)
-        -:  101:            {
-       14:  102:                COORDENADA pos = malloc(sizeof(struct Coordenada));
-       14:  103:                pos->l = i;
-       14:  104:                pos->c = j;
-       14:  105:                naoVisitados[cont++] = pos;
-        -:  106:            }
-        -:  107:        }
-        -:  108:    }
-        4:  109:    return naoVisitados;
-        -:  110:}
-        -:  111:
-        -:  112:// Algoritmo de procura em largura
-       14:  113:int existeCaminhoOrtogonal(CQUEUE q, TABELA t, int **visited, int *count)
-        -:  114:{
-       14:  115:    int direcoes[4][2] = {
-        -:  116:        {-1, 0}, // Cima
-        -:  117:        {1, 0},  // Baixo
-        -:  118:        {0, -1}, // Esquerda
-        -:  119:        {0, 1}   // Direita
-        -:  120:    };
-       90:  121:    while (q->tamanho > 0)
-        -:  122:    {
-       76:  123:        COORDENADA atual = NULL;
-       76:  124:        deleteQueue(q, &atual); // passa o endereço de 'atual' (COORDENADA*) -> e pegamos no elemento que esta na frente da fila
-        -:  125:
-       76:  126:        visited[atual->l][atual->c] = 1; // Visitamos a atual;
-       76:  127:        (*count)++;
-       76:  128:        int numeroVizinhosValidos = 0;
-       76:  129:        COORDENADA *vizinhos = malloc(4 * sizeof(COORDENADA)); // no máximo existem 4 vizinhos válidos
-      380:  130:        for (int i = 0; i < 4; i++)
-        -:  131:        {
-      304:  132:            int linha = direcoes[i][0] + atual->l;
-      304:  133:            int coluna = direcoes[i][1] + atual->c;
-        -:  134:
-      304:  135:            if (dentroDosLimites(t, linha, coluna) && visited[linha][coluna] == 0)
-        -:  136:            {
-       62:  137:                COORDENADA pos = malloc(sizeof(struct Coordenada));
-       62:  138:                pos->l = linha;
-       62:  139:                pos->c = coluna;
-       62:  140:                vizinhos[numeroVizinhosValidos] = pos;
-       62:  141:                visited[linha][coluna] = 1; // Tenho que marcar aqui para que nas proximas iterações ja se saiba que esta já esta na queue não voltar a entrar
-       62:  142:                numeroVizinhosValidos++;
-        -:  143:            }
-        -:  144:        }
-       76:  145:        insertQueue(q, vizinhos, numeroVizinhosValidos); // já trata do caso de não ter qualquer elemento
-       76:  146:        free(atual);
-       76:  147:        free(vizinhos);
-        -:  148:    }
-       14:  149:    if (*count == t->c * t->l)
-       10:  150:        return 1;
-        -:  151:    return 0;
-        -:  152:}
-        -:  153:
-        4:  154:void escreveInexistenciaCaminho(bool *temRestricoes, bool escreve, int *contaRestricoes, TABELA t, int **visited, int colunaI, int linhaI, int count)
-        -:  155:{
-        4:  156:    *temRestricoes = true;
-        4:  157:    if (escreve)
-        -:  158:    {
-    #####:  159:        printf("\n---- Restrição nº %d ----\n", *contaRestricoes + 1);
-    #####:  160:        printf("Não existe um caminho ortogonal entre todas as casas que não estão riscadas\n");
-        -:  161:    }
-        4:  162:    (*contaRestricoes)++;
-        4:  163:    int length = t->c * t->l - count;
-        4:  164:    COORDENADA *naoVisitados = devolveNaoVisitados(visited, t->l, t->c, length);
-        4:  165:    if (escreve)
-    #####:  166:        printf("Por exemplo, começando da casa (%c%d) não existe um caminho ortogonal que passe nas casas:\n", colunaI + 'a', linhaI + 1);
-       18:  167:    for (int i = 0; i < length; i++)
-        -:  168:    {
-       14:  169:        if (escreve)
-    #####:  170:            printf("  - Coluna: %c, Linha: %d\n", naoVisitados[i]->c + 'a', naoVisitados[i]->l + 1);
-       14:  171:        free(naoVisitados[i]);
-        -:  172:    }
-        4:  173:    free(naoVisitados);
-        4:  174:}
-        -:  175:
-       12:  176:bool trataCaminhoOrtogonal(TABELA t, int *contaRestricoes, bool *temRestricoes, bool escreve)
-        -:  177:{
-       12:  178:    CQUEUE queue = malloc(sizeof(struct CQueue));
-       12:  179:    initQueue(queue);
-        -:  180:
-       12:  181:    COORDENADA inicial = devolvePrimeroNRiscado(t);
-       12:  182:    if (inicial == NULL)
-        -:  183:    {
-    #####:  184:        free(queue->list);
-    #####:  185:        free(queue);
-    #####:  186:        return true;
-        -:  187:    }
-       12:  188:    int linhaI = inicial->l;
-       12:  189:    int colunaI = inicial->c;
-        -:  190:
-       12:  191:    COORDENADA *primeiro = malloc(sizeof(COORDENADA)); // Array do com o primeiro elemento a queue já ter elementos antes de se chamar existeCaminhoOrtogonal
-       12:  192:    primeiro[0] = inicial;
-       12:  193:    insertQueue(queue, primeiro, 1);
-        -:  194:
-       12:  195:    int count = 0;
-       12:  196:    int **visited = initVisited(t, &count);
-       12:  197:    if (!existeCaminhoOrtogonal(queue, t, visited, &count))
-        -:  198:    {
-        4:  199:        escreveInexistenciaCaminho(temRestricoes, escreve, contaRestricoes, t, visited, colunaI, linhaI, count);
-        -:  200:    }
-        -:  201:
-       12:  202:    free(primeiro);
-       44:  203:    for (int i = 0; i < t->l; i++)
-       32:  204:        free(visited[i]);
-       12:  205:    free(visited);
-        -:  206:
-       12:  207:    free(queue->list);
-       12:  208:    free(queue);
-        -:  209:
-       12:  210:    return true;
-        -:  211:}
+        -:    6:#include "../colors.h"
+        -:    7:
+        -:    8:// Função que dada uma tabela a percorre por ordem de linhas e colunas até encontrar o primeiro elemento que não estiver riscado, o qual vai ser utilizado para o bfs e devolve esse elemento como uma coordenada
+        7:    9:COORDENADA devolvePrimeroNRiscado(TABELA t)
+        -:   10:{
+        7:   11:    int i = 0;
+       10:   12:    while (i < (t->c * t->l) && t->tabela[i / t->c][i % t->c] == '#')
+        3:   13:        i++;
+        7:   14:    if (i >= t->c * t->l)
+        -:   15:        return NULL;
+        7:   16:    COORDENADA pos = malloc(sizeof(struct Coordenada));
+        7:   17:    pos->l = i / t->c;
+        7:   18:    pos->c = i % t->c;
+        7:   19:    return pos;
+        -:   20:}
+        -:   21:
+        -:   22:// Função que inicializa o array de visitados com 0 exceto nas casas que estão riscas (0 -> não visitado, 1 -> visitado)
+        8:   23:int **initVisited(TABELA t, int *count) // Count conta o número de casas visitadas
+        -:   24:{
+        8:   25:    int **visited = malloc(sizeof(int *) * t->l);
+       30:   26:    for (int i = 0; i < t->l; i++)
+        -:   27:    {
+       22:   28:        visited[i] = malloc(sizeof(int) * t->c);
+       84:   29:        for (int j = 0; j < t->c; j++)
+       62:   30:            if (t->tabela[i][j] == '#')
+        -:   31:            {
+        9:   32:                visited[i][j] = 1;
+        9:   33:                (*count)++; // Atualiza o número de casas visitadas
+        -:   34:            }
+        -:   35:            else
+       53:   36:                visited[i][j] = 0;
+        -:   37:    }
+        8:   38:    return visited;
+        -:   39:}
+        -:   40:
+        9:   41:void initQueue(CQUEUE q)
+        -:   42:{
+        9:   43:    q->capacidade = 3;
+        9:   44:    q->tamanho = 0;
+        9:   45:    q->front = 0;
+        9:   46:    q->list = malloc(sizeof(COORDENADA) * q->capacidade);
+        9:   47:}
+        -:   48:
+        -:   49:// Função responsável por inserir um array de coordenadas na queue
+       47:   50:int insertQueue(CQUEUE q, COORDENADA *coordenadas, int coordSize)
+        -:   51:{
+       47:   52:    if (coordSize < 1)
+        -:   53:        return 1;
+       28:   54:    int tam = q->tamanho + coordSize;
+       28:   55:    if (tam >= q->capacidade)
+        -:   56:    {
+        -:   57:        int oldCapacity = q->capacidade;
+        6:   58:        while (tam >= q->capacidade)
+        3:   59:            q->capacidade = q->capacidade == 0 ? 1 : q->capacidade * 2; // aumenta a capacidade até ter espaço para os novos elementos
+        3:   60:        COORDENADA *temp = realloc(q->list, sizeof(COORDENADA) * q->capacidade);
+        3:   61:        if (temp == NULL)
+        -:   62:        {
+        -:   63:            return 0;
+        -:   64:        }
+        3:   65:        q->list = temp;
+        3:   66:        int end = q->front + q->tamanho;
+        3:   67:        if (end > oldCapacity)
+    #####:   68:            for (int i = 0; i < end % oldCapacity; i++)
+    #####:   69:                q->list[i + oldCapacity] = q->list[i]; // volta a colocar a queue direita
+        -:   70:    }
+       69:   71:    for (int i = 0; i < coordSize; i++)
+        -:   72:    {
+       41:   73:        q->list[(q->front + q->tamanho) % q->capacidade] = coordenadas[i];
+       41:   74:        q->tamanho++;
+        -:   75:    }
+        -:   76:    return 1;
+        -:   77:}
+        -:   78:
+        -:   79:// Função que remove o elemento da frente da queue
+       39:   80:void deleteQueue(CQUEUE q, COORDENADA *pos)
+        -:   81:{
+       39:   82:    if (q->tamanho == 0)
+        -:   83:        return;
+        -:   84:    // retira o elemento da frente, mas não o free — é mais tarde na existeCaminhoOrtogonal
+       39:   85:    COORDENADA temp = q->list[q->front];
+       39:   86:    *pos = temp;
+       39:   87:    q->list[q->front] = NULL;
+       39:   88:    q->front = (q->front + 1) % q->capacidade;
+       39:   89:    q->tamanho--;
+        -:   90:}
+        -:   91:
+        -:   92:// Função que dado uma lista de visitados devolve um array com as posições que não foram visitadas
+        2:   93:COORDENADA *devolveNaoVisitados(int **visited, int l, int c, int length)
+        -:   94:{
+        2:   95:    COORDENADA *naoVisitados = malloc(sizeof(COORDENADA) * length);
+        2:   96:    int cont = 0;
+        7:   97:    for (int i = 0; i < l; i++)
+        -:   98:    {
+       18:   99:        for (int j = 0; j < c; j++)
+        -:  100:        {
+       13:  101:            if (visited[i][j] == 0)
+        -:  102:            {
+        7:  103:                COORDENADA pos = malloc(sizeof(struct Coordenada));
+        7:  104:                pos->l = i;
+        7:  105:                pos->c = j;
+        7:  106:                naoVisitados[cont++] = pos;
+        -:  107:            }
+        -:  108:        }
+        -:  109:    }
+        2:  110:    return naoVisitados;
+        -:  111:}
+        -:  112:
+        -:  113:// Algoritmo de procura em largura
+        7:  114:int existeCaminhoOrtogonal(CQUEUE q, TABELA t, int **visited, int *count)
+        -:  115:{
+        7:  116:    int direcoes[4][2] = {
+        -:  117:        {-1, 0}, // Cima
+        -:  118:        {1, 0},  // Baixo
+        -:  119:        {0, -1}, // Esquerda
+        -:  120:        {0, 1}   // Direita
+        -:  121:    };
+       45:  122:    while (q->tamanho > 0)
+        -:  123:    {
+       38:  124:        COORDENADA atual = NULL;
+       38:  125:        deleteQueue(q, &atual); // passa o endereço de 'atual' (COORDENADA*) -> e pegamos no elemento que esta na frente da fila
+        -:  126:
+       38:  127:        visited[atual->l][atual->c] = 1; // Visitamos a atual;
+       38:  128:        (*count)++;
+       38:  129:        int numeroVizinhosValidos = 0;
+       38:  130:        COORDENADA *vizinhos = malloc(4 * sizeof(COORDENADA)); // no máximo existem 4 vizinhos válidos
+      190:  131:        for (int i = 0; i < 4; i++)
+        -:  132:        {
+      152:  133:            int linha = direcoes[i][0] + atual->l;
+      152:  134:            int coluna = direcoes[i][1] + atual->c;
+        -:  135:
+      152:  136:            if (dentroDosLimites(t, linha, coluna) && visited[linha][coluna] == 0)
+        -:  137:            {
+       31:  138:                COORDENADA pos = malloc(sizeof(struct Coordenada));
+       31:  139:                pos->l = linha;
+       31:  140:                pos->c = coluna;
+       31:  141:                vizinhos[numeroVizinhosValidos] = pos;
+       31:  142:                visited[linha][coluna] = 1; // Tenho que marcar aqui para que nas proximas iterações ja se saiba que esta já esta na queue não voltar a entrar
+       31:  143:                numeroVizinhosValidos++;
+        -:  144:            }
+        -:  145:        }
+       38:  146:        insertQueue(q, vizinhos, numeroVizinhosValidos); // já trata do caso de não ter qualquer elemento
+       38:  147:        free(atual);
+       38:  148:        free(vizinhos);
+        -:  149:    }
+        7:  150:    if (*count == t->c * t->l)
+        5:  151:        return 1;
+        -:  152:    return 0;
+        -:  153:}
+        -:  154:
+        2:  155:void escreveInexistenciaCaminho(bool *temRestricoes, bool escreve, int *contaRestricoes, TABELA t, int **visited, int colunaI, int linhaI, int count)
+        -:  156:{
+        2:  157:    *temRestricoes = true;
+        2:  158:    if (escreve)
+        -:  159:    {
+    #####:  160:        printf("\n---- Restrição nº %d ----\n", *contaRestricoes + 1);
+    #####:  161:        printf("Não existe um caminho ortogonal entre todas as casas que não estão riscadas\n");
+        -:  162:    }
+        2:  163:    (*contaRestricoes)++;
+        2:  164:    int length = t->c * t->l - count;
+        2:  165:    COORDENADA *naoVisitados = devolveNaoVisitados(visited, t->l, t->c, length);
+        2:  166:    if (escreve)
+    #####:  167:        printf("Por exemplo, começando da casa (%c%d) não existe um caminho ortogonal que passe nas casas:\n", colunaI + 'a', linhaI + 1);
+        9:  168:    for (int i = 0; i < length; i++)
+        -:  169:    {
+        7:  170:        if (escreve)
+    #####:  171:            printf("  - Coluna: %c, Linha: %d\n", naoVisitados[i]->c + 'a', naoVisitados[i]->l + 1);
+        7:  172:        free(naoVisitados[i]);
+        -:  173:    }
+        2:  174:    free(naoVisitados);
+        2:  175:}
+        -:  176:
+        6:  177:bool trataCaminhoOrtogonal(TABELA t, int *contaRestricoes, bool *temRestricoes, bool escreve)
+        -:  178:{
+        6:  179:    CQUEUE queue = malloc(sizeof(struct CQueue));
+        6:  180:    initQueue(queue);
+        -:  181:
+        6:  182:    COORDENADA inicial = devolvePrimeroNRiscado(t);
+        6:  183:    if (inicial == NULL)
+        -:  184:    {
+    #####:  185:        free(queue->list);
+    #####:  186:        free(queue);
+    #####:  187:        return true;
+        -:  188:    }
+        6:  189:    int linhaI = inicial->l;
+        6:  190:    int colunaI = inicial->c;
+        -:  191:
+        6:  192:    COORDENADA *primeiro = malloc(sizeof(COORDENADA)); // Array do com o primeiro elemento a queue já ter elementos antes de se chamar existeCaminhoOrtogonal
+        6:  193:    primeiro[0] = inicial;
+        6:  194:    insertQueue(queue, primeiro, 1);
+        -:  195:
+        6:  196:    int count = 0;
+        6:  197:    int **visited = initVisited(t, &count);
+        6:  198:    if (!existeCaminhoOrtogonal(queue, t, visited, &count))
+        -:  199:    {
+        2:  200:        escreveInexistenciaCaminho(temRestricoes, escreve, contaRestricoes, t, visited, colunaI, linhaI, count);
+        -:  201:    }
+        -:  202:
+        6:  203:    free(primeiro);
+       22:  204:    for (int i = 0; i < t->l; i++)
+       16:  205:        free(visited[i]);
+        6:  206:    free(visited);
+        -:  207:
+        6:  208:    free(queue->list);
+        6:  209:    free(queue);
+        -:  210:
+        6:  211:    return true;
+        -:  212:}

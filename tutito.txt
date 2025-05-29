@@ -1,18 +1,22 @@
-5 5
-ecadc
-dcdec
-bddce
-cdeeb
-accbb
-5 5
-ecadc
-dcdec
-bddce
-#deeb
-accbb
-5 5
-E#ADC
-DC#E#
-B#DCE
-CDE#B
-A#CB#
+10 10
+bcdeefcgic
+hfeciebhje
+ejfheidceb
+ibhbgaajcc
+dibdcdgadh
+dhjgjeajfh
+egeihbifda
+gbifahbeac
+babifbebhb
+hdajdgdief
+10 10
+BCD#EF#GI#
+#F#CI#BHJE
+EJFH#IDC#B
+I#HBGA#JC#
+#IB#C#GADH
+DH#GJEA#F#
+#GE#H#IF#A
+GBIF#H#EAC
+#A#IFBE#H#
+HDAJ#G#IEF
