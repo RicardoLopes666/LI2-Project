@@ -72,7 +72,7 @@ void test_riscaLetrasRepetidas()
     // Configura a tabela original com letras repetidas
     t->tabela[0][0] = 'A';
     t->tabela[0][1] = 'a'; // Repetição na linha
-    t->tabela[1][0] = 'A'; // Repetição na coluna
+    t->tabela[1][0] = 'a'; // Repetição na coluna
 
     bool changed = false;
 

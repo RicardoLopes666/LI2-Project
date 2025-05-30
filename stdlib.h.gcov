@@ -1,7 +1,7 @@
         -:    0:Source:/usr/include/stdlib.h
         -:    0:Graph:parte1/parte1.gcno
         -:    0:Data:parte1/parte1.gcda
-        -:    0:Runs:1
+        -:    0:Runs:6
         -:    1:/* Copyright (C) 1991-2024 Free Software Foundation, Inc.
         -:    2:   Copyright The GNU Toolchain Authors.
         -:    3:   This file is part of the GNU C Library.
@@ -482,9 +482,9 @@
         -:  478:
         -:  479:#ifdef __USE_EXTERN_INLINES
         -:  480:__extern_inline int
-        2:  481:__NTH (atoi (const char *__nptr))
+       12:  481:__NTH (atoi (const char *__nptr))
         -:  482:{
-        2:  483:  return (int) strtol (__nptr, (char **) NULL, 10);
+       12:  483:  return (int) strtol (__nptr, (char **) NULL, 10);
         -:  484:}
         -:  485:__extern_inline long int
         -:  486:__NTH (atol (const char *__nptr))
