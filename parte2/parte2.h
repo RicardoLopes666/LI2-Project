@@ -11,8 +11,6 @@ bool deleteTabela(GAME *game);
 
 TABELA copiarTabela(TABELA t);
 
-void freeTabela(TABELA t);
-
 void d(GAME *game, bool *comandoProcessado);
 
 void u(GAME *game, bool *comandoProcessado);
