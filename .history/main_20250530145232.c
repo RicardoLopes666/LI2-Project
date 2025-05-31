@@ -7,21 +7,29 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <string.h>
+#include <readline/readline.h> //Para se usar o readline e permitir voltar atrás com as setas
+#include <readline/history.h>
 
 void leArgumentosEValida(char *line, char *cmd, char *arg, char *resto, bool *continuar, GAME *game, int *num_args)
 {
-    printf("> ");
-    if (fgets(line, LINE_SIZE, stdin) == NULL)
+    line = readline("> ");
+    if (line == NULL)
     {
         (*game).estado.looping = false;
         *continuar = false;
     }
+    else
+        add_history(line);
 
-    if (*continuar && line[strlen(line) - 1] != '\n')
+    if (*continuar && line[strlen(line)] != '\0')
     {
+        printf("Fiquei nul");
         *continuar = false;
     }
+
     *num_args = sscanf(line, "%s %s %[^\n]", cmd, arg, resto);
+    free(line);
+
     if (*continuar && strlen(cmd) != 1)
     {
         fprintf(stderr, "%sErro: comando %s não é válido!%s\n", ERROR_COLOR, cmd, RESET);
@@ -247,6 +255,7 @@ void desenhaBemVindo()
 int main()
 {
     desenhaBemVindo();
+    using_history(); // Função para iniciar o historico das linha que imprimimos
     GAME game;
     game.estado.looping = true;
     game.solution = NULL;
@@ -304,6 +313,7 @@ int main()
     }
 
     libertaMemoria(game);
+    clear_history();
 
     return 0;
 }

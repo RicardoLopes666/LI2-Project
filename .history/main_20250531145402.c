@@ -21,7 +21,9 @@ void leArgumentosEValida(char *line, char *cmd, char *arg, char *resto, bool *co
     {
         *continuar = false;
     }
+    printf("%s\n", line);
     *num_args = sscanf(line, "%s %s %[^\n]", cmd, arg, resto);
+    printf("%s %s %s", cmd, arg, resto);
     if (*continuar && strlen(cmd) != 1)
     {
         fprintf(stderr, "%sErro: comando %s não é válido!%s\n", ERROR_COLOR, cmd, RESET);

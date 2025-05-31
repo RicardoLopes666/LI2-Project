@@ -10,18 +10,19 @@
 
 void leArgumentosEValida(char *line, char *cmd, char *arg, char *resto, bool *continuar, GAME *game, int *num_args)
 {
-    printf("> ");
-    if (fgets(line, LINE_SIZE, stdin) == NULL)
+    if (scanf("%s", line) != 1)
     {
         (*game).estado.looping = false;
         *continuar = false;
     }
 
-    if (*continuar && line[strlen(line) - 1] != '\n')
+    if (*continuar && line[strlen(line)] != '\0')
     {
         *continuar = false;
     }
+
     *num_args = sscanf(line, "%s %s %[^\n]", cmd, arg, resto);
+
     if (*continuar && strlen(cmd) != 1)
     {
         fprintf(stderr, "%sErro: comando %s não é válido!%s\n", ERROR_COLOR, cmd, RESET);
@@ -247,6 +248,7 @@ void desenhaBemVindo()
 int main()
 {
     desenhaBemVindo();
+    using_history(); // Função para iniciar o historico das linha que imprimimos
     GAME game;
     game.estado.looping = true;
     game.solution = NULL;
@@ -304,6 +306,7 @@ int main()
     }
 
     libertaMemoria(game);
+    clear_history();
 
     return 0;
 }

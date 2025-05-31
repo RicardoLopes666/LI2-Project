@@ -1,7 +1,7 @@
         -:    0:Source:/usr/include/x86_64-linux-gnu/bits/stdio2.h
         -:    0:Graph:parte4/parte4.gcno
         -:    0:Data:parte4/parte4.gcda
-        -:    0:Runs:6
+        -:    0:Runs:10
         -:    1:/* Checking macros for stdio functions.
         -:    2:   Copyright (C) 2004-2024 Free Software Foundation, Inc.
         -:    3:   This file is part of the GNU C Library.
@@ -85,9 +85,9 @@
         -:   81:}
         -:   82:
         -:   83:__fortify_function int
-       49:   84:printf (const char *__restrict __fmt, ...)
+       85:   84:printf (const char *__restrict __fmt, ...)
         -:   85:{
-       49:   86:  return __printf_chk (__USE_FORTIFY_LEVEL - 1, __fmt, __va_arg_pack ());
+       85:   86:  return __printf_chk (__USE_FORTIFY_LEVEL - 1, __fmt, __va_arg_pack ());
         -:   87:}
         -:   88:# elif !defined __cplusplus
         -:   89:#  define printf(...) \
