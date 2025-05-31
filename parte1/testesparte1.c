@@ -6,6 +6,7 @@
 #include <ctype.h>
 #include "parte1.h"
 #include "../parte2/parte2.h"
+#define LINE_SIZE 1024
 
 // Testa a função pintarBranco
 void test_pintarBranco(void)

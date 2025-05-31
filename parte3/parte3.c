@@ -11,8 +11,13 @@
 COORDENADA devolvePrimeiroNRiscado(TABELA t)
 {
     int i = 0;
+<<<<<<< HEAD
+    while (i < (t->c * t->l) && t->tabela[i / t->c][i % t->c] == '#') // i / t->c: Calcula a linha correspondente ao índice i.
+                                                                      // i % t->c: Calcula a coluna correspondente ao índice i
+=======
     // Percorre a tabela até encontrar uma casa não riscada ('#')
     while (i < (t->c * t->l) && t->tabela[i / t->c][i % t->c] == '#')
+>>>>>>> main
         i++;
     if (i >= t->c * t->l) // Se todas as casas estão riscadas, retorna NULL
         return NULL;
