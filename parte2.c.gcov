@@ -9,271 +9,294 @@
         -:    5:#include <ctype.h> // Para usar a função isupper
         -:    6:#include <stdio.h>
         -:    7:#include "../parte3/parte3.h"
-        -:    8:
-        -:    9:// _________ Funções utilizadas para voltar atrás -> comando 'd' ____________
-        -:   10:
-       36:   11:bool initStackTabs(STACKTABS s)
-        -:   12:{
-       36:   13:    s->capacidade = 3;
-       36:   14:    s->comprimento = 0;
-       36:   15:    s->tabelas = malloc(sizeof(TABELA) * 3);
-       36:   16:    if (s->tabelas == NULL)
-    #####:   17:        return false;
-        -:   18:    return true;
-        -:   19:}
-        -:   20:
-        -:   21:// Função que insere uma tabela ao array de tabelas
-       18:   22:bool insereTabela(STACKTABS s, TABELA tab)
-        -:   23:{
-       18:   24:    if (s->comprimento >= s->capacidade)
-        -:   25:    {
-    #####:   26:        s->capacidade = s->capacidade == 0 ? 1 : 2 * s->capacidade;
-    #####:   27:        TABELA *new;
-    #####:   28:        new = realloc(s->tabelas, s->capacidade * sizeof(TABELA));
-    #####:   29:        if (new == NULL)
-        -:   30:            return false;
-    #####:   31:        s->tabelas = new;
+        -:    8:#include "../colors.h"
+        -:    9:
+        -:   10:// _________ Funções utilizadas para voltar atrás -> comando 'd' ____________
+        -:   11:
+       36:   12:bool initStackTabs(STACKTABS s)
+        -:   13:{
+       36:   14:    s->capacidade = 3;
+       36:   15:    s->indice = 0;
+       36:   16:    s->comprimento = 0;
+       36:   17:    s->tabelas = malloc(sizeof(TABELA) * 3);
+       36:   18:    if (s->tabelas == NULL)
+    #####:   19:        return false;
+        -:   20:    return true;
+        -:   21:}
+        -:   22:
+        -:   23:// Função que insere uma tabela ao array de tabelas
+       18:   24:bool insereTabela(STACKTABS s, TABELA tab)
+        -:   25:{
+       18:   26:    if (s->indice < s->comprimento) // Neste caso tem de se que dar free das tabela que estão para a frente e adicionar a nova tabela
+        -:   27:    {
+    #####:   28:        for (int i = s->indice; i < s->comprimento; i++)
+    #####:   29:            freeTabela(s->tabelas[i]);
+        -:   30:
+    #####:   31:        s->comprimento = s->indice;
         -:   32:    }
-       18:   33:    s->tabelas[s->comprimento++] = tab;
-       18:   34:    return true;
-        -:   35:}
-        -:   36:
-        -:   37:TABELA copiarTabela(TABELA t); // Para poder usar em deleteTabela
-        -:   38:
-        4:   39:bool deleteTabela(GAME *game)
-        -:   40:{
-        4:   41:    if (game->stackTabs->comprimento <= 1) // Dá erro se tentar eliminar a tabela inicial
-        -:   42:        return false;
-        2:   43:    freeTabela(game->stackTabs->tabelas[--game->stackTabs->comprimento]); // Liberta o espaço da tabela
-        2:   44:    freeTabela(game->tab);
-        2:   45:    game->tab = copiarTabela(game->stackTabs->tabelas[game->stackTabs->comprimento - 1]);
-        2:   46:    return true;
-        -:   47:}
-        -:   48:
-        -:   49:// Função que faz uma cópia do elementos de uma tabela para uma outra criada com malloc e devolve o novo endereço
-       14:   50:TABELA copiarTabela(TABELA t)
-        -:   51:{
-       14:   52:    TABELA new = malloc(sizeof(struct Tabela));
-       14:   53:    if (new == NULL)
-        -:   54:    {
-        -:   55:        return NULL;
-        -:   56:    }
-       14:   57:    new->c = t->c;
-       14:   58:    new->l = t->l;
-       14:   59:    new->tabela = malloc(t->l * sizeof(char *));
-       14:   60:    if (new->tabela == NULL)
-        -:   61:    {
-    #####:   62:        free(new);
-    #####:   63:        return NULL;
-        -:   64:    }
-       40:   65:    for (int i = 0; i < t->l; i++)
-        -:   66:    {
-       26:   67:        new->tabela[i] = malloc((t->c + 1) * sizeof(char)); // + 1 para colocar o '\0'
-       26:   68:        if (new->tabela[i] == NULL)
-        -:   69:        {
-    #####:   70:            for (int j = 0; j < i; j++)
-        -:   71:            {
-    #####:   72:                free(new->tabela[j]);
-        -:   73:            }
-    #####:   74:            free(new->tabela);
-    #####:   75:            free(new);
-    #####:   76:            return NULL;
-        -:   77:        }
-      106:   78:        for (int j = 0; j <= t->c; j++)
+        -:   33:
+       18:   34:    else if (s->comprimento >= s->capacidade)
+        -:   35:    {
+    #####:   36:        s->capacidade = s->capacidade == 0 ? 1 : 2 * s->capacidade;
+    #####:   37:        TABELA *new;
+    #####:   38:        new = realloc(s->tabelas, s->capacidade * sizeof(TABELA));
+    #####:   39:        if (new == NULL)
+        -:   40:            return false;
+    #####:   41:        s->tabelas = new;
+        -:   42:    }
+       18:   43:    s->tabelas[s->comprimento++] = tab;
+       18:   44:    s->indice++;
+       18:   45:    return true;
+        -:   46:}
+        -:   47:
+        -:   48:TABELA copiarTabela(TABELA t); // Para poder usar em deleteTabela
+        -:   49:
+        4:   50:bool deleteTabela(GAME *game)
+        -:   51:{                                                                         // Apenas se reduz o indice caso possivel
+        4:   52:    if (game->stackTabs->comprimento <= 1 || game->stackTabs->indice < 2) // Dá erro se tentar eliminar a tabela inicial
+        -:   53:        return false;
+        2:   54:    freeTabela(game->tab);
+        2:   55:    game->tab = copiarTabela(game->stackTabs->tabelas[game->stackTabs->indice-- - 2]);
+        2:   56:    return true;
+        -:   57:}
+        -:   58:
+        -:   59:// Função que faz uma cópia do elementos de uma tabela para uma outra criada com malloc e devolve o novo endereço
+       40:   60:TABELA copiarTabela(TABELA t)
+        -:   61:{
+       40:   62:    TABELA new = malloc(sizeof(struct Tabela));
+       40:   63:    if (new == NULL)
+        -:   64:    {
+        -:   65:        return NULL;
+        -:   66:    }
+       40:   67:    new->c = t->c;
+       40:   68:    new->l = t->l;
+       40:   69:    new->tabela = malloc(t->l * sizeof(char *));
+       40:   70:    if (new->tabela == NULL)
+        -:   71:    {
+    #####:   72:        free(new);
+    #####:   73:        return NULL;
+        -:   74:    }
+      130:   75:    for (int i = 0; i < t->l; i++)
+        -:   76:    {
+       90:   77:        new->tabela[i] = malloc((t->c + 1) * sizeof(char)); // + 1 para colocar o '\0'
+       90:   78:        if (new->tabela[i] == NULL)
         -:   79:        {
-       80:   80:            if (j == t->c)
-       26:   81:                new->tabela[i][j] = '\0';
-        -:   82:            else
-       54:   83:                new->tabela[i][j] = t->tabela[i][j];
-        -:   84:        }
-        -:   85:    }
-        -:   86:    return new;
-        -:   87:}
-        -:   88:
-        -:   89:// Liberta a memória alocada para a lista de tabuleiros
-       36:   90:void freeStackTabs(STACKTABS s)
-        -:   91:{
-       36:   92:    if (s != NULL)
-        -:   93:    {
-       52:   94:        for (int i = 0; i < s->comprimento; i++)
-        -:   95:        {
-       16:   96:            freeTabela(s->tabelas[i]);
-        -:   97:        }
-       36:   98:        free(s->tabelas);
-       36:   99:        free(s);
-        -:  100:    }
-       36:  101:}
-        -:  102:
-    #####:  103:void d(GAME *game, bool *comandoProcessado)
-        -:  104:{
-    #####:  105:    if (!deleteTabela(game))
-        -:  106:    {
-    #####:  107:        fprintf(stderr, "Erro: não existem tabuleiros anteriores\n");
-        -:  108:    }
-        -:  109:    else
-    #####:  110:        *comandoProcessado = true;
-    #####:  111:}
+    #####:   80:            for (int j = 0; j < i; j++)
+        -:   81:            {
+    #####:   82:                free(new->tabela[j]);
+        -:   83:            }
+    #####:   84:            free(new->tabela);
+    #####:   85:            free(new);
+    #####:   86:            return NULL;
+        -:   87:        }
+      398:   88:        for (int j = 0; j <= t->c; j++)
+        -:   89:        {
+      308:   90:            if (j == t->c)
+       90:   91:                new->tabela[i][j] = '\0';
+        -:   92:            else
+      218:   93:                new->tabela[i][j] = t->tabela[i][j];
+        -:   94:        }
+        -:   95:    }
+        -:   96:    return new;
+        -:   97:}
+        -:   98:
+        -:   99:// Liberta a memória alocada para a lista de tabuleiros
+       36:  100:void freeStackTabs(STACKTABS s)
+        -:  101:{
+       36:  102:    if (s != NULL)
+        -:  103:    {
+       54:  104:        for (int i = 0; i < s->comprimento; i++)
+        -:  105:        {
+       18:  106:            freeTabela(s->tabelas[i]);
+        -:  107:        }
+       36:  108:        free(s->tabelas);
+       36:  109:        free(s);
+        -:  110:    }
+       36:  111:}
         -:  112:
-        -:  113:// _____ Funçãoes utilizadas para verificar as restrições -> comando 'v'______
-        -:  114:
-        -:  115:// Função auxiliar para verificar se uma célula está dentro dos limites do tabuleiro
-      156:  116:bool dentroDosLimites(TABELA t, int linha, int coluna)
-        -:  117:{
-      156:  118:    return linha >= 0 && linha < t->l && coluna >= 0 && coluna < t->c;
-        -:  119:}
-        -:  120:
-        -:  121:// Função que verifica a vizinhança de uma casa riscada e caso tenha alguma casa riscada conta como restrição
-        -:  122:// Retorna o número de restrições violadas e preenche o array `restricoes` com as coordenadas
-        4:  123:int verificaRiscadaVizinhasBrancas(TABELA t, int linha, int coluna, int restricoes[][2])
-        -:  124:{
-        4:  125:    if (!dentroDosLimites(t, linha, coluna) || t->tabela[linha][coluna] != '#')
-        -:  126:    {
-        -:  127:        return 0; // A célula não é uma casa riscada
-        -:  128:    }
-        -:  129:
-        4:  130:    int direcoes[4][2] = {
-        -:  131:        {-1, 0}, // Cima
-        -:  132:        {1, 0},  // Baixo
-        -:  133:        {0, -1}, // Esquerda
-        -:  134:        {0, 1}   // Direita
-        -:  135:    };
-        -:  136:
-        4:  137:    int count = 0; // Contador de restrições violadas
-        -:  138:
-       20:  139:    for (int i = 0; i < 4; i++)
-        -:  140:    {
-       16:  141:        int novaLinha = linha + direcoes[i][0];
-       16:  142:        int novaColuna = coluna + direcoes[i][1];
+    #####:  113:void u(GAME *game, bool *comandoProcessado)
+        -:  114:{
+    #####:  115:    if (game->stackTabs->indice >= game->stackTabs->comprimento)
+    #####:  116:        fprintf(stderr, "%sErro: Não existem tabuleiros mais para a frente%s\n", ERROR_COLOR, RESET);
+        -:  117:    else
+        -:  118:    {
+    #####:  119:        freeTabela(game->tab);
+    #####:  120:        game->tab = copiarTabela(game->stackTabs->tabelas[game->stackTabs->indice++]);
+        -:  121:    }
+        -:  122:
+    #####:  123:    *comandoProcessado = true;
+    #####:  124:}
+        -:  125:
+    #####:  126:void d(GAME *game, bool *comandoProcessado)
+        -:  127:{
+    #####:  128:    if (!deleteTabela(game))
+        -:  129:    {
+    #####:  130:        fprintf(stderr, "%sErro: Não existem tabuleiros anteriores%s\n", ERROR_COLOR, RESET);
+        -:  131:    }
+        -:  132:
+    #####:  133:    *comandoProcessado = true;
+    #####:  134:}
+        -:  135:
+        -:  136:// _____ Funçãoes utilizadas para verificar as restrições -> comando 'v'______
+        -:  137:
+        -:  138:// Função auxiliar para verificar se uma célula está dentro dos limites do tabuleiro
+      658:  139:bool dentroDosLimites(TABELA t, int linha, int coluna)
+        -:  140:{
+      658:  141:    return linha >= 0 && linha < t->l && coluna >= 0 && coluna < t->c;
+        -:  142:}
         -:  143:
-       16:  144:        if (dentroDosLimites(t, novaLinha, novaColuna))
-        -:  145:        {
-       12:  146:            if (t->tabela[novaLinha][novaColuna] == '#')
-        -:  147:            {
-        -:  148:                // Se encontrar uma casa riscada na vizinhança, adiciona como restrição
-        2:  149:                restricoes[count][0] = novaLinha;
-        2:  150:                restricoes[count][1] = novaColuna;
-        2:  151:                count++;
-        -:  152:            }
-        -:  153:        }
-        -:  154:    }
-        -:  155:
-        -:  156:    return count; // Retorna o número de restrições violadas
-        -:  157:}
-        -:  158:
-        -:  159:// Função que verifica se existem duas casas brancas iguais na mesma linha ou coluna
-        4:  160:bool verificaLetraIgualLinhaColuna(TABELA t, int linha, int coluna)
-        -:  161:{
-        4:  162:    if (!dentroDosLimites(t, linha, coluna) || !isupper(t->tabela[linha][coluna]))
+        -:  144:// Função que verifica a vizinhança de uma casa riscada e caso tenha alguma casa riscada conta como restrição
+        -:  145:// Retorna o número de restrições violadas e preenche o array `restricoes` com as coordenadas
+        8:  146:int verificaRiscadaVizinhasBrancas(TABELA t, int linha, int coluna, int restricoes[][2])
+        -:  147:{
+        8:  148:    if (!dentroDosLimites(t, linha, coluna) || t->tabela[linha][coluna] != '#')
+        -:  149:    {
+        -:  150:        return 0; // A célula não é uma casa riscada
+        -:  151:    }
+        -:  152:
+        8:  153:    int direcoes[4][2] = {
+        -:  154:        {-1, 0}, // Cima
+        -:  155:        {1, 0},  // Baixo
+        -:  156:        {0, -1}, // Esquerda
+        -:  157:        {0, 1}   // Direita
+        -:  158:    };
+        -:  159:
+        8:  160:    int count = 0; // Contador de restrições violadas
+        -:  161:
+       40:  162:    for (int i = 0; i < 4; i++)
         -:  163:    {
-        -:  164:        return false; // A célula não é uma casa branca
-        -:  165:    }
+       32:  164:        int novaLinha = linha + direcoes[i][0];
+       32:  165:        int novaColuna = coluna + direcoes[i][1];
         -:  166:
-        -:  167:    char letraMaiuscula = t->tabela[linha][coluna];
-        -:  168:
-        -:  169:    // Verifica a linha
-       10:  170:    for (int j = 0; j < t->c; j++)
-        -:  171:    {
-       10:  172:        if (j != coluna && t->tabela[linha][j] == letraMaiuscula)
-        -:  173:        {
-        -:  174:            return true; // Encontrou outra casa branca igual na mesma linha
-        -:  175:        }
-        -:  176:    }
-        -:  177:
-        -:  178:    // Verifica a coluna
-    #####:  179:    for (int i = 0; i < t->l; i++)
-        -:  180:    {
-    #####:  181:        if (i != linha && t->tabela[i][coluna] == letraMaiuscula)
-        -:  182:        {
-        -:  183:            return true; // Encontrou outra casa branca igual na mesma coluna
-        -:  184:        }
-        -:  185:    }
-        -:  186:
-        -:  187:    return false; // Não encontrou casas brancas iguais na mesma linha ou coluna
-        -:  188:}
+       32:  167:        if (dentroDosLimites(t, novaLinha, novaColuna))
+        -:  168:        {
+       20:  169:            if (t->tabela[novaLinha][novaColuna] == '#')
+        -:  170:            {
+        -:  171:                // Se encontrar uma casa riscada na vizinhança, adiciona como restrição
+        2:  172:                restricoes[count][0] = novaLinha;
+        2:  173:                restricoes[count][1] = novaColuna;
+        2:  174:                count++;
+        -:  175:            }
+        -:  176:        }
+        -:  177:    }
+        -:  178:
+        -:  179:    return count; // Retorna o número de restrições violadas
+        -:  180:}
+        -:  181:
+        -:  182:// Função que verifica se existem duas casas brancas iguais na mesma linha ou coluna
+       22:  183:bool verificaLetraIgualLinhaColuna(TABELA t, int linha, int coluna)
+        -:  184:{
+       22:  185:    if (!dentroDosLimites(t, linha, coluna) || !isupper(t->tabela[linha][coluna]))
+        -:  186:    {
+        -:  187:        return false; // A célula não é uma casa branca
+        -:  188:    }
         -:  189:
-        -:  190:// Função que trata das restrições que são vistas casa a casa (colocar em branco à volta de uma riscada e avisar letras que se repetem maiusculas)
-       18:  191:void verificaRiscadasERepetidas(TABELA t, int i, int j, int *contaRestricoes, bool *temRestricoes, bool escreve)
-        -:  192:{
-        -:  193:    // Verifica restrições para casas riscadas
-       18:  194:    if (t->tabela[i][j] == '#')
-        -:  195:    {
-        2:  196:        int restricoes[4][2]; // Máximo de 4 vizinhos
-        2:  197:        int numRestricoes = verificaRiscadaVizinhasBrancas(t, i, j, restricoes);
-        -:  198:
-        2:  199:        if (numRestricoes > 0)
-        -:  200:        {
-    #####:  201:            *temRestricoes = true;
-    #####:  202:            if (escreve)
-        -:  203:            {
-    #####:  204:                printf("\n---- Restrição nº %d ----\n", *contaRestricoes + 1);
-    #####:  205:                printf("Casa riscada em (%c%d) tem restrições violadas (apenas deveria ter casas brancas na sua vizinhança) nas seguintes coordenadas:\n", 'a' + j, i + 1);
-        -:  206:
-    #####:  207:                for (int k = 0; k < numRestricoes; k++)
-        -:  208:                {
-    #####:  209:                    printf("  - Coluna: %c, Linha: %d\n", 'a' + restricoes[k][1], restricoes[k][0] + 1);
-        -:  210:                }
-        -:  211:            }
-    #####:  212:            (*contaRestricoes)++;
-        -:  213:        }
-        -:  214:    }
-        -:  215:
-        -:  216:    // Verifica restrições para casas brancas
-       18:  217:    if (isupper(t->tabela[i][j]))
+        -:  190:    char letraMaiuscula = t->tabela[linha][coluna];
+        -:  191:
+        -:  192:    // Verifica a linha
+       70:  193:    for (int j = 0; j < t->c; j++)
+        -:  194:    {
+       52:  195:        if (j != coluna && t->tabela[linha][j] == letraMaiuscula)
+        -:  196:        {
+        -:  197:            return true; // Encontrou outra casa branca igual na mesma linha
+        -:  198:        }
+        -:  199:    }
+        -:  200:
+        -:  201:    // Verifica a coluna
+       60:  202:    for (int i = 0; i < t->l; i++)
+        -:  203:    {
+       42:  204:        if (i != linha && t->tabela[i][coluna] == letraMaiuscula)
+        -:  205:        {
+        -:  206:            return true; // Encontrou outra casa branca igual na mesma coluna
+        -:  207:        }
+        -:  208:    }
+        -:  209:
+        -:  210:    return false; // Não encontrou casas brancas iguais na mesma linha ou coluna
+        -:  211:}
+        -:  212:
+        -:  213:// Função que trata das restrições que são vistas casa a casa (colocar em branco à volta de uma riscada e avisar letras que se repetem maiusculas)
+       52:  214:void verificaRiscadasERepetidas(TABELA t, int i, int j, int *contaRestricoes, bool *temRestricoes, bool escreve)
+        -:  215:{
+        -:  216:    // Verifica restrições para casas riscadas
+       52:  217:    if (t->tabela[i][j] == '#')
         -:  218:    {
-        4:  219:        if (verificaLetraIgualLinhaColuna(t, i, j))
-        -:  220:        {
-        4:  221:            *temRestricoes = true;
-        4:  222:            if (escreve)
-        -:  223:            {
-    #####:  224:                printf("\n---- Restrição nº %d ----\n", *contaRestricoes + 1);
-    #####:  225:                printf("Casa branca em (%c%d) tem restrições violadas (letra repetida na mesma linha ou coluna).\n", 'a' + j, i + 1);
-        -:  226:            }
-        4:  227:            (*contaRestricoes)++;
-        -:  228:        }
-        -:  229:    }
-       18:  230:}
-        -:  231:
-        -:  232:// Função que imprime as restrições do jogo caso estas existam
-        2:  233:bool verificaRestricoes(TABELA t, bool escreve)
-        -:  234:{
-        2:  235:    bool temRestricoes = false;
-        2:  236:    int contaRestricoes = 0;
-        -:  237:    // Percorre todas as células do tabuleiro
-        8:  238:    for (int i = 0; i < t->l; i++)
-        -:  239:    {
-       24:  240:        for (int j = 0; j < t->c; j++)
-        -:  241:        {
-        -:  242:            // Trata das restrições que são vistas casa a casa (colocar em branco à volta de uma riscada e avisar letras que se repetem maiusculas)
-       18:  243:            verificaRiscadasERepetidas(t, i, j, &contaRestricoes, &temRestricoes, escreve);
-        -:  244:        }
-        -:  245:    }
-        -:  246:
-        -:  247:    // Função que chama as funções auxiliares necessarias para verificar se existem caminhos ortogonais e trata as respetivas mensagens no terminal
-        2:  248:    if (!trataCaminhoOrtogonal(t, &contaRestricoes, &temRestricoes, escreve))
-        -:  249:    {
-        -:  250:        return false;
-        -:  251:    }
-        -:  252:
-        2:  253:    if (!temRestricoes)
-        -:  254:    {
-    #####:  255:        if (escreve)
-    #####:  256:            printf("Nenhuma restrição foi violada no tabuleiro.\n");
-        -:  257:    }
-        -:  258:
-        2:  259:    return temRestricoes;
-        -:  260:}
-        -:  261:
-    #####:  262:void v(GAME game, bool *continuar, bool *comandoProcessado)
-        -:  263:{
-    #####:  264:    if (game.tab == NULL)
-        -:  265:    {
-    #####:  266:        fprintf(stderr, "Erro: tabuleiro não carregado.\n");
-    #####:  267:        *continuar = false;
+        6:  219:        int restricoes[4][2]; // Máximo de 4 vizinhos
+        6:  220:        int numRestricoes = verificaRiscadaVizinhasBrancas(t, i, j, restricoes);
+        -:  221:
+        6:  222:        if (numRestricoes > 0)
+        -:  223:        {
+    #####:  224:            *temRestricoes = true;
+    #####:  225:            if (escreve)
+        -:  226:            {
+    #####:  227:                printf("\n%s%s---- Restrição nº %d ----%s\n", HINT_COLOR, BOLD, *contaRestricoes + 1, RESET);
+    #####:  228:                printf("Casa riscada em (%c%d) tem restrições violadas (apenas deveria ter casas brancas na sua vizinhança) nas seguintes coordenadas:\n", 'a' + j, i + 1);
+        -:  229:
+    #####:  230:                for (int k = 0; k < numRestricoes; k++)
+        -:  231:                {
+    #####:  232:                    printf("  - Coluna: %c, Linha: %d\n", 'a' + restricoes[k][1], restricoes[k][0] + 1);
+        -:  233:                }
+        -:  234:            }
+    #####:  235:            (*contaRestricoes)++;
+        -:  236:        }
+        -:  237:    }
+        -:  238:
+        -:  239:    // Verifica restrições para casas brancas
+       52:  240:    if (isupper(t->tabela[i][j]))
+        -:  241:    {
+       22:  242:        if (verificaLetraIgualLinhaColuna(t, i, j))
+        -:  243:        {
+        4:  244:            *temRestricoes = true;
+        4:  245:            if (escreve)
+        -:  246:            {
+    #####:  247:                printf("\n%s%s---- Restrição nº %d ----%s\n", HINT_COLOR, BOLD, *contaRestricoes + 1, RESET);
+    #####:  248:                printf("Casa branca em (%c%d) tem restrições violadas (letra repetida na mesma linha ou coluna).\n", 'a' + j, i + 1);
+        -:  249:            }
+        4:  250:            (*contaRestricoes)++;
+        -:  251:        }
+        -:  252:    }
+       52:  253:}
+        -:  254:
+        -:  255:// Função que imprime as restrições do jogo caso estas existam
+        8:  256:bool verificaRestricoes(TABELA t, bool escreve)
+        -:  257:{
+        8:  258:    bool temRestricoes = false;
+        8:  259:    int contaRestricoes = 0;
+        -:  260:    // Percorre todas as células do tabuleiro
+       28:  261:    for (int i = 0; i < t->l; i++)
+        -:  262:    {
+       72:  263:        for (int j = 0; j < t->c; j++)
+        -:  264:        {
+        -:  265:            // Trata das restrições que são vistas casa a casa (colocar em branco à volta de uma riscada e avisar letras que se repetem maiusculas)
+       52:  266:            verificaRiscadasERepetidas(t, i, j, &contaRestricoes, &temRestricoes, escreve);
+        -:  267:        }
         -:  268:    }
-        -:  269:    else
-        -:  270:    {
-    #####:  271:        printf("A verificar as restrições do tabuleiro...\n");
-    #####:  272:        verificaRestricoes(game.tab, true);
-    #####:  273:        *comandoProcessado = true;
+        -:  269:
+        -:  270:    // Função que chama as funções auxiliares necessarias para verificar se existem caminhos ortogonais e trata as respetivas mensagens no terminal
+        8:  271:    if (!trataCaminhoOrtogonal(t, &contaRestricoes, &temRestricoes, escreve))
+        -:  272:    {
+        -:  273:        return false;
         -:  274:    }
-    #####:  275:}
+        -:  275:
+        8:  276:    if (!temRestricoes)
+        -:  277:    {
+        6:  278:        if (escreve)
+    #####:  279:            printf("%sNenhuma restrição foi violada no tabuleiro.%s\n", GREEN, RESET);
+        -:  280:    }
+        -:  281:
+        8:  282:    return temRestricoes;
+        -:  283:}
+        -:  284:
+    #####:  285:void v(GAME game, bool *continuar, bool *comandoProcessado)
+        -:  286:{
+    #####:  287:    if (game.tab == NULL)
+        -:  288:    {
+    #####:  289:        fprintf(stderr, "%sErro: tabuleiro não carregado.%s\n", ERROR_COLOR, RESET);
+    #####:  290:        *continuar = false;
+        -:  291:    }
+        -:  292:    else
+        -:  293:    {
+    #####:  294:        printf("%sA verificar as restrições do tabuleiro...%s\n", HINT_COLOR, RESET);
+    #####:  295:        verificaRestricoes(game.tab, true);
+    #####:  296:        *comandoProcessado = true;
+        -:  297:    }
+    #####:  298:}

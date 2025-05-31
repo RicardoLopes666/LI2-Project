@@ -17,11 +17,23 @@ typedef struct StackTabs
 bool initStackTabs(STACKTABS s);
 bool insereTabela(STACKTABS s, TABELA tab);
 TABELA copiarTabela(TABELA t);
+<<<<<<< HEAD
 bool deleteTabela(GAME *game);
 void freeStackTabs(STACKTABS s);
 void d(GAME *game, bool *comandoProcessado);
 
 // Funções para verificar as restrições -> comando 'v'
+=======
+
+void d(GAME *game, bool *comandoProcessado);
+
+void u(GAME *game, bool *comandoProcessado);
+
+bool verificaLetraIgualLinhaColuna(TABELA t, int linha, int coluna);
+
+void freeStackTabs(STACKTABS s);
+
+>>>>>>> main
 bool dentroDosLimites(TABELA t, int linha, int coluna);
 int verificaRiscadaVizinhasBrancas(TABELA t, int linha, int coluna, int restricoes[][2]);
 bool verificaLetraIgualLinhaColuna(TABELA t, int linha, int coluna);

@@ -6,6 +6,8 @@
 #include "../tipos.h"
 #include <ctype.h> // Para toupper
 #include "../parte2/parte2.h"
+#include "../parte4/parte4.h"
+#include "../colors.h"
 #define LINE_SIZE 1024
 
 // Função que cria e aloca o tabuleiro com as dimensões fornecidas
@@ -61,18 +63,18 @@ bool gravar(char cmd, char *arg, GAME *game)
     {
         if (arg == NULL)
         {
-            fprintf(stderr, "Erro: o comando gravar precisa de um argumento!\n");
+            fprintf(stderr, "%sErro: o comando gravar precisa de um argumento!%s\n", ERROR_COLOR, RESET);
             return false;
         }
         if (game->tab == NULL)
         {
-            fprintf(stderr, "Erro: a tabela não deve ser nula antes de a gravar!\n");
+            fprintf(stderr, "%sErro: a tabela não deve ser nula antes de a gravar!%s\n", ERROR_COLOR, RESET);
             return false;
         }
         FILE *f = fopen(arg, "w"); // Abre o ficheiro (caso existe o que estiver lá escrito vai ser sobrescrito)
         if (f == NULL)
         {
-            fprintf(stderr, "Erro a abrir o ficheiro");
+            fprintf(stderr, "%sErro: a abrir o ficheiro%s\n", ERROR_COLOR, RESET);
             return false;
         }
         for (int i = 0; i < game->stackTabs->comprimento; i++)
@@ -108,7 +110,7 @@ bool leTabuleiro(TABELA *t, int linhas, int colunas, FILE *file)
         {
             if (fscanf(file, " %c", &(*t)->tabela[i][j]) != 1)
             {
-                fprintf(stderr, "Erro: na leitura do conteúdo do tabuleiro\n");
+                fprintf(stderr, "%sErro: na leitura do conteúdo do tabuleiro%s\n", ERROR_COLOR, RESET);
                 return false;
             }
         }
@@ -123,10 +125,20 @@ bool colocaTabelaNaStack(GAME *game, TABELA tabela)
         if (tabela)
             freeTabela(tabela);
         freeStackTabs(game->stackTabs);
-        fprintf(stderr, "Erro: na criação da stack de tabuleiros");
+        fprintf(stderr, "%sErro: na criação da stack de tabuleiros%s\n", ERROR_COLOR, RESET);
         return false;
     }
     return true;
+}
+
+void colocaSolucao(GAME *game)
+{
+    TABELA aux = resolve(game->stackTabs->tabelas[0]); // Recebe a primeira tabela carregada (em principio so com letras minusculas)
+
+    TABELA temp = game->solution;
+    game->solution = aux;
+    if (temp != NULL)
+        freeTabela(temp);
 }
 
 // Comando para ler o tabuleiro de um ficheiro
@@ -138,7 +150,7 @@ bool lerCmd(char cmd, char *arg, GAME *game)
     FILE *file = fopen(arg, "r"); // r é para leitura
     if (!file)
     {
-        fprintf(stderr, "Erro: ao abrir o ficheiro %s para leitura\n", arg);
+        fprintf(stderr, "%sErro: ao abrir o ficheiro %s para leitura%s\n", ERROR_COLOR, arg, RESET);
         return false;
     }
 
@@ -152,7 +164,7 @@ bool lerCmd(char cmd, char *arg, GAME *game)
     game->stackTabs = s;
 
     int linhas, colunas;
-    // Loop que le os vários tabuleiros enquanto o ficheiro não estiver vazio e coloca-os da stackTabs
+    // Loop que le os vários tabuleiros enquanto o ficheiro não estiver vazio e coloca-os na stackTabs
     while (fscanf(file, "%d %d", &linhas, &colunas) == 2)
     {
         TABELA t = malloc(sizeof(struct Tabela));
@@ -170,7 +182,7 @@ bool lerCmd(char cmd, char *arg, GAME *game)
     }
     if (game->stackTabs->comprimento == 0)
     {
-        printf("Erro: tabuleiro não contem nenhum tabuleiro");
+        printf("%sErro: o ficheiro não contem nenhum tabuleiro%s", ERROR_COLOR, RESET);
         fclose(file);
         return false;
     }
@@ -179,10 +191,13 @@ bool lerCmd(char cmd, char *arg, GAME *game)
     if (game->tab != NULL)
         freeTabela(game->tab);
     TABELA temp = copiarTabela(game->stackTabs->tabelas[game->stackTabs->comprimento - 1]);
+
     if (temp != NULL)
         game->tab = temp;
     else
         return false;
+    colocaSolucao(game);
+
     return true;
 }
 
@@ -197,11 +212,13 @@ bool coordenadaParaIndice(const char *coord, int *linha, int *coluna)
 }
 
 // Pinta de branco (transforma para maiuscula)
-bool pintarBranco(TABELA t, int linha, int coluna)
+bool pintarBranco(TABELA t, int linha, int coluna, TABELA p)  // p é a primeira tabela carregada
 {
     if (linha >= 0 && linha < t->l && coluna >= 0 && coluna < t->c)
     {
-        t->tabela[linha][coluna] = toupper(t->tabela[linha][coluna]);
+        if (t->tabela[linha][coluna] != '#')
+            t->tabela[linha][coluna] = toupper(t->tabela[linha][coluna]);
+        else t->tabela[linha][coluna] = toupper (p->tabela[linha][coluna]);
         return true;
     }
     return false;
@@ -218,20 +235,64 @@ bool riscar(TABELA t, int linha, int coluna)
 }
 
 // Função que mostra o tabuleiro
-void mostrarTabela(TABELA t)
+void mostrarTabela(GAME game, int isC) // isC é uma flag que se for positiva quer dizer que estou a invocar o comando c
 {
-    printf("\nEstado atual do tabuleiro:\n");
+    TABELA t = game.tab;
+    TABELA s = game.solution;
+    if (!isC)
+        printf("\n%sEstado atual do tabuleiro:%s\n", COMMAND_COLOR, RESET);
     if (t == NULL)
     {
-        printf("Tabuleiro não inicializado.\n");
+        printf("%sTabuleiro não inicializado.%s\n", ERROR_COLOR, RESET);
         return;
     }
+
+    // Desenha os headers (a, b, c, ..)
+    printf("    ");
+    for (int j = 0; j < t->c; j++)
+        printf(" %s%c%s  ", COORDINATE_COLOR, 'a' + j, RESET);
+    printf("\n");
+
+    // Desenha a primeira linha da tabela
+    printf("   ┏");
+    for (int j = 0; j < t->c; j++)
+        printf("━━━%s", (j == t->c - 1) ? "┓\n" : "┳");
+
     for (int i = 0; i < t->l; i++)
     {
+        // Escreve o numero da linha
+        printf("%s%2d%s ┃", COORDINATE_COLOR, i + 1, RESET);
+
         for (int j = 0; j < t->c; j++)
         {
-            printf("%c ", t->tabela[i][j]);
+            char cell = t->tabela[i][j];
+            int igual = t->tabela[i][j] == s->tabela[i][j];
+            if (cell == '#')
+            {
+                isC ? printf("%s # %s", igual ? CAPITAL_GREEN : CAPITAL_RED, RESET) : printf("%s # %s", HASHED_CELL, RESET);
+            }
+            else if (isupper(cell))
+            {
+                isC ? printf("%s[%c]%s", igual ? CAPITAL_GREEN : CAPITAL_RED, cell, RESET) : printf("%s[%c]%s", CAPITAL_LETTER, cell, RESET);
+            }
+            else
+                printf(" %s%c%s ", NORMAL_LETTER, cell, RESET);
+            printf("┃");
         }
         printf("\n");
+
+        if (i < t->l - 1)
+        {
+            // Desenha linha entre as diferentes linhas do tabuleiro
+            printf("   ┣");
+            for (int j = 0; j < t->c; j++)
+                printf("━━━%s", (j == t->c - 1) ? "┫\n" : "╋");
+        }
     }
+
+    // Desenha a linha inferior
+    printf("   ┗");
+    for (int j = 0; j < t->c; j++)
+        printf("━━━%s", (j == t->c - 1) ? "┛\n" : "┻");
+    printf("\n");
 }

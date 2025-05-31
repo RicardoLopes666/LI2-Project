@@ -1,5 +1,6 @@
 #include <CUnit/Basic.h>
 #include "parte2.h"
+#include "../parte1/parte1.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -24,6 +25,7 @@ void test_initStackTabs()
     CU_ASSERT_TRUE(initStackTabs(s));
     CU_ASSERT_EQUAL(s->capacidade, 3); // começa com 3
     CU_ASSERT_EQUAL(s->comprimento, 0);
+    CU_ASSERT_EQUAL(s->indice, 0);
     freeStackTabs(s);
 }
 

@@ -5,12 +5,14 @@
 #include <ctype.h> // Para usar a função isupper
 #include <stdio.h>
 #include "../parte3/parte3.h"
+#include "../colors.h"
 
 // _________ Funções utilizadas para voltar atrás -> comando 'd' ____________
 
 bool initStackTabs(STACKTABS s)
 {
     s->capacidade = 3;
+    s->indice = 0;
     s->comprimento = 0;
     s->tabelas = malloc(sizeof(TABELA) * 3);
     if (s->tabelas == NULL)
@@ -21,7 +23,15 @@ bool initStackTabs(STACKTABS s)
 // Função que insere uma tabela ao array de tabelas
 bool insereTabela(STACKTABS s, TABELA tab)
 {
-    if (s->comprimento >= s->capacidade)
+    if (s->indice < s->comprimento) // Neste caso tem de se que dar free das tabela que estão para a frente e adicionar a nova tabela
+    {
+        for (int i = s->indice; i < s->comprimento; i++)
+            freeTabela(s->tabelas[i]);
+
+        s->comprimento = s->indice;
+    }
+
+    else if (s->comprimento >= s->capacidade)
     {
         s->capacidade = s->capacidade == 0 ? 1 : 2 * s->capacidade;
         TABELA *new;
@@ -31,18 +41,18 @@ bool insereTabela(STACKTABS s, TABELA tab)
         s->tabelas = new;
     }
     s->tabelas[s->comprimento++] = tab;
+    s->indice++;
     return true;
 }
 
 TABELA copiarTabela(TABELA t); // Para poder usar em deleteTabela
 
 bool deleteTabela(GAME *game)
-{
-    if (game->stackTabs->comprimento <= 1) // Dá erro se tentar eliminar a tabela inicial
+{                                                                         // Apenas se reduz o indice caso possivel
+    if (game->stackTabs->comprimento <= 1 || game->stackTabs->indice < 2) // Dá erro se tentar eliminar a tabela inicial
         return false;
-    freeTabela(game->stackTabs->tabelas[--game->stackTabs->comprimento]); // Liberta o espaço da tabela
     freeTabela(game->tab);
-    game->tab = copiarTabela(game->stackTabs->tabelas[game->stackTabs->comprimento - 1]);
+    game->tab = copiarTabela(game->stackTabs->tabelas[game->stackTabs->indice-- - 2]);
     return true;
 }
 
@@ -100,14 +110,27 @@ void freeStackTabs(STACKTABS s)
     }
 }
 
+void u(GAME *game, bool *comandoProcessado)
+{
+    if (game->stackTabs->indice >= game->stackTabs->comprimento)
+        fprintf(stderr, "%sErro: Não existem tabuleiros mais para a frente%s\n", ERROR_COLOR, RESET);
+    else
+    {
+        freeTabela(game->tab);
+        game->tab = copiarTabela(game->stackTabs->tabelas[game->stackTabs->indice++]);
+    }
+
+    *comandoProcessado = true;
+}
+
 void d(GAME *game, bool *comandoProcessado)
 {
     if (!deleteTabela(game))
     {
-        fprintf(stderr, "Erro: não existem tabuleiros anteriores\n");
+        fprintf(stderr, "%sErro: Não existem tabuleiros anteriores%s\n", ERROR_COLOR, RESET);
     }
-    else
-        *comandoProcessado = true;
+
+    *comandoProcessado = true;
 }
 
 // _____ Funçãoes utilizadas para verificar as restrições -> comando 'v'______
@@ -201,7 +224,7 @@ void verificaRiscadasERepetidas(TABELA t, int i, int j, int *contaRestricoes, bo
             *temRestricoes = true;
             if (escreve)
             {
-                printf("\n---- Restrição nº %d ----\n", *contaRestricoes + 1);
+                printf("\n%s%s---- Restrição nº %d ----%s\n", HINT_COLOR, BOLD, *contaRestricoes + 1, RESET);
                 printf("Casa riscada em (%c%d) tem restrições violadas (apenas deveria ter casas brancas na sua vizinhança) nas seguintes coordenadas:\n", 'a' + j, i + 1);
 
                 for (int k = 0; k < numRestricoes; k++)
@@ -221,7 +244,7 @@ void verificaRiscadasERepetidas(TABELA t, int i, int j, int *contaRestricoes, bo
             *temRestricoes = true;
             if (escreve)
             {
-                printf("\n---- Restrição nº %d ----\n", *contaRestricoes + 1);
+                printf("\n%s%s---- Restrição nº %d ----%s\n", HINT_COLOR, BOLD, *contaRestricoes + 1, RESET);
                 printf("Casa branca em (%c%d) tem restrições violadas (letra repetida na mesma linha ou coluna).\n", 'a' + j, i + 1);
             }
             (*contaRestricoes)++;
@@ -253,7 +276,7 @@ bool verificaRestricoes(TABELA t, bool escreve)
     if (!temRestricoes)
     {
         if (escreve)
-            printf("Nenhuma restrição foi violada no tabuleiro.\n");
+            printf("%sNenhuma restrição foi violada no tabuleiro.%s\n", GREEN, RESET);
     }
 
     return temRestricoes;
@@ -263,12 +286,12 @@ void v(GAME game, bool *continuar, bool *comandoProcessado)
 {
     if (game.tab == NULL)
     {
-        fprintf(stderr, "Erro: tabuleiro não carregado.\n");
+        fprintf(stderr, "%sErro: tabuleiro não carregado.%s\n", ERROR_COLOR, RESET);
         *continuar = false;
     }
     else
     {
-        printf("A verificar as restrições do tabuleiro...\n");
+        printf("%sA verificar as restrições do tabuleiro...%s\n", HINT_COLOR, RESET);
         verificaRestricoes(game.tab, true);
         *comandoProcessado = true;
     }

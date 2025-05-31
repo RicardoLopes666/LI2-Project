@@ -1,15 +1,30 @@
+<<<<<<< HEAD
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <CUnit/Basic.h>
 #include "parte4.c"
+=======
+#include <CUnit/CUnit.h>
+#include <CUnit/Basic.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include "parte4.h"
+>>>>>>> main
 
 void test_verificaSeQuebraCaminho()
 {
     // Inicializa uma tabela de teste
     TABELA aux = malloc(sizeof(struct Tabela));
+<<<<<<< HEAD
     aux->l = 3; // 3 linhas
     aux->c = 3; // 3 colunas
+=======
+    aux->l = 2; // 2 linhas
+    aux->c = 2; // 2 colunas
+>>>>>>> main
     aux->tabela = malloc(aux->l * sizeof(char *));
     for (int i = 0; i < aux->l; i++)
     {
@@ -31,8 +46,14 @@ void test_verificaSeQuebraCaminho()
     CU_ASSERT_FALSE(changed);                // O valor de changed deve ser falso
 
     // Cenário 2: A célula quebra o caminho
+<<<<<<< HEAD
     aux->tabela[0][0] = 'B'; // Adiciona outra célula para criar restrições
     verificaSeQuebraCaminho(aux, 1, 1, &changed, true);
+=======
+    aux->tabela[0][1] = '#';
+    aux->tabela[1][0] = 'B'; // Adiciona outra célula para criar restrições
+    verificaSeQuebraCaminho(aux, 1, 0, &changed, true);
+>>>>>>> main
     CU_ASSERT_EQUAL(aux->tabela[1][1], 'A'); // A célula deve ser pintada de branco
     CU_ASSERT_TRUE(changed);                 // O valor de changed deve ser verdadeiro
 
@@ -69,7 +90,11 @@ void test_riscaLetrasRepetidas()
     // Configura a tabela original com letras repetidas
     t->tabela[0][0] = 'A';
     t->tabela[0][1] = 'a'; // Repetição na linha
+<<<<<<< HEAD
     t->tabela[1][0] = 'A'; // Repetição na coluna
+=======
+    t->tabela[1][0] = 'a'; // Repetição na coluna
+>>>>>>> main
 
     bool changed = false;
 

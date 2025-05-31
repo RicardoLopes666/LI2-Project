@@ -5,6 +5,7 @@
 #include "../parte2/parte2.h" // Inclui a declaração de copiarTabela e dentroDosLimites
 #include "../parte1/parte1.h"
 #include "../parte3/parte3.h"
+#include "../colors.h"
 
 // Função que deteta as casas que se riscadas impediam um caminho ortogonal entre casas e nesse caso pinta-as
 void verificaSeQuebraCaminho(TABELA aux, int l, int c, bool *changed, bool escreve)
@@ -28,13 +29,12 @@ void verificaSeQuebraCaminho(TABELA aux, int l, int c, bool *changed, bool escre
 // Função auxiliar para riscar letras repetidas na mesma linha ou coluna
 void riscaLetrasRepetidas(TABELA t, TABELA aux, int i, int j, bool escreve, bool *changed)
 {
-    char letraMaiuscula = t->tabela[i][j];
-    char letraMinuscula = tolower(letraMaiuscula);
+    char letraMinuscula = tolower(t->tabela[i][j]);
 
     // Verifica a linha
     for (int k = 0; k < t->c; k++)
     {
-        if (k != j && (t->tabela[i][k] == letraMaiuscula || t->tabela[i][k] == letraMinuscula))
+        if (k != j && t->tabela[i][k] == letraMinuscula)
         {
             if (escreve)
                 printf("A riscar a célula %c%d com letra '%c' devido à repetição na linha.\n", 'a' + k, i + 1, t->tabela[i][k]);
@@ -46,7 +46,7 @@ void riscaLetrasRepetidas(TABELA t, TABELA aux, int i, int j, bool escreve, bool
     // Verifica a coluna
     for (int k = 0; k < t->l; k++)
     {
-        if (k != i && (t->tabela[k][j] == letraMaiuscula || t->tabela[k][j] == letraMinuscula))
+        if (k != i && t->tabela[k][j] == letraMinuscula)
         {
             if (escreve)
                 printf("A riscar célula %c%d com letra '%c' devido à repetição na coluna.\n", 'a' + j, k + 1, t->tabela[k][j]);
@@ -138,7 +138,7 @@ void comandoA(TABELA *aux, bool *continuar)
         *continuar = false; // Coloca -se a falso para não se fazer uma cópia do tabuleiro neste caso
     }
     else
-        printf("Tabuleiro alterado.\n");
+        printf("%sTabuleiro alterado.%s\n", GREEN, RESET);
 }
 
 // --- Codigo para o comando R ---
@@ -383,13 +383,8 @@ TABELA resolve(TABELA t)
 
     // Aplica-se o comando 'a' repetidamente até ele não fazer mais alterações
     aplicaA(&aux);
-    if (jogoResolvido(aux) || tentaColunas(&aux) || tentaLinhas(&aux))
+    if (!jogoResolvido(aux) && !tentaColunas(&aux) && !tentaLinhas(&aux))
     {
-        printf("Tabuleiro resolvido.\n");
-    }
-    else
-    {
-        printf("Tabuleiro não pode ser resolvido.\n");
         freeTabela(aux);
         return NULL;
     }

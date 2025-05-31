@@ -2,6 +2,7 @@
 #define COMANDOS_H
 
 #include <stdbool.h>
+<<<<<<< HEAD
 #include "tipos.h"
 #include "../parte2/parte2.h" // Inclui a declaração de copiarTabela e dentroDosLimites
 #include "../parte1/parte1.h"
@@ -44,6 +45,27 @@ void trataABA_colunas(TABELA aux);
 void riscaABA(TABELA aux);
 
 // Verifica se existem minúsculas no tabuleiro
+=======
+#include "../tipos.h"
+
+// ————— Funções do comando de ajuda (‘a’) —————
+void verificaSeQuebraCaminho(TABELA aux, int l, int c, bool *changed, bool escreve);
+void riscaLetrasRepetidas(TABELA t, TABELA aux, int i, int j, bool escreve, bool *changed);
+void pintaVizinhosDeRiscadas(TABELA t, TABELA aux, int i, int j, bool escreve, bool *changed);
+TABELA ajuda(TABELA t, bool escreve, bool *changed);
+int aplicaA(TABELA *aux);
+void comandoA(TABELA *aux, bool *continuar);
+
+// ————— Funções do comando de riscar (‘R’) —————
+void trataAA_A_NasLinhas(TABELA aux);
+void trataAA_A_NasColunas(TABELA aux);
+void risca_AA_A(TABELA aux);
+void trataABA_linhas(TABELA aux);
+void trataABA_colunas(TABELA aux);
+void riscaABA(TABELA aux);
+
+// ————— Funções de verificação/resolução —————
+>>>>>>> main
 int existemMinusculas(TABELA t);
 
 // Verifica se o jogo está completo (sem minúsculas e sem erros)
@@ -67,4 +89,8 @@ bool tentaLinhas(TABELA *t);
 // Coloca ainda o aux a null e o continuar a false caso não seja possível resolver o tabuleiro
 TABELA resolve(TABELA t);
 
+<<<<<<< HEAD
 #endif // COMANDOS_H
+=======
+#endif /* PARTE4_H */
+>>>>>>> main

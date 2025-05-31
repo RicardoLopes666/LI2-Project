@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include "parte1.h" // Certifica-te que este header contém as declarações das funções e tipos usados
+#include "parte1.h"
 #include "../parte2/parte2.h"
 #define LINE_SIZE 1024
 
@@ -12,18 +12,24 @@
 void test_pintarBranco(void)
 {
     TABELA t = malloc(sizeof(struct Tabela));
+    TABELA p = malloc(sizeof(struct Tabela));
     initTabela(t, 3, 3);
-
+    initTabela(p, 3, 3);
     // Coloca um caractere minúsculo para ser convertido
     t->tabela[1][1] = 'a';
-    CU_ASSERT_TRUE(pintarBranco(t, 1, 1));
+    t->tabela[0][0] = '#';
+    p->tabela[0][0] = 'a';
+    CU_ASSERT_TRUE(pintarBranco(t, 1, 1, p));
     CU_ASSERT_EQUAL(t->tabela[1][1], 'A');
+    CU_ASSERT_TRUE(pintarBranco(t, 0, 0, p));
+    CU_ASSERT_EQUAL(t->tabela[0][0], 'A');
 
     // Testa índices fora dos limites
-    CU_ASSERT_FALSE(pintarBranco(t, -1, 1));
-    CU_ASSERT_FALSE(pintarBranco(t, 3, 3));
+    CU_ASSERT_FALSE(pintarBranco(t, -1, 1, p));
+    CU_ASSERT_FALSE(pintarBranco(t, 3, 3, p));
 
     freeTabela(t);
+    freeTabela(p);
 }
 
 // Testa a função riscar
@@ -46,19 +52,29 @@ void test_riscar(void)
 // Testa a função mostrarTabela, incluindo o caso em que a tabela é NULL
 void test_mostrarTabela(void)
 {
+    GAME g;
     TABELA t = malloc(sizeof(struct Tabela));
+    TABELA s = malloc(sizeof(struct Tabela));
     initTabela(t, 3, 3);
-
-    t->tabela[0][0] = 'A';
-    t->tabela[1][1] = 'B';
-    t->tabela[2][2] = 'C';
+    initTabela(s, 3, 3);
+    g.tab = t;
+    g.solution = s;
+    for (int i = 0; i < t->l; i++)
+    {
+        for (int j = 0; j < t->c; j++)
+        {
+            g.tab->tabela[i][j] = 'A';
+            g.solution->tabela[i][j] = 'A';
+        }
+    }
 
     // Chamada normal
-    mostrarTabela(t);
+    mostrarTabela(g, 0);
     // Chamada com NULL (deve imprimir "Tabuleiro não inicializado.")
-    mostrarTabela(NULL);
-
     freeTabela(t);
+    g.tab = NULL;
+    mostrarTabela(g, 0);
+    freeTabela(g.solution);
 }
 
 // Testa a função coordenadaParaIndice
@@ -195,9 +211,10 @@ void test_lerCmd(void)
     char *filename = "temp_test_ler.txt";
     FILE *f;
 
-    // Caso válidok
+    // Caso válido
     game.estado.looping = true;
     game.tab = NULL;
+    game.solution = NULL;
 
     // Prepara stack vazio
     game.stackTabs = malloc(sizeof(struct StackTabs));
@@ -207,7 +224,7 @@ void test_lerCmd(void)
     // Cria ficheiro com um tabuleiro 2×2
     f = fopen(filename, "w");
     CU_ASSERT_PTR_NOT_NULL_FATAL(f);
-    fprintf(f, "2 2\nEF\nGH\n");
+    fprintf(f, "2 2\nee\nge\n");
     fclose(f);
 
     //  ler com sucesso
@@ -218,12 +235,13 @@ void test_lerCmd(void)
     // Verifica dimensões e conteúdo
     CU_ASSERT_EQUAL(game.tab->l, 2);
     CU_ASSERT_EQUAL(game.tab->c, 2);
-    CU_ASSERT_EQUAL(game.tab->tabela[0][0], 'E');
-    CU_ASSERT_EQUAL(game.tab->tabela[0][1], 'F');
-    CU_ASSERT_EQUAL(game.tab->tabela[1][0], 'G');
-    CU_ASSERT_EQUAL(game.tab->tabela[1][1], 'H');
+    CU_ASSERT_EQUAL(game.tab->tabela[0][0], 'e');
+    CU_ASSERT_EQUAL(game.tab->tabela[0][1], 'e');
+    CU_ASSERT_EQUAL(game.tab->tabela[1][0], 'g');
+    CU_ASSERT_EQUAL(game.tab->tabela[1][1], 'e');
 
     freeTabela(game.tab);
+    freeTabela(game.solution);
     freeStackTabs(game.stackTabs);
     remove(filename);
 
