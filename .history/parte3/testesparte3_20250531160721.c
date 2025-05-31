@@ -9,7 +9,7 @@
 #include "../parte2/parte2.h" // para outras funções de tabela
 #include "parte3.h"           // declara funções de parte3
 
-// Stubs para funções de tabela
+// Stubs para funções de tabela se não existirem
 static TABELA criarTabela(int l, int c)
 {
     TABELA t = malloc(sizeof(*t));
@@ -31,7 +31,6 @@ static void _begin_capture(void)
     orig_stdout = stdout;
     stdout = fopen("/dev/null", "w");
 }
-
 static void _end_capture(void)
 {
     fclose(stdout);

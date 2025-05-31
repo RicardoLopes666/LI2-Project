@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include "../tipos.h"
 #include "../parte2/parte2.h"
-#include "../parte1/parte1.h"
 #include <ctype.h>
 #include "../colors.h"
 

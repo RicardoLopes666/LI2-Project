@@ -1,6 +1,5 @@
 #include <CUnit/Basic.h>
 #include "parte2.h"
-#include "../parte1/parte1.h"
 #include <stdlib.h>
 #include <string.h>
 

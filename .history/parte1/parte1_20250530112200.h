@@ -13,6 +13,7 @@ typedef bool (*COMANDO)(char cmd, char *arg, GAME *game);
 // Declarações de funções
 void initTabela(TABELA t, int l, int c);
 void freeTabela(TABELA t);
+TABELA lerFicheiro(const char *nome);
 bool gravar(char cmd, char *arg, GAME *game);
 bool sair(char cmd, char *arg, GAME *game);
 void colocaSolucao(GAME *game);

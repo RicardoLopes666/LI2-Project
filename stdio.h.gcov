@@ -1,7 +1,7 @@
         -:    0:Source:/usr/include/x86_64-linux-gnu/bits/stdio.h
         -:    0:Graph:parte1/parte1.gcno
         -:    0:Data:parte1/parte1.gcda
-        -:    0:Runs:14
+        -:    0:Runs:2
         -:    1:/* Optimizing macros and inline functions for stdio functions.
         -:    2:   Copyright (C) 1998-2024 Free Software Foundation, Inc.
         -:    3:   This file is part of the GNU C Library.
@@ -83,9 +83,9 @@
         -:   79:
         -:   80:/* Write a character to stdout.  */
         -:   81:__STDIO_INLINE int
-       14:   82:putchar (int __c)
+        2:   82:putchar (int __c)
         -:   83:{
-       14:   84:  return putc (__c, stdout);
+        2:   84:  return putc (__c, stdout);
         -:   85:}
         -:   86:
         -:   87:
