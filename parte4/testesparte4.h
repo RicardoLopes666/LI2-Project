@@ -1,10 +1,9 @@
-#ifndef TESTES_PARTE4_H
-#define TESTES_PARTE4_H
+#ifndef TESTESPARTE4_H
+#define TESTESPARTE4_H
 
-#include "parte4.h"
 #include <CUnit/Basic.h>
 
-/* Declarações das funções de teste */
+/* Protótipos das funções de teste da Parte 4 */
 void test_verificaSeQuebraCaminho(void);
 void test_riscaLetrasRepetidas(void);
 void test_pintaVizinhosDeRiscadas(void);
@@ -15,4 +14,4 @@ void test_trataAA_A_NasColunas(void);
 void test_riscaABA(void);
 void test_jogoResolvido(void);
 
-#endif /* TESTES_PARTE4_H */
+#endif // TESTESPARTE4_H
