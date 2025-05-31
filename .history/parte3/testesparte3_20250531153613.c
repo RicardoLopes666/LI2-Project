@@ -168,8 +168,8 @@ void test_existeCaminhoOrtogonal_simples()
 void test_trataCaminhoOrtogonal_erro()
 {
     TABELA t = criarTabela(3, 3);
-    t->tabela[1][0] = '#';
-    t->tabela[0][1] = '#';
+    t->tabela[0][0] = '#';
+    t->tabela[2][2] = '#';
     bool temR = false;
     int conta = 0;
     _begin_capture();

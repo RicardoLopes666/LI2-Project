@@ -73,14 +73,15 @@ int main()
 
     CU_pSuite suite3 = CU_add_suite("Testes Parte 3", NULL, NULL);
 
-    CU_add_test(suite3, "test_devolvePrimeiroNRiscado_tudo_riscado", test_devolvePrimeiroNRiscado_tudo_riscado);
-    CU_add_test(suite3, "test_devolvePrimeiroNRiscado_encontra", test_devolvePrimeiroNRiscado_encontra);
-    CU_add_test(suite3, "test_initVisited", test_initVisited);
-    CU_add_test(suite3, "test_queue_insert_delete", test_queue_insert_delete);
-    CU_add_test(suite3, "test_devolveNaoVisitados", test_devolveNaoVisitados);
-    CU_add_test(suite3, "test_existeCaminhoOrtogonal_simples", test_existeCaminhoOrtogonal_simples);
-    CU_add_test(suite3, "test_trataCaminhoOrtogonal_erro", test_trataCaminhoOrtogonal_erro);
-    CU_add_test(suite3, "test_trataCaminhoOrtogonal_ok", test_trataCaminhoOrtogonal_ok);
+    Cu_add_teste(suite3, test_devolvePrimeiroNRiscado_tudo_riscado);
+    Cu_add_teste(suite3, test_devolvePrimeiroNRiscado_encontra);
+    Cu_add_teste(suite3, test_initVisited);
+    Cu_add_teste(suite3, test_queue_insert_delete);
+    Cu_add_teste(suite3, test_devolveNaoVisitados);
+    Cu_add_teste(suite3, test_existeCaminhoOrtogonal_simples);
+    Cu_add_teste(suite3, test_trataCaminhoOrtogonal_erro);
+    Cu_add_teste(suite3, test_trataCaminhoOrtogonal_ok);
+
     CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();
     CU_cleanup_registry();

@@ -1,7 +1,7 @@
         -:    0:Source:parte1/parte1.c
         -:    0:Graph:parte1/parte1.gcno
         -:    0:Data:parte1/parte1.gcda
-        -:    0:Runs:10
+        -:    0:Runs:14
         -:    1:#include <assert.h>
         -:    2:#include <stdbool.h>
         -:    3:#include <stdlib.h>
@@ -15,116 +15,116 @@
         -:   11:#define LINE_SIZE 1024
         -:   12:
         -:   13:// Função que cria e aloca o tabuleiro com as dimensões fornecidas
-      100:   14:void initTabela(TABELA t, int l, int c)
+      140:   14:void initTabela(TABELA t, int l, int c)
         -:   15:{
-      100:   16:    t->l = l;
-      100:   17:    t->c = c;
-      100:   18:    t->tabela = malloc(l * sizeof(char *));
-      330:   19:    for (int i = 0; i < l; i++)
+      140:   16:    t->l = l;
+      140:   17:    t->c = c;
+      140:   18:    t->tabela = malloc(l * sizeof(char *));
+      462:   19:    for (int i = 0; i < l; i++)
         -:   20:    {
-      230:   21:        t->tabela[i] = malloc((c + 1) * sizeof(char)); // + 1 para colocar o '\0'
-     1050:   22:        for (int j = 0; j <= c; j++)
+      322:   21:        t->tabela[i] = malloc((c + 1) * sizeof(char)); // + 1 para colocar o '\0'
+     1470:   22:        for (int j = 0; j <= c; j++)
         -:   23:        {
-      820:   24:            if (j == c)
-      230:   25:                t->tabela[i][j] = '\0';
+     1148:   24:            if (j == c)
+      322:   25:                t->tabela[i][j] = '\0';
         -:   26:            else
-      590:   27:                t->tabela[i][j] = ' '; // Inicializa com espaços
+      826:   27:                t->tabela[i][j] = ' '; // Inicializa com espaços
         -:   28:        }
         -:   29:    }
-      100:   30:}
+      140:   30:}
         -:   31:
         -:   32:// Função para libertar a memória alocada para um tabuleiro
-      406:   33:void freeTabela(TABELA t)
+      586:   33:void freeTabela(TABELA t)
         -:   34:{
-      406:   35:    if (t == NULL)
+      586:   35:    if (t == NULL)
         -:   36:        return;
-     1380:   37:    for (int i = 0; i < t->l; i++)
+     1988:   37:    for (int i = 0; i < t->l; i++)
         -:   38:    {
-      978:   39:        free(t->tabela[i]);
+     1406:   39:        free(t->tabela[i]);
         -:   40:    }
-      402:   41:    free(t->tabela);
-      402:   42:    free(t);
+      582:   41:    free(t->tabela);
+      582:   42:    free(t);
         -:   43:}
         -:   44:
         -:   45:// Tipo de função para comandos. Agora os comandos recebem um GAME* para acessar o estado e o tabuleiro.
         -:   46:typedef bool (*COMANDO)(char cmd, char *arg, GAME *game);
         -:   47:
         -:   48:// Função responsável por escrever no ficheiro o conteúdo de uma tabela
-       10:   49:void escreveTabela(TABELA tabela, FILE *f)
+       14:   49:void escreveTabela(TABELA tabela, FILE *f)
         -:   50:{
-       10:   51:    fprintf(f, "%d %d\n", tabela->l, tabela->c);
-       30:   52:    for (int i = 0; i < tabela->l; i++)
+       14:   51:    fprintf(f, "%d %d\n", tabela->l, tabela->c);
+       42:   52:    for (int i = 0; i < tabela->l; i++)
         -:   53:    {
-       20:   54:        fprintf(f, "%s\n", tabela->tabela[i]);
+       28:   54:        fprintf(f, "%s\n", tabela->tabela[i]);
         -:   55:    }
-       10:   56:    putchar('\n');
-       10:   57:}
+       14:   56:    putchar('\n');
+       14:   57:}
         -:   58:
         -:   59:// Comando para gravar o estado do jogo num ficheiro
-       50:   60:bool gravar(char cmd, char *arg, GAME *game)
+       70:   60:bool gravar(char cmd, char *arg, GAME *game)
         -:   61:{
-       50:   62:    if (cmd == 'g')
+       70:   62:    if (cmd == 'g')
         -:   63:    {
-       40:   64:        if (arg == NULL)
+       56:   64:        if (arg == NULL)
         -:   65:        {
-       10:   66:            fprintf(stderr, "%sErro: o comando gravar precisa de um argumento!%s\n", ERROR_COLOR, RESET);
-       10:   67:            return false;
+       14:   66:            fprintf(stderr, "%sErro: o comando gravar precisa de um argumento!%s\n", ERROR_COLOR, RESET);
+       14:   67:            return false;
         -:   68:        }
-       30:   69:        if (game->tab == NULL)
+       42:   69:        if (game->tab == NULL)
         -:   70:        {
-       10:   71:            fprintf(stderr, "%sErro: a tabela não deve ser nula antes de a gravar!%s\n", ERROR_COLOR, RESET);
-       10:   72:            return false;
+       14:   71:            fprintf(stderr, "%sErro: a tabela não deve ser nula antes de a gravar!%s\n", ERROR_COLOR, RESET);
+       14:   72:            return false;
         -:   73:        }
-       20:   74:        FILE *f = fopen(arg, "w"); // Abre o ficheiro (caso existe o que estiver lá escrito vai ser sobrescrito)
-       20:   75:        if (f == NULL)
+       28:   74:        FILE *f = fopen(arg, "w"); // Abre o ficheiro (caso existe o que estiver lá escrito vai ser sobrescrito)
+       28:   75:        if (f == NULL)
         -:   76:        {
-       10:   77:            fprintf(stderr, "%sErro: a abrir o ficheiro%s\n", ERROR_COLOR, RESET);
-       10:   78:            return false;
+       14:   77:            fprintf(stderr, "%sErro: a abrir o ficheiro%s\n", ERROR_COLOR, RESET);
+       14:   78:            return false;
         -:   79:        }
-       20:   80:        for (int i = 0; i < game->stackTabs->comprimento; i++)
+       28:   80:        for (int i = 0; i < game->stackTabs->comprimento; i++)
         -:   81:        {
-       10:   82:            escreveTabela(game->stackTabs->tabelas[i], f);
+       14:   82:            escreveTabela(game->stackTabs->tabelas[i], f);
         -:   83:        }
-       10:   84:        fclose(f);
-       10:   85:        printf("Gravado em %s\n", arg);
-       10:   86:        return true;
+       14:   84:        fclose(f);
+       14:   85:        printf("Gravado em %s\n", arg);
+       14:   86:        return true;
         -:   87:    }
         -:   88:
         -:   89:    return false;
         -:   90:}
         -:   91:
         -:   92:// Comando para sair
-       20:   93:bool sair(char cmd, char *arg, GAME *game)
+       28:   93:bool sair(char cmd, char *arg, GAME *game)
         -:   94:{
-       20:   95:    if (arg != NULL)
+       28:   95:    if (arg != NULL)
         -:   96:        return false;
-       10:   97:    if (cmd == 's')
+       14:   97:    if (cmd == 's')
         -:   98:    {
-       10:   99:        game->estado.looping = false;
-       10:  100:        return true;
+       14:   99:        game->estado.looping = false;
+       14:  100:        return true;
         -:  101:    }
         -:  102:    return false;
         -:  103:}
         -:  104:
-       20:  105:bool leTabuleiro(TABELA *t, int linhas, int colunas, FILE *file)
+       28:  105:bool leTabuleiro(TABELA *t, int linhas, int colunas, FILE *file)
         -:  106:{
-       40:  107:    for (int i = 0; i < linhas; i++)
+       56:  107:    for (int i = 0; i < linhas; i++)
         -:  108:    {
-       80:  109:        for (int j = 0; j < colunas; j++)
+      112:  109:        for (int j = 0; j < colunas; j++)
         -:  110:        {
-       60:  111:            if (fscanf(file, " %c", &(*t)->tabela[i][j]) != 1)
+       84:  111:            if (fscanf(file, " %c", &(*t)->tabela[i][j]) != 1)
         -:  112:            {
-       10:  113:                fprintf(stderr, "%sErro: na leitura do conteúdo do tabuleiro%s\n", ERROR_COLOR, RESET);
-       10:  114:                return false;
+       14:  113:                fprintf(stderr, "%sErro: na leitura do conteúdo do tabuleiro%s\n", ERROR_COLOR, RESET);
+       14:  114:                return false;
         -:  115:            }
         -:  116:        }
         -:  117:    }
         -:  118:    return true;
         -:  119:}
         -:  120:
-       10:  121:bool colocaTabelaNaStack(GAME *game, TABELA tabela)
+       14:  121:bool colocaTabelaNaStack(GAME *game, TABELA tabela)
         -:  122:{
-       10:  123:    if (!insereTabela(game->stackTabs, tabela))
+       14:  123:    if (!insereTabela(game->stackTabs, tabela))
         -:  124:    {
     #####:  125:        if (tabela)
     #####:  126:            freeTabela(tabela);
@@ -135,168 +135,168 @@
         -:  131:    return true;
         -:  132:}
         -:  133:
-       10:  134:void colocaSolucao(GAME *game)
+       14:  134:void colocaSolucao(GAME *game)
         -:  135:{
-       10:  136:    TABELA aux = resolve(game->stackTabs->tabelas[0]); // Recebe a primeira tabela carregada (em principio so com letras minusculas)
+       14:  136:    TABELA aux = resolve(game->stackTabs->tabelas[0]); // Recebe a primeira tabela carregada (em principio so com letras minusculas)
         -:  137:
-       10:  138:    TABELA temp = game->solution;
-       10:  139:    game->solution = aux;
-       10:  140:    if (temp != NULL)
+       14:  138:    TABELA temp = game->solution;
+       14:  139:    game->solution = aux;
+       14:  140:    if (temp != NULL)
     #####:  141:        freeTabela(temp);
-       10:  142:}
+       14:  142:}
         -:  143:
         -:  144:// Comando para ler o tabuleiro de um ficheiro
-       60:  145:bool lerCmd(char cmd, char *arg, GAME *game)
+       84:  145:bool lerCmd(char cmd, char *arg, GAME *game)
         -:  146:{
-       60:  147:    if (cmd != 'l' || arg == NULL)
+       84:  147:    if (cmd != 'l' || arg == NULL)
         -:  148:        return false;
         -:  149:
-       40:  150:    FILE *file = fopen(arg, "r"); // r é para leitura
-       40:  151:    if (!file)
+       56:  150:    FILE *file = fopen(arg, "r"); // r é para leitura
+       56:  151:    if (!file)
         -:  152:    {
-       10:  153:        fprintf(stderr, "%sErro: ao abrir o ficheiro %s para leitura%s\n", ERROR_COLOR, arg, RESET);
-       10:  154:        return false;
+       14:  153:        fprintf(stderr, "%sErro: ao abrir o ficheiro %s para leitura%s\n", ERROR_COLOR, arg, RESET);
+       14:  154:        return false;
         -:  155:    }
         -:  156:
-       30:  157:    freeStackTabs(game->stackTabs);
-       30:  158:    STACKTABS s = malloc(sizeof(struct StackTabs));
-       30:  159:    if (!initStackTabs(s))
+       42:  157:    freeStackTabs(game->stackTabs);
+       42:  158:    STACKTABS s = malloc(sizeof(struct StackTabs));
+       42:  159:    if (!initStackTabs(s))
         -:  160:    {
     #####:  161:        free(s);
     #####:  162:        return false;
         -:  163:    }
-       30:  164:    game->stackTabs = s;
+       42:  164:    game->stackTabs = s;
         -:  165:
-       30:  166:    int linhas, colunas;
+       42:  166:    int linhas, colunas;
         -:  167:    // Loop que le os vários tabuleiros enquanto o ficheiro não estiver vazio e coloca-os na stackTabs
-       40:  168:    while (fscanf(file, "%d %d", &linhas, &colunas) == 2)
+       56:  168:    while (fscanf(file, "%d %d", &linhas, &colunas) == 2)
         -:  169:    {
-       20:  170:        TABELA t = malloc(sizeof(struct Tabela));
+       28:  170:        TABELA t = malloc(sizeof(struct Tabela));
         -:  171:
-       20:  172:        initTabela(t, linhas, colunas);
+       28:  172:        initTabela(t, linhas, colunas);
         -:  173:
         -:  174:        // Lê o conteúdo do tabuleiro do ficheiro e passa-o para a tabela t
-       20:  175:        if (!leTabuleiro(&t, linhas, colunas, file) || !colocaTabelaNaStack(game, t))
+       28:  175:        if (!leTabuleiro(&t, linhas, colunas, file) || !colocaTabelaNaStack(game, t))
         -:  176:        {
-       10:  177:            freeTabela(t);
-       10:  178:            freeStackTabs(s);
-       10:  179:            fclose(file);
-       10:  180:            return false;
+       14:  177:            freeTabela(t);
+       14:  178:            freeStackTabs(s);
+       14:  179:            fclose(file);
+       14:  180:            return false;
         -:  181:        }
         -:  182:    }
-       20:  183:    if (game->stackTabs->comprimento == 0)
+       28:  183:    if (game->stackTabs->comprimento == 0)
         -:  184:    {
-       10:  185:        printf("%sErro: o ficheiro não contem nenhum tabuleiro%s", ERROR_COLOR, RESET);
-       10:  186:        fclose(file);
-       10:  187:        return false;
+       14:  185:        printf("%sErro: o ficheiro não contem nenhum tabuleiro%s", ERROR_COLOR, RESET);
+       14:  186:        fclose(file);
+       14:  187:        return false;
         -:  188:    }
         -:  189:
-       10:  190:    fclose(file);
-       10:  191:    if (game->tab != NULL)
+       14:  190:    fclose(file);
+       14:  191:    if (game->tab != NULL)
     #####:  192:        freeTabela(game->tab);
-       10:  193:    TABELA temp = copiarTabela(game->stackTabs->tabelas[game->stackTabs->comprimento - 1]);
+       14:  193:    TABELA temp = copiarTabela(game->stackTabs->tabelas[game->stackTabs->comprimento - 1]);
         -:  194:
-       10:  195:    if (temp != NULL)
-       10:  196:        game->tab = temp;
+       14:  195:    if (temp != NULL)
+       14:  196:        game->tab = temp;
         -:  197:    else
         -:  198:        return false;
-       10:  199:    colocaSolucao(game);
+       14:  199:    colocaSolucao(game);
         -:  200:
-       10:  201:    return true;
+       14:  201:    return true;
         -:  202:}
         -:  203:
         -:  204:// Converte coordenada do formato "a3" para  coordenadas (linha e coluna)
-       30:  205:bool coordenadaParaIndice(const char *coord, int *linha, int *coluna)
+       42:  205:bool coordenadaParaIndice(const char *coord, int *linha, int *coluna)
         -:  206:{
-       30:  207:    if (strlen(coord) < 2)
+       42:  207:    if (strlen(coord) < 2)
         -:  208:        return false;
-       20:  209:    *coluna = coord[0] - 'a';     // 'a' corresponde à coluna 0
-       20:  210:    *linha = atoi(coord + 1) - 1; // atoi (ascii to integer):  atoi -> converte uma string para um int   NOTA (coord + 1) é para comecar na segunda letra da string, e tirmaos 1, por causa do indice zero
-       20:  211:    return true;
+       28:  209:    *coluna = coord[0] - 'a';     // 'a' corresponde à coluna 0
+       28:  210:    *linha = atoi(coord + 1) - 1; // atoi (ascii to integer):  atoi -> converte uma string para um int   NOTA (coord + 1) é para comecar na segunda letra da string, e tirmaos 1, por causa do indice zero
+       28:  211:    return true;
         -:  212:}
         -:  213:
         -:  214:// Pinta de branco (transforma para maiuscula)
-       40:  215:bool pintarBranco(TABELA t, int linha, int coluna, TABELA p)  // p é a primeira tabela carregada
+       56:  215:bool pintarBranco(TABELA t, int linha, int coluna, TABELA p)  // p é a primeira tabela carregada
         -:  216:{
-       40:  217:    if (linha >= 0 && linha < t->l && coluna >= 0 && coluna < t->c)
+       56:  217:    if (linha >= 0 && linha < t->l && coluna >= 0 && coluna < t->c)
         -:  218:    {
-       20:  219:        if (t->tabela[linha][coluna] != '#')
-       10:  220:            t->tabela[linha][coluna] = toupper(t->tabela[linha][coluna]);
-       10:  221:        else t->tabela[linha][coluna] = toupper (p->tabela[linha][coluna]);
-       20:  222:        return true;
+       28:  219:        if (t->tabela[linha][coluna] != '#')
+       14:  220:            t->tabela[linha][coluna] = toupper(t->tabela[linha][coluna]);
+       14:  221:        else t->tabela[linha][coluna] = toupper (p->tabela[linha][coluna]);
+       28:  222:        return true;
         -:  223:    }
         -:  224:    return false;
         -:  225:}
         -:  226:
         -:  227:// Risca a casa (substitui por '#')
-       30:  228:bool riscar(TABELA t, int linha, int coluna)
+       42:  228:bool riscar(TABELA t, int linha, int coluna)
         -:  229:{
-       30:  230:    if (linha < 0 || linha >= t->l || coluna < 0 || coluna >= t->c)
+       42:  230:    if (linha < 0 || linha >= t->l || coluna < 0 || coluna >= t->c)
         -:  231:        return false;
         -:  232:
-       10:  233:    t->tabela[linha][coluna] = '#'; // Marca a célula com '#'
-       10:  234:    return true;
+       14:  233:    t->tabela[linha][coluna] = '#'; // Marca a célula com '#'
+       14:  234:    return true;
         -:  235:}
         -:  236:
         -:  237:// Função que mostra o tabuleiro
-       20:  238:void mostrarTabela(GAME game, int isC) // isC é uma flag que se for positiva quer dizer que estou a invocar o comando c
+       28:  238:void mostrarTabela(GAME game, int isC) // isC é uma flag que se for positiva quer dizer que estou a invocar o comando c
         -:  239:{
-       20:  240:    TABELA t = game.tab;
-       20:  241:    TABELA s = game.solution;
-       20:  242:    if (!isC)
-       20:  243:        printf("\n%sEstado atual do tabuleiro:%s\n", COMMAND_COLOR, RESET);
-       20:  244:    if (t == NULL)
+       28:  240:    TABELA t = game.tab;
+       28:  241:    TABELA s = game.solution;
+       28:  242:    if (!isC)
+       28:  243:        printf("\n%sEstado atual do tabuleiro:%s\n", COMMAND_COLOR, RESET);
+       28:  244:    if (t == NULL)
         -:  245:    {
-       10:  246:        printf("%sTabuleiro não inicializado.%s\n", ERROR_COLOR, RESET);
-       10:  247:        return;
+       14:  246:        printf("%sTabuleiro não inicializado.%s\n", ERROR_COLOR, RESET);
+       14:  247:        return;
         -:  248:    }
         -:  249:
         -:  250:    // Desenha os headers (a, b, c, ..)
-       10:  251:    printf("    ");
-       40:  252:    for (int j = 0; j < t->c; j++)
-       30:  253:        printf(" %s%c%s  ", COORDINATE_COLOR, 'a' + j, RESET);
-       10:  254:    printf("\n");
+       14:  251:    printf("    ");
+       56:  252:    for (int j = 0; j < t->c; j++)
+       42:  253:        printf(" %s%c%s  ", COORDINATE_COLOR, 'a' + j, RESET);
+       14:  254:    printf("\n");
         -:  255:
         -:  256:    // Desenha a primeira linha da tabela
-       10:  257:    printf("   ┏");
-       40:  258:    for (int j = 0; j < t->c; j++)
-       60:  259:        printf("━━━%s", (j == t->c - 1) ? "┓\n" : "┳");
+       14:  257:    printf("   ┏");
+       56:  258:    for (int j = 0; j < t->c; j++)
+       84:  259:        printf("━━━%s", (j == t->c - 1) ? "┓\n" : "┳");
         -:  260:
-       40:  261:    for (int i = 0; i < t->l; i++)
+       56:  261:    for (int i = 0; i < t->l; i++)
         -:  262:    {
         -:  263:        // Escreve o numero da linha
-       30:  264:        printf("%s%2d%s ┃", COORDINATE_COLOR, i + 1, RESET);
+       42:  264:        printf("%s%2d%s ┃", COORDINATE_COLOR, i + 1, RESET);
         -:  265:
-      120:  266:        for (int j = 0; j < t->c; j++)
+      168:  266:        for (int j = 0; j < t->c; j++)
         -:  267:        {
-       90:  268:            char cell = t->tabela[i][j];
-       90:  269:            int igual = t->tabela[i][j] == s->tabela[i][j];
-       90:  270:            if (cell == '#')
+      126:  268:            char cell = t->tabela[i][j];
+      126:  269:            int igual = t->tabela[i][j] == s->tabela[i][j];
+      126:  270:            if (cell == '#')
         -:  271:            {
     #####:  272:                isC ? printf("%s # %s", igual ? CAPITAL_GREEN : CAPITAL_RED, RESET) : printf("%s # %s", HASHED_CELL, RESET);
         -:  273:            }
-       90:  274:            else if (isupper(cell))
+      126:  274:            else if (isupper(cell))
         -:  275:            {
-      90*:  276:                isC ? printf("%s[%c]%s", igual ? CAPITAL_GREEN : CAPITAL_RED, cell, RESET) : printf("%s[%c]%s", CAPITAL_LETTER, cell, RESET);
+     126*:  276:                isC ? printf("%s[%c]%s", igual ? CAPITAL_GREEN : CAPITAL_RED, cell, RESET) : printf("%s[%c]%s", CAPITAL_LETTER, cell, RESET);
         -:  277:            }
         -:  278:            else
     #####:  279:                printf(" %s%c%s ", NORMAL_LETTER, cell, RESET);
-       90:  280:            printf("┃");
+      126:  280:            printf("┃");
         -:  281:        }
-       30:  282:        printf("\n");
+       42:  282:        printf("\n");
         -:  283:
-       30:  284:        if (i < t->l - 1)
+       42:  284:        if (i < t->l - 1)
         -:  285:        {
         -:  286:            // Desenha linha entre as diferentes linhas do tabuleiro
-       20:  287:            printf("   ┣");
-       80:  288:            for (int j = 0; j < t->c; j++)
-      120:  289:                printf("━━━%s", (j == t->c - 1) ? "┫\n" : "╋");
+       28:  287:            printf("   ┣");
+      112:  288:            for (int j = 0; j < t->c; j++)
+      168:  289:                printf("━━━%s", (j == t->c - 1) ? "┫\n" : "╋");
         -:  290:        }
         -:  291:    }
         -:  292:
         -:  293:    // Desenha a linha inferior
-       10:  294:    printf("   ┗");
-       40:  295:    for (int j = 0; j < t->c; j++)
-       60:  296:        printf("━━━%s", (j == t->c - 1) ? "┛\n" : "┻");
-       10:  297:    printf("\n");
+       14:  294:    printf("   ┗");
+       56:  295:    for (int j = 0; j < t->c; j++)
+       84:  296:        printf("━━━%s", (j == t->c - 1) ? "┛\n" : "┻");
+       14:  297:    printf("\n");
         -:  298:}

@@ -146,34 +146,43 @@ void test_devolveNaoVisitados()
 void test_existeCaminhoOrtogonal_simples()
 {
     TABELA t = criarTabela(2, 2);
+
     CQUEUE q = malloc(sizeof(*q));
     initQueue(q);
+
     COORDENADA s = malloc(sizeof(struct Coordenada));
     s->l = 0;
     s->c = 0;
     insertQueue(q, (COORDENADA[]){s}, 1);
+
     int count = 0;
     int **v = initVisited(t, &count);
-    CU_ASSERT_TRUE(existeCaminhoOrtogonal(q, t, v, &count));
-    CU_ASSERT_EQUAL(count, 4);
-    for (int i = 0; i < 2; i++)
-        free(v[i]);
-    free(v);
+
+    - // A função existeCaminhoOrtogonal já liberta 's' e toda a matriz v:
+        -CU_ASSERT_TRUE(existeCaminhoOrtogonal(q, t, v, &count));
+    -CU_ASSERT_EQUAL(count, 4);
+    -free(s);
+    -for (int i = 0; i < 2; i++) - free(v[i]);
+    -free(v);
+    +CU_ASSERT_TRUE(existeCaminhoOrtogonal(q, t, v, &count));
+    +CU_ASSERT_EQUAL(count, 4);
+    // Já não fazemos free(s) nem free(v) aqui, porque foram libertados na função.
+
     free(q->list);
     free(q);
+
     freeTabela(t);
 }
-
 // Testa escrita e conta em trataCaminhoOrtogonal (erro)
 void test_trataCaminhoOrtogonal_erro()
 {
     TABELA t = criarTabela(3, 3);
-    t->tabela[1][0] = '#';
-    t->tabela[0][1] = '#';
+    t->tabela[0][0] = '#';
+    t->tabela[2][2] = '#';
     bool temR = false;
     int conta = 0;
     _begin_capture();
-    bool r = trataCaminhoOrtogonal(t, &conta, &temR, false);
+    bool r = trataCaminhoOrtogonal(t, &conta, &temR, true);
     _end_capture();
     CU_ASSERT_TRUE(r);
     CU_ASSERT_TRUE(temR);

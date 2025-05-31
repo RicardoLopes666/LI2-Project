@@ -9,6 +9,11 @@
 #include "../parte2/parte2.h" // para outras funções de tabela
 #include "../parte3/parte3.h" // declara funções de parte3
 
+bool dentroDosLimites(TABELA t, int linha, int coluna)
+{
+    return linha >= 0 && linha < t->l && coluna >= 0 && coluna < t->c;
+}
+
 // Stubs para funções de tabela se não existirem
 static TABELA criarTabela(int l, int c)
 {
@@ -22,6 +27,14 @@ static TABELA criarTabela(int l, int c)
         memset(t->tabela[i], '.', c);
     }
     return t;
+}
+
+void freeTabela(TABELA t)
+{
+    for (int i = 0; i < t->l; i++)
+        free(t->tabela[i]);
+    free(t->tabela);
+    free(t);
 }
 
 // Capture de stdout para silenciar funções que escrevem
@@ -112,6 +125,8 @@ void test_queue_insert_delete()
     CU_ASSERT_EQUAL(q->tamanho, 0);
     free(q->list);
     free(q);
+    for (int i = 0; i < 5; i++)
+        free(arr[i]);
 }
 
 // Testa devolveNaoVisitados
@@ -156,6 +171,7 @@ void test_existeCaminhoOrtogonal_simples()
     int **v = initVisited(t, &count);
     CU_ASSERT_TRUE(existeCaminhoOrtogonal(q, t, v, &count));
     CU_ASSERT_EQUAL(count, 4);
+    free(s);
     for (int i = 0; i < 2; i++)
         free(v[i]);
     free(v);
@@ -168,12 +184,12 @@ void test_existeCaminhoOrtogonal_simples()
 void test_trataCaminhoOrtogonal_erro()
 {
     TABELA t = criarTabela(3, 3);
-    t->tabela[1][0] = '#';
-    t->tabela[0][1] = '#';
+    t->tabela[0][0] = '#';
+    t->tabela[2][2] = '#';
     bool temR = false;
     int conta = 0;
     _begin_capture();
-    bool r = trataCaminhoOrtogonal(t, &conta, &temR, false);
+    bool r = trataCaminhoOrtogonal(t, &conta, &temR, true);
     _end_capture();
     CU_ASSERT_TRUE(r);
     CU_ASSERT_TRUE(temR);
