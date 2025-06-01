@@ -13,18 +13,36 @@ accbb
 5 5
 ecadc
 #cdec
-bDdce
+bdDce
 cdeeb
 accbb
 5 5
 ECadc
-#Cdec
-BD#ce
-c#eeb
+#C#ec
+B#Dce
+Cdeeb
 accbb
 5 5
 ECAD#
-#CDE#
-BD#CE
-C#E##
-AC#BB
+#C#E#
+B#DCE
+CDE#B
+A#CB#
+5 5
+ecadc
+dcdec
+bddce
+cdeeb
+accbb
+5 5
+ecadc
+dcdec
+bddce
+cdeeb
+accb#
+5 5
+ecadc
+dcdec
+bddce
+cdeeB
+accB#

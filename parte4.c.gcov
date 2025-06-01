@@ -287,110 +287,120 @@
         -:  283:    }
         2:  284:}
         -:  285:
-        -:  286:// Função que vai a cada linha e verifica elementos iguas minusculos e tenta pintar um deles para ver se se consegue chegar à resposta
-        -:  287:// Devolve true se a resposta for encontrada e false caso contrario
-        4:  288:bool tentaColunas(TABELA *t)
-        -:  289:{
-        4:  290:    bool continuar = true;
-        9:  291:    for (int i = 0; continuar && i < (*t)->l; i++)
-        -:  292:    {
-       12:  293:        for (int j = 0; continuar && j < (*t)->c; j++)
-        -:  294:        {
-        7:  295:            if (islower((*t)->tabela[i][j]))
-        -:  296:            {
-       13:  297:                for (int k = 0; continuar && k < (*t)->c; k++)
-        -:  298:                {
-        8:  299:                    if (k != j && (*t)->tabela[i][k] == (*t)->tabela[i][j])
-        -:  300:                    {
-        1:  301:                        tentaRiscarColunas(i, j, k, t, &continuar);
-        1:  302:                        if (continuar)
-    #####:  303:                            aplicaA(t);
-        1:  304:                        if (jogoResolvido(*t))
-        1:  305:                            continuar = false;
-        -:  306:                    }
-        -:  307:                }
-        -:  308:            }
-        -:  309:        }
-        -:  310:    }
-        4:  311:    return (!continuar);
-        -:  312:}
-        -:  313:
-        -:  314:// Função que tenta pintar para as duas casas que tem iguais e ve se em alguns dos casos se obtem o jogo resolvido ou ent alguma restrição
-        2:  315:void tentaRiscarLinhas(int c, int l1, int l2, TABELA *t, bool *continuar)
-        -:  316:{
+        -:  286:// Função auxiliar que tenta riscar e verifica se o jogo fica resolvido
+        1:  287:void tentaColunasAux(int i, int j, int k, TABELA *t, bool *continuar)
+        -:  288:{
+        1:  289:    tentaRiscarColunas(i, j, k, t, continuar);
+        1:  290:    if (*continuar)
+    #####:  291:        aplicaA(t);
+        1:  292:    if (jogoResolvido(*t))
+        1:  293:        *continuar = false;
+        1:  294:}
+        -:  295:
+        -:  296:// Função que vai a cada linha e verifica elementos iguas minusculos e tenta pintar um deles para ver se se consegue chegar à resposta
+        -:  297:// Devolve true se a resposta for encontrada e false caso contrario
+        4:  298:bool tentaColunas(TABELA *t)
+        -:  299:{
+        4:  300:    bool continuar = true;
+        9:  301:    for (int i = 0; continuar && i < (*t)->l; i++)
+        -:  302:    {
+       12:  303:        for (int j = 0; continuar && j < (*t)->c; j++)
+        -:  304:        {
+        7:  305:            if (islower((*t)->tabela[i][j]))
+        -:  306:            {
+       13:  307:                for (int k = 0; continuar && k < (*t)->c; k++)
+        -:  308:                {
+        8:  309:                    if (k != j && (*t)->tabela[i][k] == (*t)->tabela[i][j])
+        1:  310:                        tentaColunasAux(i, j, k, t, &continuar);
+        -:  311:                }
+        -:  312:            }
+        -:  313:        }
+        -:  314:    }
+        4:  315:    return (!continuar);
+        -:  316:}
         -:  317:
-        2:  318:    int ls[2] = {l1, l2};
-        2:  319:    int keepGoing = 1;
-        4:  320:    for (int i = 0; keepGoing && i < 2; i++)
-        -:  321:    {
-        2:  322:        TABELA tentativa = copiarTabela(*t);
-        2:  323:        int linha = ls[i];
-        2:  324:        int coluna = c;
-        2:  325:        char letra = (*t)->tabela[linha][coluna];
-        2:  326:        tentativa->tabela[linha][coluna] = toupper(letra);
-        2:  327:        aplicaA(&tentativa);
-        2:  328:        if (jogoResolvido(tentativa))
-        -:  329:        {
-        2:  330:            *continuar = false;
-        2:  331:            keepGoing = 0;
-        2:  332:            TABELA temp = *t;
-        2:  333:            *t = copiarTabela(tentativa);
-        2:  334:            freeTabela(temp);
-        -:  335:        }
-    #####:  336:        else if (verificaRestricoes(tentativa, false)) // Caso assim existam restrições eu mudo ja na tabela original porque sei que tem de ser da outra forma
-        -:  337:        {
-    #####:  338:            keepGoing = 0;
-    #####:  339:            (*t)->tabela[linha][coluna] = '#';
-    #####:  340:            (*t)->tabela[i == 0 ? l2 : l1][coluna] = toupper(letra); // uso letra porque ambas as posições tem a mesma letra minuscula la
-        -:  341:        }
-        2:  342:        freeTabela(tentativa);
-        -:  343:    }
-        2:  344:}
-        -:  345:
-        -:  346:// Função que vai a cada coluna e verifica elementos iguas minusculos e tenta pintar um deles para ver se se consegue chegar à resposta
-        -:  347:// Devolve true se a resposta for encontrada e false caso contrario
-        4:  348:bool tentaLinhas(TABELA *t)
-        -:  349:{
-        4:  350:    bool continuar = true;
-        9:  351:    for (int i = 0; continuar && i < (*t)->l; i++)
-        -:  352:    {
-       12:  353:        for (int j = 0; continuar && j < (*t)->c; j++)
-        -:  354:        {
-        7:  355:            if (islower((*t)->tabela[j][i]))
-        -:  356:            {
-       13:  357:                for (int k = 0; continuar && k < (*t)->l; k++)
-        -:  358:                {
-        8:  359:                    if (k != j && (*t)->tabela[k][i] == (*t)->tabela[j][i])
-        -:  360:                    {
-        1:  361:                        tentaRiscarLinhas(i, j, k, t, &continuar);
-        1:  362:                        if (continuar)
-    #####:  363:                            aplicaA(t);
-        1:  364:                        if (jogoResolvido(*t))
-        1:  365:                            continuar = false;
-        -:  366:                    }
-        -:  367:                }
-        -:  368:            }
-        -:  369:        }
-        -:  370:    }
-        4:  371:    return (!continuar);
-        -:  372:}
-        -:  373:
-        -:  374:// Função que recebe a tabela inicial de quando o jogo foi carregado e tenta resolver o jogo -> Comando R
-        -:  375:// Coloca ainda o aux a null null e o continuar a false caso não seja possivel resolver o tabuleiro
-        4:  376:TABELA resolve(TABELA t)
-        -:  377:{
-        4:  378:    TABELA aux = copiarTabela(t);
-        -:  379:
-        -:  380:    // Funções que riscam as casas que se tem a certeza que tem de ser riscadas
-        4:  381:    riscaABA(aux);
-        4:  382:    risca_AA_A(aux);
+        -:  318:// Função que tenta pintar para as duas casas que tem iguais e ve se em alguns dos casos se obtem o jogo resolvido ou ent alguma restrição
+        2:  319:void tentaRiscarLinhas(int c, int l1, int l2, TABELA *t, bool *continuar)
+        -:  320:{
+        -:  321:
+        2:  322:    int ls[2] = {l1, l2};
+        2:  323:    int keepGoing = 1;
+        4:  324:    for (int i = 0; keepGoing && i < 2; i++)
+        -:  325:    {
+        2:  326:        TABELA tentativa = copiarTabela(*t);
+        2:  327:        int linha = ls[i];
+        2:  328:        int coluna = c;
+        2:  329:        char letra = (*t)->tabela[linha][coluna];
+        2:  330:        tentativa->tabela[linha][coluna] = toupper(letra);
+        2:  331:        aplicaA(&tentativa);
+        2:  332:        if (jogoResolvido(tentativa))
+        -:  333:        {
+        2:  334:            *continuar = false;
+        2:  335:            keepGoing = 0;
+        2:  336:            TABELA temp = *t;
+        2:  337:            *t = copiarTabela(tentativa);
+        2:  338:            freeTabela(temp);
+        -:  339:        }
+    #####:  340:        else if (verificaRestricoes(tentativa, false)) // Caso assim existam restrições eu mudo ja na tabela original porque sei que tem de ser da outra forma
+        -:  341:        {
+    #####:  342:            keepGoing = 0;
+    #####:  343:            (*t)->tabela[linha][coluna] = '#';
+    #####:  344:            (*t)->tabela[i == 0 ? l2 : l1][coluna] = toupper(letra); // uso letra porque ambas as posições tem a mesma letra minuscula la
+        -:  345:        }
+        2:  346:        freeTabela(tentativa);
+        -:  347:    }
+        2:  348:}
+        -:  349:
+        -:  350:// Função auxiliar que tenta riscar e verifica se o jogo fica resolvido
+        1:  351:void tentaLinhasAux(int i, int j, int k, TABELA *t, bool *continuar)
+        -:  352:{
+        1:  353:    tentaRiscarLinhas(i, j, k, t, continuar);
+        1:  354:    if (*continuar)
+    #####:  355:        aplicaA(t);
+        1:  356:    if (jogoResolvido(*t))
+        1:  357:        *continuar = false;
+        1:  358:}
+        -:  359:
+        -:  360:// Função que vai a cada coluna e verifica elementos iguas minusculos e tenta pintar um deles para ver se se consegue chegar à resposta
+        -:  361:// Devolve true se a resposta for encontrada e false caso contrario
+        4:  362:bool tentaLinhas(TABELA *t)
+        -:  363:{
+        4:  364:    bool continuar = true;
+        9:  365:    for (int i = 0; continuar && i < (*t)->l; i++)
+        -:  366:    {
+       12:  367:        for (int j = 0; continuar && j < (*t)->c; j++)
+        -:  368:        {
+        7:  369:            if (islower((*t)->tabela[j][i]))
+        -:  370:            {
+       13:  371:                for (int k = 0; continuar && k < (*t)->l; k++)
+        -:  372:                {
+        8:  373:                    if (k != j && (*t)->tabela[k][i] == (*t)->tabela[j][i])
+        -:  374:                    {
+        1:  375:                        tentaLinhasAux(i, j, k, t, &continuar);
+        -:  376:                    }
+        -:  377:                }
+        -:  378:            }
+        -:  379:        }
+        -:  380:    }
+        4:  381:    return (!continuar);
+        -:  382:}
         -:  383:
-        -:  384:    // Aplica-se o comando 'a' repetidamente até ele não fazer mais alterações
-        4:  385:    aplicaA(&aux);
-        4:  386:    if (!jogoResolvido(aux) && !tentaColunas(&aux) && !tentaLinhas(&aux))
-        -:  387:    {
-        3:  388:        freeTabela(aux);
-        3:  389:        return NULL;
-        -:  390:    }
-        1:  391:    return aux;
-        -:  392:}
+        -:  384:// Função que recebe a tabela inicial de quando o jogo foi carregado e tenta resolver o jogo -> Comando R
+        -:  385:// Coloca ainda o aux a null null e o continuar a false caso não seja possivel resolver o tabuleiro
+        4:  386:TABELA resolve(TABELA t)
+        -:  387:{
+        4:  388:    TABELA aux = copiarTabela(t);
+        -:  389:
+        -:  390:    // Funções que riscam as casas que se tem a certeza que tem de ser riscadas
+        4:  391:    riscaABA(aux);
+        4:  392:    risca_AA_A(aux);
+        -:  393:
+        -:  394:    // Aplica-se o comando 'a' repetidamente até ele não fazer mais alterações
+        4:  395:    aplicaA(&aux);
+        4:  396:    if (!jogoResolvido(aux) && !tentaColunas(&aux) && !tentaLinhas(&aux))
+        -:  397:    {
+        3:  398:        freeTabela(aux);
+        3:  399:        return NULL;
+        -:  400:    }
+        1:  401:    return aux;
+        -:  402:}
