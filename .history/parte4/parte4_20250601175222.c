@@ -129,7 +129,7 @@ int aplicaA(TABELA *aux)
     return mudancas;
 }
 
-// Função responsável por executar o comando a ate não haver alterações no tabuleiro (comando 'A')
+// Função responsável por
 void comandoA(TABELA *aux, bool *continuar)
 {
     int mudou = aplicaA(aux);

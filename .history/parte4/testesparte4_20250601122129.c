@@ -6,8 +6,8 @@
 #include <ctype.h>
 #include "parte4.h"
 
-// Função auxiliar para criar
-TABELA create_table(int l, int c, char fill)
+// Helper para criar e liberar tabelas
+static TABELA create_table(int l, int c, char fill)
 {
     TABELA t = malloc(sizeof(struct Tabela));
     CU_ASSERT_PTR_NOT_NULL_FATAL(t);
@@ -27,7 +27,7 @@ TABELA create_table(int l, int c, char fill)
 
 void test_verificaSeQuebraCaminho()
 {
-    // não isola (contaRestricoes == 0)
+    // Cenário 1: não isola (contaRestricoes == 0)
     TABELA aux1 = create_table(2, 2, ' ');
     aux1->tabela[0][0] = 'a';
     bool changed = false;
@@ -36,7 +36,8 @@ void test_verificaSeQuebraCaminho()
     CU_ASSERT_FALSE(changed);
     freeTabela(aux1);
 
-    // isolar uma célula
+    // Cenário 2: isolar uma célula
+    // Inicialmente, só duas células minúsculas desconectadas: (0,0) e (1,1)
     TABELA aux2 = create_table(2, 2, ' ');
     aux2->tabela[0][0] = 'a';
     aux2->tabela[1][1] = '#';
@@ -48,7 +49,6 @@ void test_verificaSeQuebraCaminho()
     freeTabela(aux2);
 }
 
-// Função responsável por testar a função riscaLetrasRepetidas
 void test_riscaLetrasRepetidas()
 {
     TABELA t = create_table(3, 3, ' ');
@@ -72,7 +72,6 @@ void test_riscaLetrasRepetidas()
     freeTabela(aux);
 }
 
-// Função responsável por testar a função pintaVizinhosDeRiscadas
 void test_pintaVizinhosDeRiscadas()
 {
     TABELA t = create_table(3, 3, ' ');
@@ -98,7 +97,6 @@ void test_pintaVizinhosDeRiscadas()
     freeTabela(aux);
 }
 
-// Função responsável por testar a função trataABA_linhas
 void test_trataABA_linhas()
 {
     TABELA aux = create_table(3, 3, ' ');
@@ -113,11 +111,10 @@ void test_trataABA_linhas()
     freeTabela(aux);
 }
 
-// Função responsável por testar trataABA_colunas
 void test_trataABA_colunas()
 {
     TABELA aux = create_table(3, 3, ' ');
-    // Grupo ABA na coluna 1
+    // Grupo ABA em coluna 1: (0,1)='a', (1,1)='b', (2,1)='a'
     aux->tabela[0][1] = 'a';
     aux->tabela[1][1] = 'b';
     aux->tabela[2][1] = 'a';
@@ -128,7 +125,6 @@ void test_trataABA_colunas()
     freeTabela(aux);
 }
 
-// Função responsável por testar afunção trataAA_A_NasLinhas
 void test_trataAA_A_NasLinhas()
 {
     TABELA aux = create_table(3, 3, ' ');
@@ -143,7 +139,6 @@ void test_trataAA_A_NasLinhas()
     freeTabela(aux);
 }
 
-// Função responsável por testar a função trataAA_A_NasColunas
 void test_trataAA_A_NasColunas()
 {
     TABELA aux = create_table(3, 3, ' ');
@@ -158,7 +153,6 @@ void test_trataAA_A_NasColunas()
     freeTabela(aux);
 }
 
-// Função responsável por testar a função riscaABA
 void test_riscaABA()
 {
     TABELA aux = create_table(3, 3, ' ');
@@ -173,7 +167,6 @@ void test_riscaABA()
     freeTabela(aux);
 }
 
-// Função responsável por testar as funções existemMinusculas e jogoResolvido
 void test_existemMinusculas_and_jogoResolvido()
 {
     TABELA aux = create_table(2, 2, ' ');
@@ -191,7 +184,6 @@ void test_existemMinusculas_and_jogoResolvido()
     freeTabela(aux);
 }
 
-// Função responsável por testar a função aplicaA
 void test_aplicaA()
 {
     // Constrói uma tabela em que exista repetição que o comando 'a' corrige
@@ -206,7 +198,6 @@ void test_aplicaA()
     freeTabela(aux);
 }
 
-// Função responsável por testar a função A
 void test_comandoA()
 {
     TABELA aux = create_table(2, 2, ' ');
@@ -228,7 +219,6 @@ void test_comandoA()
     freeTabela(aux);
 }
 
-// Função responsável por testar a função tentaRiscarColunas
 void test_tentaRiscarColunas_resolve()
 {
     // Tabela 2×2: 'a','A' → transformando 'a' em '#' resolve o jogo imediatamente
@@ -247,7 +237,6 @@ void test_tentaRiscarColunas_resolve()
     freeTabela(t);
 }
 
-// Função responsável por testar a função tentaColunas
 void test_tentaColunas()
 {
     // Tabela 1×2: 'a','a' → tentaColunas deve retornar true
@@ -261,7 +250,6 @@ void test_tentaColunas()
     freeTabela(t);
 }
 
-// Função responsável por testar a função teantaRiscasLinhas
 void test_tentaRiscarLinhas_resolve()
 {
     // Tabela 2×1: ['a'; 'A'] → transformar (0,0) resolve
@@ -280,7 +268,6 @@ void test_tentaRiscarLinhas_resolve()
     freeTabela(t);
 }
 
-// Função responsável por testar a função tentaLinhas
 void test_tentaLinhas()
 {
     // Tabela 2×1: ['a'; 'a'] → tentaLinhas retorna true
@@ -294,7 +281,6 @@ void test_tentaLinhas()
     freeTabela(t);
 }
 
-// Função responsável por testar a função resolve no caso de dar null
 void test_resolve_null()
 {
     // Tabela contrária: duas minúsculas isoladas, sem solução
@@ -306,7 +292,6 @@ void test_resolve_null()
     freeTabela(t);
 }
 
-// Função responsável por testar a função resolve
 void test_resolve_success()
 {
     // Tabela já resolvida: apenas maiúsculas

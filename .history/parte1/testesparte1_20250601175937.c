@@ -282,7 +282,7 @@ void test_lerCmd_freeOldTab()
     remove(filename);
 }
 
-// Ler arquivo vazio (comprimento == 0) - cobre o ramo de erro "o ficheiro não contem nenhum tabuleiro"
+//  Ler arquivo vazio (comprimento == 0) - cobre o ramo de erro "o ficheiro não contem nenhum tabuleiro"
 void test_lerCmd_emptyFile()
 {
     GAME game;
@@ -310,7 +310,7 @@ void test_lerCmd_emptyFile()
     remove(filename);
 }
 
-// Ler arquivo com formato de dimensões válido, mas conteúdo incompleto no leTabuleiro
+// 4) Ler arquivo com formato de dimensões válido, mas conteúdo incompleto no leTabuleiro
 void test_lerCmd_incompleteData()
 {
     GAME game;
@@ -412,7 +412,7 @@ void test_i()
 void test_e_correctMatches()
 {
     GAME game;
-    bool comandoProcessado = false;
+    bool comandoProcessed = false;
 
     // Cria tabuleiro 1x2 e solução 1x2
     TABELA t = malloc(sizeof(struct Tabela));
@@ -429,8 +429,9 @@ void test_e_correctMatches()
     game.tab = t;
     game.solution = s;
 
-    e(game, &comandoProcessado);
-    CU_ASSERT_TRUE(comandoProcessado);
+    // Chama e(): espera que comandoProcessed seja true e que increment corretas aconteça
+    e(game, &comandoProcessed);
+    CU_ASSERT_TRUE(comandoProcessed);
 
     freeTabela(t);
     freeTabela(s);

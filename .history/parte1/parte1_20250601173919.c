@@ -255,7 +255,6 @@ bool riscar(TABELA t, int linha, int coluna)
     return true;
 }
 
-// Função responsável por desenhar no terminal a separação entre duas linhas da tabela
 void desenhaSeparacao(TABELA t, int i)
 {
     if (i < t->l - 1)
@@ -297,7 +296,7 @@ void desenhaConteudo(TABELA t, bool isC, TABELA s)
     }
 }
 
-// Função que mostra o tabuleiro no terminal
+// Função que mostra o tabuleiro
 void mostrarTabela(GAME game, int isC) // isC é uma flag que se for positiva quer dizer que estou a invocar o comando c
 {
     TABELA t = game.tab;
@@ -331,7 +330,6 @@ void mostrarTabela(GAME game, int isC) // isC é uma flag que se for positiva qu
     printf("\n");
 }
 
-// Função responsável por executar o comando 'i'
 void i(GAME *game, bool *comandoProcessado)
 {
     TABELA new = copiarTabela(game->stackTabs->tabelas[0]);
@@ -344,7 +342,6 @@ void i(GAME *game, bool *comandoProcessado)
     *comandoProcessado = true;
 }
 
-// Função responsável função que mostra no ecrã as estatisticas calculadas com o comando 'e'
 void escreveEstatisticas(float percentagem, GAME g, int resolvidas, int total, int corretas, bool *comandoProcessado, int b, int r)
 {
     printf("\n%s=== ESTATÍSTICAS DO JOGO ===%s\n", HINT_COLOR, RESET);
@@ -370,7 +367,6 @@ void escreveEstatisticas(float percentagem, GAME g, int resolvidas, int total, i
     *comandoProcessado = true;
 }
 
-// Função responsável por calcular as estatisticas atuais do jogo
 void e(GAME g, bool *comandoProcessado)
 {
     int total = g.tab->c * g.tab->l;

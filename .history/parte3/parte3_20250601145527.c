@@ -135,7 +135,6 @@ COORDENADA *devolveNaoVisitados(int **visited, int l, int c, int length)
     return naoVisitados;
 }
 
-// Função responsável visitar uma determinada posição e adiciona-la aos vizinhos
 void atualizaEstado(int linha, int coluna, int **visited, COORDENADA *vizinhos, int *numeroVizinhosValidos)
 {
     COORDENADA pos = malloc(sizeof(struct Coordenada));

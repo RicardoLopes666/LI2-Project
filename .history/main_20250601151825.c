@@ -9,7 +9,6 @@
 #include <string.h>
 #define LINE_SIZE 1024
 
-// Função responsável por ler o comando do terminal
 void leArgumentosEValida(char *line, char *cmd, char *arg, char *resto, bool *continuar, GAME *game, int *num_args)
 {
     printf("> ");
@@ -36,7 +35,6 @@ void leArgumentosEValida(char *line, char *cmd, char *arg, char *resto, bool *co
     }
 }
 
-// Função responsável por guardar o estado atual do tabuleiro na stack de tabelas
 void guardaNovoTab(bool *continuar, GAME game, bool *comandoProcessado)
 {
     if (*continuar)
@@ -52,7 +50,6 @@ void guardaNovoTab(bool *continuar, GAME game, bool *comandoProcessado)
     }
 }
 
-// Função responsável por chamar a função a e imprimir a devidas mensagens no terminal
 void chamaa(bool *continuar, bool *comandoProcessado, GAME *game)
 {
     printf("%sA executar o comando de ajuda...%s\n", HINT_COLOR, RESET);
@@ -78,7 +75,6 @@ void chamaa(bool *continuar, bool *comandoProcessado, GAME *game)
     }
 }
 
-// Função responsável chamar a função de resolver o jogo e emprimir as respetivas mensagens no terminal
 void chamaR(GAME *game)
 {
     printf("%sA executar o comando de resolver o jogo...%s\n", HINT_COLOR, RESET);
@@ -96,7 +92,6 @@ void chamaR(GAME *game)
     }
 }
 
-// Função responsável chamar o codigo corresponde aos comando a, R, A e i
 void trataComandoaARi(char comando, char *arg, GAME *game, bool *continuar, bool *comandoProcessado)
 {
     if (arg[0] != '\0')
@@ -126,7 +121,6 @@ void trataComandoaARi(char comando, char *arg, GAME *game, bool *continuar, bool
     }
 }
 
-// Função responsável chamar o codigo corresponde aos comando b, E e r
 void trataComandobEr(char comando, char *arg, bool *continuar, GAME game)
 {
     if (arg[0] == '\0')
@@ -159,7 +153,6 @@ void trataComandobEr(char comando, char *arg, bool *continuar, GAME game)
     }
 }
 
-// Função responsável por libertar a memória alocada ao longo do correr do jogo
 void libertaMemoria(GAME game)
 {
     // Liberta a memória alocada para a lista de tabuleiros
@@ -173,13 +166,11 @@ void libertaMemoria(GAME game)
         freeTabela(game.solution);
 }
 
-// Função responsável que verifica se o comando pertence aqueles que alteram o tabuleiro
 int comandoQAlteraTab(char comando, bool continuar, bool comandoProcessado)
 {
     return (!comandoProcessado && continuar && (comando == 'b' || comando == 'r' || comando == 'a' || comando == 'R' || comando == 'A' || comando == 'i'));
 }
 
-// Função responsável por chamar as funções v, d ,u e e
 void tratavdce(bool *continuar, bool *comandoProcessado, GAME *game, char *arg, char comando)
 {
     if (arg[0] != '\0')
@@ -203,7 +194,6 @@ void tratavdce(bool *continuar, bool *comandoProcessado, GAME *game, char *arg, 
         e(*game, comandoProcessado);
 }
 
-// Função responsável por tratar do codigo corresponde aos comandos v, d, u, c e e
 void comandovduce(bool *continuar, char comando, char *arg, GAME *game, bool *comandoProcessado)
 {
     if (comando == 'v' || comando == 'd' || comando == 'u' || comando == 'e')
@@ -245,7 +235,6 @@ void mostrarAjuda()
     printf("%ss%s              - sair do programa\n\n", COMMAND_COLOR, RESET);
 }
 
-// Função responsável pelo executar o comando que mostra os comandos disponíveis
 void comandoAjuda(char comando, bool *comandoProcessado)
 {
     if (comando == '?')
@@ -255,7 +244,6 @@ void comandoAjuda(char comando, bool *comandoProcessado)
     }
 }
 
-// Função responsável por mostrar no ecrã a vitória do jogador
 void escreveVitoria()
 {
 
@@ -275,7 +263,6 @@ void escreveVitoria()
     printf("%sPara continuar a jogar carregue um novo tabuleiro\n\n%s", HINT_COLOR, RESET);
 }
 
-// Função responsável por mostrar no ecrã a mensagem de inicio de jogo
 void desenhaBemVindo()
 {
     printf("%s%s", CLEAR_SCREEN, YELLOW);
@@ -293,7 +280,6 @@ void desenhaBemVindo()
     printf("%sUtilize '?' para ver os comandos disponíveis%s\n", HINT_COLOR, RESET);
 }
 
-// Função responsável por executar os comandos que alteram o tabuleiro
 void trataComandoQAlteraTab(char comando, char *arg, bool *continuar, GAME *game, bool *comandoProcessado)
 {
     if (comando == 'b' || comando == 'r')
@@ -310,7 +296,6 @@ void trataComandoQAlteraTab(char comando, char *arg, bool *continuar, GAME *game
     guardaNovoTab(continuar, *game, comandoProcessado);
 }
 
-// Função responsável por iniciar um game
 void initGame(GAME *game)
 {
     game->estado.looping = true;
@@ -319,7 +304,6 @@ void initGame(GAME *game)
     game->stackTabs = malloc(sizeof(struct StackTabs)); // Cria a estrutura de dados que vai ser usada para armazenar os diferentes estados do jogo
 }
 
-// Função responsável por verificar se o game ja tem algum jogo carregado
 void verificaExisteTab(GAME game, bool *continuar, bool comandoProcessado)
 {
     if (game.tab == NULL && !comandoProcessado) // Para não ser incluido quando usado o comando '?'

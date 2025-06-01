@@ -10,7 +10,7 @@
 
 #define LINE_SIZE 1024
 
-// Função responsável por criar um tabueliro com as dimensões indicadas e todos os elementos com fill
+// Função responsável
 TABELA create_filled_table(int l, int c, char fill)
 {
     TABELA t = malloc(sizeof(struct Tabela));
@@ -75,7 +75,7 @@ void test_mostrarTabela()
     TABELA s = malloc(sizeof(struct Tabela));
     initTabela(t, 2, 2);
     initTabela(s, 2, 2);
-
+    // Preenche tab e solution para cobrir ramos de isC = 0
     g.tab = t;
     g.solution = s;
     for (int i = 0; i < t->l; i++)
@@ -89,7 +89,7 @@ void test_mostrarTabela()
     // isC = 0
     mostrarTabela(g, 0);
 
-    // isC = 1 com célula riscada e célula maiúscula incorreta
+    // isC = 1 com célula riscada e célula maiúscula incorreta para cobrir ramos de impressão colorida
     g.tab->tabela[0][0] = '#';
     g.solution->tabela[0][0] = '#';
     g.tab->tabela[0][1] = 'B';
@@ -228,9 +228,10 @@ void test_gravar()
     freeStackTabs(game.stackTabs);
 }
 
-// Testa o comando lerCmd
+// Testa o comando lerCmd (cenários básicos já cobertos)
+// Agora adicionamos casos adicionais para atingir 100% de cobertura
 
-//  Ler com arquivo inexistente (fopen retorna NULL)
+// 1) Ler com arquivo inexistente (fopen retorna NULL)
 void test_lerCmd_fileNotFound()
 {
     GAME game;
@@ -246,7 +247,7 @@ void test_lerCmd_fileNotFound()
     freeStackTabs(game.stackTabs);
 }
 
-// Ler com game.tab não nulo - garante que freeTabela(game->tab) é chamado
+// 2) Ler com game.tab não nulo - garante que freeTabela(game->tab) é chamado
 void test_lerCmd_freeOldTab()
 {
     GAME game;
@@ -273,7 +274,7 @@ void test_lerCmd_freeOldTab()
     // Ler deve chamar freeTabela(old) e depois atribuir nova tabela via resolve
     CU_ASSERT_TRUE(lerCmd('l', filename, &game));
     CU_ASSERT_PTR_NOT_NULL(game.tab);
-    // Como o único caractere é 'a', espera-se que lerCmd coloque 'a'
+    // Como o único caractere é 'a', espera-se que lerCmd coloque 'a' (sem help)
     CU_ASSERT_EQUAL(game.tab->tabela[0][0], 'a');
 
     freeTabela(game.tab);
@@ -282,7 +283,7 @@ void test_lerCmd_freeOldTab()
     remove(filename);
 }
 
-// Ler arquivo vazio (comprimento == 0) - cobre o ramo de erro "o ficheiro não contem nenhum tabuleiro"
+// 3) Ler arquivo vazio (comprimento == 0) - cobre o ramo de erro "o ficheiro não contem nenhum tabuleiro"
 void test_lerCmd_emptyFile()
 {
     GAME game;
@@ -310,7 +311,7 @@ void test_lerCmd_emptyFile()
     remove(filename);
 }
 
-// Ler arquivo com formato de dimensões válido, mas conteúdo incompleto no leTabuleiro
+// 4) Ler arquivo com formato de dimensões válido, mas conteúdo incompleto no leTabuleiro
 void test_lerCmd_incompleteData()
 {
     GAME game;
@@ -412,7 +413,7 @@ void test_i()
 void test_e_correctMatches()
 {
     GAME game;
-    bool comandoProcessado = false;
+    bool comandoProcessed = false;
 
     // Cria tabuleiro 1x2 e solução 1x2
     TABELA t = malloc(sizeof(struct Tabela));
@@ -429,8 +430,9 @@ void test_e_correctMatches()
     game.tab = t;
     game.solution = s;
 
-    e(game, &comandoProcessado);
-    CU_ASSERT_TRUE(comandoProcessado);
+    // Chama e(): espera que comandoProcessed seja true e que increment corretas aconteça
+    e(game, &comandoProcessed);
+    CU_ASSERT_TRUE(comandoProcessed);
 
     freeTabela(t);
     freeTabela(s);

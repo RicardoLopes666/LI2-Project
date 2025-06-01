@@ -129,7 +129,6 @@ int aplicaA(TABELA *aux)
     return mudancas;
 }
 
-// Função responsável por executar o comando a ate não haver alterações no tabuleiro (comando 'A')
 void comandoA(TABELA *aux, bool *continuar)
 {
     int mudou = aplicaA(aux);
@@ -232,7 +231,6 @@ void riscaABA(TABELA aux)
     trataABA_linhas(aux);
 }
 
-// FUnção que verifica se exsitem letras minusculas numa tabela
 int existemMinusculas(TABELA t)
 {
     for (int i = 0; i < t->l; i++)

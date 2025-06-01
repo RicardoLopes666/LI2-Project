@@ -102,7 +102,6 @@ bool sair(char cmd, char *arg, GAME *game)
     return false;
 }
 
-// Função que le um tabuleiro de um ficheiro e o coloca numa tabela
 bool leTabuleiro(TABELA *t, int linhas, int colunas, FILE *file)
 {
     for (int i = 0; i < linhas; i++)
@@ -119,7 +118,6 @@ bool leTabuleiro(TABELA *t, int linhas, int colunas, FILE *file)
     return true;
 }
 
-// Função responsável por colocar uma tabela na stack de tabelas
 bool colocaTabelaNaStack(GAME *game, TABELA tabela)
 {
     if (!insereTabela(game->stackTabs, tabela))
@@ -133,13 +131,12 @@ bool colocaTabelaNaStack(GAME *game, TABELA tabela)
     return true;
 }
 
-// Função responsável por colocar a solução do tabuleiro no game.solution
 void colocaSolucao(GAME *game)
 {
     TABELA aux = resolve(game->stackTabs->tabelas[0]); // Recebe a primeira tabela carregada (em principio so com letras minusculas)
     if (aux == NULL)
     {
-        printf("%sERRO: o tabuleiro carregado não é válido%s\n", ERROR_COLOR, RESET);
+        printf("%sERRO: o tabuleiro carregado não pode ser resolvido.%s\n", ERROR_COLOR, RESET);
         printf("Carregue um tabuleiro novo para continuar a jogar.\n");
         TABELA temp = game->tab;
         game->tab = NULL;
@@ -151,8 +148,6 @@ void colocaSolucao(GAME *game)
     if (temp != NULL)
         freeTabela(temp);
 }
-
-// Função responsável função que passa todas as tabelas de um ficheiro para a stack tabs
 bool leTabuleirosDoFicheiro(int *linhas, int *colunas, FILE *file, GAME *game, STACKTABS s)
 {
     while (fscanf(file, "%d %d", linhas, colunas) == 2)
@@ -255,7 +250,6 @@ bool riscar(TABELA t, int linha, int coluna)
     return true;
 }
 
-// Função responsável por desenhar no terminal a separação entre duas linhas da tabela
 void desenhaSeparacao(TABELA t, int i)
 {
     if (i < t->l - 1)
@@ -297,7 +291,7 @@ void desenhaConteudo(TABELA t, bool isC, TABELA s)
     }
 }
 
-// Função que mostra o tabuleiro no terminal
+// Função que mostra o tabuleiro
 void mostrarTabela(GAME game, int isC) // isC é uma flag que se for positiva quer dizer que estou a invocar o comando c
 {
     TABELA t = game.tab;
@@ -331,7 +325,6 @@ void mostrarTabela(GAME game, int isC) // isC é uma flag que se for positiva qu
     printf("\n");
 }
 
-// Função responsável por executar o comando 'i'
 void i(GAME *game, bool *comandoProcessado)
 {
     TABELA new = copiarTabela(game->stackTabs->tabelas[0]);
@@ -344,7 +337,6 @@ void i(GAME *game, bool *comandoProcessado)
     *comandoProcessado = true;
 }
 
-// Função responsável função que mostra no ecrã as estatisticas calculadas com o comando 'e'
 void escreveEstatisticas(float percentagem, GAME g, int resolvidas, int total, int corretas, bool *comandoProcessado, int b, int r)
 {
     printf("\n%s=== ESTATÍSTICAS DO JOGO ===%s\n", HINT_COLOR, RESET);
@@ -370,7 +362,6 @@ void escreveEstatisticas(float percentagem, GAME g, int resolvidas, int total, i
     *comandoProcessado = true;
 }
 
-// Função responsável por calcular as estatisticas atuais do jogo
 void e(GAME g, bool *comandoProcessado)
 {
     int total = g.tab->c * g.tab->l;

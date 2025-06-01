@@ -179,7 +179,6 @@ int comandoQAlteraTab(char comando, bool continuar, bool comandoProcessado)
     return (!comandoProcessado && continuar && (comando == 'b' || comando == 'r' || comando == 'a' || comando == 'R' || comando == 'A' || comando == 'i'));
 }
 
-// Função responsável por chamar as funções v, d ,u e e
 void tratavdce(bool *continuar, bool *comandoProcessado, GAME *game, char *arg, char comando)
 {
     if (arg[0] != '\0')
@@ -203,7 +202,6 @@ void tratavdce(bool *continuar, bool *comandoProcessado, GAME *game, char *arg, 
         e(*game, comandoProcessado);
 }
 
-// Função responsável por tratar do codigo corresponde aos comandos v, d, u, c e e
 void comandovduce(bool *continuar, char comando, char *arg, GAME *game, bool *comandoProcessado)
 {
     if (comando == 'v' || comando == 'd' || comando == 'u' || comando == 'e')
@@ -245,7 +243,6 @@ void mostrarAjuda()
     printf("%ss%s              - sair do programa\n\n", COMMAND_COLOR, RESET);
 }
 
-// Função responsável pelo executar o comando que mostra os comandos disponíveis
 void comandoAjuda(char comando, bool *comandoProcessado)
 {
     if (comando == '?')
@@ -255,7 +252,6 @@ void comandoAjuda(char comando, bool *comandoProcessado)
     }
 }
 
-// Função responsável por mostrar no ecrã a vitória do jogador
 void escreveVitoria()
 {
 
@@ -275,7 +271,6 @@ void escreveVitoria()
     printf("%sPara continuar a jogar carregue um novo tabuleiro\n\n%s", HINT_COLOR, RESET);
 }
 
-// Função responsável por mostrar no ecrã a mensagem de inicio de jogo
 void desenhaBemVindo()
 {
     printf("%s%s", CLEAR_SCREEN, YELLOW);
@@ -293,7 +288,6 @@ void desenhaBemVindo()
     printf("%sUtilize '?' para ver os comandos disponíveis%s\n", HINT_COLOR, RESET);
 }
 
-// Função responsável por executar os comandos que alteram o tabuleiro
 void trataComandoQAlteraTab(char comando, char *arg, bool *continuar, GAME *game, bool *comandoProcessado)
 {
     if (comando == 'b' || comando == 'r')
@@ -310,7 +304,6 @@ void trataComandoQAlteraTab(char comando, char *arg, bool *continuar, GAME *game
     guardaNovoTab(continuar, *game, comandoProcessado);
 }
 
-// Função responsável por iniciar um game
 void initGame(GAME *game)
 {
     game->estado.looping = true;
@@ -319,7 +312,6 @@ void initGame(GAME *game)
     game->stackTabs = malloc(sizeof(struct StackTabs)); // Cria a estrutura de dados que vai ser usada para armazenar os diferentes estados do jogo
 }
 
-// Função responsável por verificar se o game ja tem algum jogo carregado
 void verificaExisteTab(GAME game, bool *continuar, bool comandoProcessado)
 {
     if (game.tab == NULL && !comandoProcessado) // Para não ser incluido quando usado o comando '?'

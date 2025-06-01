@@ -8,7 +8,7 @@
 #include "../colors.h"
 
 // _________ Funções utilizadas para voltar atrás -> comando 'd' ____________
-// Função responsável por iniciar uma stack de tabelas
+
 bool initStackTabs(STACKTABS s)
 {
     s->capacidade = 3;
@@ -45,10 +45,8 @@ bool insereTabela(STACKTABS s, TABELA tab)
     return true;
 }
 
-// Header da função copiarTabela para poder ser usado em deleTabela
 TABELA copiarTabela(TABELA t); // Para poder usar em deleteTabela
 
-// Função responsável por eliminar uma tabela da stack
 bool deleteTabela(GAME *game)
 {                                                                         // Apenas se reduz o indice caso possivel
     if (game->stackTabs->comprimento <= 1 || game->stackTabs->indice < 2) // Dá erro se tentar eliminar a tabela inicial
@@ -58,7 +56,6 @@ bool deleteTabela(GAME *game)
     return true;
 }
 
-// Função responsável por copiar uma linha de t para nova tabela (new)
 void copiaLinha(int i, TABELA t, TABELA new)
 {
     for (int j = 0; j <= t->c; j++)
@@ -118,7 +115,6 @@ void freeStackTabs(STACKTABS s)
     }
 }
 
-// Função responsável por andar para a frente no histórico de tabelas
 void u(GAME *game, bool *comandoProcessado)
 {
     if (game->stackTabs->indice >= game->stackTabs->comprimento)
@@ -132,7 +128,6 @@ void u(GAME *game, bool *comandoProcessado)
     *comandoProcessado = true;
 }
 
-// Função responsável por desfazer um comando feito
 void d(GAME *game, bool *comandoProcessado)
 {
     if (!deleteTabela(game))
@@ -292,7 +287,6 @@ bool verificaRestricoes(TABELA t, bool escreve)
     return temRestricoes;
 }
 
-// Função responsável por verificar as restrições que existem no estado atual do tabuleiro
 void v(GAME game, bool *continuar, bool *comandoProcessado)
 {
     if (game.tab == NULL)

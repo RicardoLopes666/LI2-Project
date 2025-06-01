@@ -9,8 +9,8 @@
 #include "../parte2/parte2.h" // para outras funções de tabela
 #include "parte3.h"           // declara funções de parte3
 
-// Função responsável por cirar uma tabela com .
-TABELA criarTabela(int l, int c)
+// Stubs para funções de tabela
+static TABELA criarTabela(int l, int c)
 {
     TABELA t = malloc(sizeof(*t));
     t->l = l;
@@ -25,14 +25,14 @@ TABELA criarTabela(int l, int c)
 }
 
 // Capture de stdout para silenciar funções que escrevem
-FILE *orig_stdout;
-void _begin_capture(void)
+static FILE *orig_stdout;
+static void _begin_capture(void)
 {
     orig_stdout = stdout;
     stdout = fopen("/dev/null", "w");
 }
 
-void _end_capture(void)
+static void _end_capture(void)
 {
     fclose(stdout);
     stdout = orig_stdout;
