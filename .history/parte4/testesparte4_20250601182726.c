@@ -228,15 +228,79 @@ void test_comandoA()
     freeTabela(aux);
 }
 
+// Função responsável por testar a função tentaRiscarColunas
+void test_tentaRiscarColunas_resolve()
+{
+    // Tabela 2×2: 'a','A' → transformando 'a' em '#' resolve o jogo imediatamente
+    TABELA t = create_table(2, 2, ' ');
+    t->tabela[1][0] = 'C';
+    t->tabela[1][1] = 'B';
+    t->tabela[0][0] = 'a';
+    t->tabela[0][1] = 'a';
+    bool continuar = true;
+    tentaRiscarColunas(0, 0, 1, &t, &continuar);
+    CU_ASSERT_FALSE(continuar);
+
+    CU_ASSERT_EQUAL(t->tabela[0][0], 'A');
+    CU_ASSERT_EQUAL(t->tabela[0][1], '#');
+
+    freeTabela(t);
+}
+
+// Função responsável por testar a função tentaColunas
+void test_tentaColunas()
+{
+    // Tabela 1×2: 'a','a' → tentaColunas deve retornar true
+    TABELA t = create_table(1, 2, ' ');
+    t->tabela[0][0] = 'a';
+    t->tabela[0][1] = 'a';
+
+    bool result = tentaColunas(&t);
+    CU_ASSERT_TRUE(result);
+
+    freeTabela(t);
+}
+
+// Função responsável por testar a função teantaRiscasLinhas
+void test_tentaRiscarLinhas_resolve()
+{
+    // Tabela 2×1: ['a'; 'A'] → transformar (0,0) resolve
+    TABELA t = create_table(2, 2, ' ');
+    t->tabela[1][0] = 'C';
+    t->tabela[1][1] = 'a';
+    t->tabela[0][0] = 'B';
+    t->tabela[0][1] = 'a';
+    bool continuar = true;
+
+    tentaRiscarLinhas(1, 0, 1, &t, &continuar);
+    CU_ASSERT_FALSE(continuar);
+    CU_ASSERT_EQUAL(t->tabela[1][1], '#');
+    CU_ASSERT_EQUAL(t->tabela[0][1], 'A');
+
+    freeTabela(t);
+}
+
+// Função responsável por testar a função tentaLinhas
+void test_tentaLinhas()
+{
+    // Tabela 2×1: ['a'; 'a'] → tentaLinhas retorna true
+    TABELA t = create_table(2, 1, ' ');
+    t->tabela[0][0] = 'a';
+    t->tabela[1][0] = 'a';
+
+    bool result = tentaLinhas(&t);
+    CU_ASSERT_TRUE(result);
+
+    freeTabela(t);
+}
+
 // Função responsável por testar a função resolve no caso de dar null
 void test_resolve_null()
 {
     // Tabela contrária: duas minúsculas isoladas, sem solução
     TABELA t = create_table(2, 2, ' ');
     t->tabela[0][0] = 'a';
-    t->tabela[1][1] = 'a';
-    t->tabela[1][0] = 'a';
-    t->tabela[0][1] = 'a';
+    t->tabela[1][1] = 'b';
     TABELA sol = resolve(t);
     CU_ASSERT_PTR_NULL(sol);
     freeTabela(t);

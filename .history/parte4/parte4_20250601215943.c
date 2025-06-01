@@ -253,51 +253,6 @@ int jogoResolvido(TABELA aux)
     return 1;
 }
 
-bool encontraSolucao(TABELA tab, int l, int c)
-{
-
-    if (l == tab->l)
-    {
-        return true;
-    }
-
-    if (c == tab->c)
-    {
-        return encontraSolucao(tab, l + 1, 0);
-    }
-
-    if (isupper(tab->tabela[l][c]) || tab->tabela[l][c] == '#')
-    {
-        return encontraSolucao(tab, l, c + 1);
-    }
-
-    char original = tab->tabela[l][c];
-
-    // --- 4.1) Tentar maiúscula (manter ativa) ---
-    tab->tabela[l][c] = toupper(original);
-    if (!verificaRestricoes(tab, false))
-    {
-        if (encontraSolucao(tab, l, c + 1))
-        {
-            return true;
-        }
-    }
-
-    tab->tabela[l][c] = original;
-
-    tab->tabela[l][c] = '#';
-    if (!verificaRestricoes(tab, false))
-    {
-        if (encontraSolucao(tab, l, c + 1))
-        {
-            return true;
-        }
-    }
-
-    tab->tabela[l][c] = original;
-    return false;
-}
-
 // Função que recebe a tabela inicial de quando o jogo foi carregado e tenta resolver o jogo -> Comando R
 // Coloca ainda o aux a null null e o continuar a false caso não seja possivel resolver o tabuleiro
 TABELA resolve(TABELA t)
@@ -317,4 +272,45 @@ TABELA resolve(TABELA t)
         return NULL;
     }
     return aux;
+}
+
+bool encontraSolucao(TABELA tab, int l, int c)
+{
+    if (l == tab->l)
+    {
+        return true;
+    }
+    else if (c == tab->c)
+    {
+        return (encontraSolucao(tab, l + 1, 0));
+    }
+    else if (!('a' <= tab->tabela[l][c] && tab->tabela[l][c] <= 'z'))
+    {
+        return (encontraSolucao(tab, l, c + 1));
+    }
+    else
+    {
+
+        if (!verificaRestricoes(tab, false))
+        {
+            char original = tab->tabela[l][c];
+            tab->tabela[l][c] = toupper(tab->tabela[l][c]);
+            if (encontraSolucao(tab, l, c + 1))
+            {
+                return true;
+            }
+            tab->tabela[l][c] = original;
+        }
+        if (!verificaRestricoes(tab, false))
+        {
+            char original = tab->tabela[l][c];
+            tab->tabela[l][c] = '#';
+            if (encontraSolucao(tab, l, c + 1))
+            {
+                return true;
+            }
+            tab->tabela[l][c] = original;
+        }
+        return false;
+    }
 }

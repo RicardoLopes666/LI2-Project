@@ -49,7 +49,21 @@ int existemMinusculas(TABELA t);
 // Verifica se o jogo está completo (sem minúsculas e sem erros)
 int jogoResolvido(TABELA aux);
 
-bool encontraSolucao(TABELA tab, int l, int c);
+// Função que tenta pintar para as duas casas que têm iguais e vê se em alguns dos casos se obtem o jogo resolvido ou se existe alguma restrição
+void tentaRiscarColunas(int l, int c1, int c2, TABELA *t, bool *continuar);
+
+// Função que vai a cada linha e verifica elementos iguais minúsculos e tenta pintar um deles para ver se se consegue chegar à resposta
+// Devolve true se a resposta for encontrada e false caso contrário
+void tentaColunasAux(int i, int j, int k, TABELA *t, bool *continuar);
+bool tentaColunas(TABELA *t);
+
+// Função que tenta pintar para as duas casas que têm iguais e vê se em alguns dos casos se obtem o jogo resolvido ou se existe alguma restrição
+void tentaRiscarLinhas(int c, int l1, int l2, TABELA *t, bool *continuar);
+
+// Função que vai a cada coluna e verifica elementos iguais minúsculos e tenta pintar um deles para ver se se consegue chegar à resposta
+// Devolve true se a resposta for encontrada e false caso contrário
+void tentaLinhasAux(int i, int j, int k, TABELA *t, bool *continuar);
+bool tentaLinhas(TABELA *t);
 
 // Função que recebe a tabela inicial de quando o jogo foi carregado e tenta resolver o jogo -> Comando R
 // Coloca ainda o aux a null e o continuar a false caso não seja possível resolver o tabuleiro

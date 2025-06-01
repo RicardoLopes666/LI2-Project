@@ -15,6 +15,10 @@ void test_riscaABA();
 void test_existemMinusculas_and_jogoResolvido();
 void test_aplicaA();
 void test_comandoA();
+void test_tentaRiscarColunas_resolve();
+void test_tentaColunas();
+void test_tentaRiscarLinhas_resolve();
+void test_tentaLinhas();
 void test_resolve_null();
 void test_resolve_success();
 

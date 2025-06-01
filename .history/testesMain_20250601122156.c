@@ -104,6 +104,10 @@ int main()
     CU_add_test(suite4, "test_existemMinusculas_and_jogoResolvido", test_existemMinusculas_and_jogoResolvido);
     CU_add_test(suite4, "test_aplicaA", test_aplicaA);
     CU_add_test(suite4, "test_comandoA", test_comandoA);
+    CU_add_test(suite4, "test_tentaRiscarColunas_resolve", test_tentaRiscarColunas_resolve);
+    CU_add_test(suite4, "test_tentaColunas", test_tentaColunas);
+    CU_add_test(suite4, "test_tentaRiscarLinhas_resolve", test_tentaRiscarLinhas_resolve);
+    CU_add_test(suite4, "test_tentaLinhas", test_tentaLinhas);
     CU_add_test(suite4, "test_resolve_null", test_resolve_null);
     CU_add_test(suite4, "test_resolve_success", test_resolve_success);
     CU_basic_set_mode(CU_BRM_VERBOSE);

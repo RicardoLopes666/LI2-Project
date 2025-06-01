@@ -282,9 +282,10 @@ bool encontraSolucao(TABELA tab, int l, int c)
             return true;
         }
     }
-
+    // "Backtrack parcial": vamos reverter antes de tentar a próxima opção
     tab->tabela[l][c] = original;
 
+    // --- 4.2) Tentar sombrear com '#' ---
     tab->tabela[l][c] = '#';
     if (!verificaRestricoes(tab, false))
     {
@@ -293,7 +294,7 @@ bool encontraSolucao(TABELA tab, int l, int c)
             return true;
         }
     }
-
+    // Nenhuma das duas opções funcionou → restaurar e devolver false
     tab->tabela[l][c] = original;
     return false;
 }

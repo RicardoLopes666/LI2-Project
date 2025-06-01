@@ -255,47 +255,42 @@ int jogoResolvido(TABELA aux)
 
 bool encontraSolucao(TABELA tab, int l, int c)
 {
-
     if (l == tab->l)
     {
         return true;
     }
-
-    if (c == tab->c)
+    else if (isupper(tab->tabela[l][c]) || tab->tabela[l][c] == '#')
     {
-        return encontraSolucao(tab, l + 1, 0);
+        return (encontraSolucao(tab, l, c + 1));
     }
-
-    if (isupper(tab->tabela[l][c]) || tab->tabela[l][c] == '#')
+    else if (c == tab->c)
     {
-        return encontraSolucao(tab, l, c + 1);
+        return (encontraSolucao(tab, l + 1, 0));
     }
-
-    char original = tab->tabela[l][c];
-
-    // --- 4.1) Tentar maiúscula (manter ativa) ---
-    tab->tabela[l][c] = toupper(original);
-    if (!verificaRestricoes(tab, false))
+    else
     {
-        if (encontraSolucao(tab, l, c + 1))
+        char original = tab->tabela[l][c];
+        tab->tabela[l][c] = toupper(tab->tabela[l][c]);
+        if (!verificaRestricoes(tab, false))
         {
-            return true;
+            char original = tab->tabela[l][c];
+            if (encontraSolucao(tab, l, c + 1))
+            {
+                return true;
+            }
+            tab->tabela[l][c] = original;
         }
-    }
-
-    tab->tabela[l][c] = original;
-
-    tab->tabela[l][c] = '#';
-    if (!verificaRestricoes(tab, false))
-    {
-        if (encontraSolucao(tab, l, c + 1))
+        tab->tabela[l][c] = '#';
+        if (!verificaRestricoes(tab, false))
         {
-            return true;
+            if (encontraSolucao(tab, l, c + 1))
+            {
+                return true;
+            }
+            tab->tabela[l][c] = original;
         }
+        return false;
     }
-
-    tab->tabela[l][c] = original;
-    return false;
 }
 
 // Função que recebe a tabela inicial de quando o jogo foi carregado e tenta resolver o jogo -> Comando R

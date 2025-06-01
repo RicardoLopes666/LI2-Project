@@ -352,7 +352,7 @@ void test_colocaSolucao()
     CU_ASSERT_TRUE_FATAL(insereTabela(game.stackTabs, t1));
 
     // Prepara game.solution existente
-    game.solution = create_filled_table(1, 1, 'A');
+    game.solution = create_filled_table(1, 1, 'N');
 
     // Guarda ponteiro antigo
     TABELA old = game.solution;
@@ -362,7 +362,7 @@ void test_colocaSolucao()
     CU_ASSERT_PTR_NOT_EQUAL(game.solution, old);
     if (game.solution)
     {
-        CU_ASSERT_EQUAL(game.solution->tabela[0][0], 'A');
+        CU_ASSERT_EQUAL(game.solution->tabela[0][0], 'N');
         freeTabela(game.solution);
     }
 

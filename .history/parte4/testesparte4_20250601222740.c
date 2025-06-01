@@ -234,9 +234,7 @@ void test_resolve_null()
     // Tabela contrária: duas minúsculas isoladas, sem solução
     TABELA t = create_table(2, 2, ' ');
     t->tabela[0][0] = 'a';
-    t->tabela[1][1] = 'a';
-    t->tabela[1][0] = 'a';
-    t->tabela[0][1] = 'a';
+    t->tabela[1][1] = 'b';
     TABELA sol = resolve(t);
     CU_ASSERT_PTR_NULL(sol);
     freeTabela(t);

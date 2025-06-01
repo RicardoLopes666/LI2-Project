@@ -253,49 +253,134 @@ int jogoResolvido(TABELA aux)
     return 1;
 }
 
-bool encontraSolucao(TABELA tab, int l, int c)
+// Função que tenta pintar para as duas casas que tem iguais e ve se em alguns dos casos se obtem o jogo resolvido ou ent alguma restrição
+void tentaRiscarColunas(int l, int c1, int c2, TABELA *t, bool *continuar)
 {
 
-    if (l == tab->l)
+    int cs[2] = {c1, c2};
+    int keepGoing = 1; // variavel utilizada para parar o loop em caso de o tabuleiro estar resolvido
+    for (int i = 0; keepGoing && i < 2; i++)
     {
-        return true;
-    }
-
-    if (c == tab->c)
-    {
-        return encontraSolucao(tab, l + 1, 0);
-    }
-
-    if (isupper(tab->tabela[l][c]) || tab->tabela[l][c] == '#')
-    {
-        return encontraSolucao(tab, l, c + 1);
-    }
-
-    char original = tab->tabela[l][c];
-
-    // --- 4.1) Tentar maiúscula (manter ativa) ---
-    tab->tabela[l][c] = toupper(original);
-    if (!verificaRestricoes(tab, false))
-    {
-        if (encontraSolucao(tab, l, c + 1))
+        TABELA tentativa = copiarTabela(*t);
+        int linha = l;
+        int coluna = cs[i];
+        char letra = (*t)->tabela[linha][coluna];
+        tentativa->tabela[linha][coluna] = toupper(letra);
+        aplicaA(&tentativa);
+        if (jogoResolvido(tentativa))
         {
-            return true;
+            *continuar = false;
+            keepGoing = 0;
+            TABELA temp = *t;
+            *t = copiarTabela(tentativa);
+            freeTabela(temp);
+        }
+        else if (verificaRestricoes(tentativa, false)) // Caso assim existam restrições eu mudo ja na tabela original porque sei que tem de ser da outra forma
+        {
+            keepGoing = 0;
+            (*t)->tabela[linha][coluna] = '#';
+            (*t)->tabela[linha][i == 0 ? c2 : c1] = toupper(letra);
+        }
+        freeTabela(tentativa);
+    }
+}
+
+// Função auxiliar que tenta riscar e verifica se o jogo fica resolvido
+void tentaColunasAux(int i, int j, int k, TABELA *t, bool *continuar)
+{
+    tentaRiscarColunas(i, j, k, t, continuar);
+    if (*continuar)
+        aplicaA(t);
+    if (jogoResolvido(*t))
+        *continuar = false;
+}
+
+// Função que vai a cada linha e verifica elementos iguas minusculos e tenta pintar um deles para ver se se consegue chegar à resposta
+// Devolve true se a resposta for encontrada e false caso contrario
+bool tentaColunas(TABELA *t)
+{
+    bool continuar = true;
+    for (int i = 0; continuar && i < (*t)->l; i++)
+    {
+        for (int j = 0; continuar && j < (*t)->c; j++)
+        {
+            if (islower((*t)->tabela[i][j]))
+            {
+                for (int k = 0; continuar && k < (*t)->c; k++)
+                {
+                    if (k != j && (*t)->tabela[i][k] == (*t)->tabela[i][j])
+                        tentaColunasAux(i, j, k, t, &continuar);
+                }
+            }
         }
     }
+    return (!continuar);
+}
 
-    tab->tabela[l][c] = original;
+// Função que tenta pintar para as duas casas que tem iguais e ve se em alguns dos casos se obtem o jogo resolvido ou ent alguma restrição
+void tentaRiscarLinhas(int c, int l1, int l2, TABELA *t, bool *continuar)
+{
 
-    tab->tabela[l][c] = '#';
-    if (!verificaRestricoes(tab, false))
+    int ls[2] = {l1, l2};
+    int keepGoing = 1;
+    for (int i = 0; keepGoing && i < 2; i++)
     {
-        if (encontraSolucao(tab, l, c + 1))
+        TABELA tentativa = copiarTabela(*t);
+        int linha = ls[i];
+        int coluna = c;
+        char letra = (*t)->tabela[linha][coluna];
+        tentativa->tabela[linha][coluna] = toupper(letra);
+        aplicaA(&tentativa);
+        if (jogoResolvido(tentativa))
         {
-            return true;
+            *continuar = false;
+            keepGoing = 0;
+            TABELA temp = *t;
+            *t = copiarTabela(tentativa);
+            freeTabela(temp);
+        }
+        else if (verificaRestricoes(tentativa, false)) // Caso assim existam restrições eu mudo ja na tabela original porque sei que tem de ser da outra forma
+        {
+            keepGoing = 0;
+            (*t)->tabela[linha][coluna] = '#';
+            (*t)->tabela[i == 0 ? l2 : l1][coluna] = toupper(letra); // uso letra porque ambas as posições tem a mesma letra minuscula la
+        }
+        freeTabela(tentativa);
+    }
+}
+
+// Função auxiliar que tenta riscar e verifica se o jogo fica resolvido
+void tentaLinhasAux(int i, int j, int k, TABELA *t, bool *continuar)
+{
+    tentaRiscarLinhas(i, j, k, t, continuar);
+    if (*continuar)
+        aplicaA(t);
+    if (jogoResolvido(*t))
+        *continuar = false;
+}
+
+// Função que vai a cada coluna e verifica elementos iguas minusculos e tenta pintar um deles para ver se se consegue chegar à resposta
+// Devolve true se a resposta for encontrada e false caso contrario
+bool tentaLinhas(TABELA *t)
+{
+    bool continuar = true;
+    for (int i = 0; continuar && i < (*t)->l; i++)
+    {
+        for (int j = 0; continuar && j < (*t)->c; j++)
+        {
+            if (islower((*t)->tabela[j][i]))
+            {
+                for (int k = 0; continuar && k < (*t)->l; k++)
+                {
+                    if (k != j && (*t)->tabela[k][i] == (*t)->tabela[j][i])
+                    {
+                        tentaLinhasAux(i, j, k, t, &continuar);
+                    }
+                }
+            }
         }
     }
-
-    tab->tabela[l][c] = original;
-    return false;
+    return (!continuar);
 }
 
 // Função que recebe a tabela inicial de quando o jogo foi carregado e tenta resolver o jogo -> Comando R
@@ -310,11 +395,67 @@ TABELA resolve(TABELA t)
 
     // Aplica-se o comando 'a' repetidamente até ele não fazer mais alterações
     aplicaA(&aux);
-
-    if (!jogoResolvido(aux) && !encontraSolucao(aux, 0, 0))
+    if (!jogoResolvido(aux) && !tentaColunas(&aux) && !tentaLinhas(&aux))
     {
         freeTabela(aux);
         return NULL;
     }
     return aux;
+}
+
+bool solve(TABELA tabAtual, int l, int c)
+{
+    if (l == tabAtual->l)
+    {
+        return true;
+    }
+    else if (c == tabAtual->c)
+    {
+        return (solve(tabAtual, l + 1, 0));
+    }
+    else if (!('a' <= tabAtual->tabela[l][c] && tabAtual->tabela[l][c] <= 'z'))
+    {
+        return (solve(tabAtual, l, c + 1));
+    }
+    else
+    {
+
+        if (verificaRestricoes(tabAtual, false))
+        {
+            char original = tabAtual->tabela[l][c];
+            tabAtual->tabela[l][c] = toupper(tabAtual->tabela[l][c]);
+            if (solve(tabAtual, l, c + 1))
+            {
+                return true;
+            }
+            tabAtual->grelha[l][c] = original;
+        }
+        if (ser_valido(tabAtual, l, c, '#'))
+        {
+            char original = tabAtual->grelha[l][c];
+            tabAtual->grelha[l][c] = '#';
+            if (solve(tabAtual, l, c + 1, modo))
+            {
+                return true;
+            }
+            tabAtual->grelha[l][c] = original;
+        }
+        return false;
+    }
+}
+
+bool comando_R(Tabuleiro *tabAtual, Historico *hist, bool modo)
+{
+    Tabuleiro tabOriginal = copiar_tabuleiro(&hist->estados[0]);
+
+    Historico histTemp;
+    inicializar_historico(&histTemp);
+
+    tecnicas_iniciais(&tabOriginal, &histTemp);
+    comando_A(&tabOriginal, &histTemp);
+    bool r = solve(&tabOriginal, 0, 0, modo);
+
+    copiar_tabuleiro_para(&tabOriginal, tabAtual);
+
+    return r;
 }
