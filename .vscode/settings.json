@@ -4,6 +4,8 @@
     "ctype.h": "c",
     "tipos.h": "c",
     "basic.h": "c",
-    "cunit.h": "c"
+    "cunit.h": "c",
+    "stdio.h": "c",
+    "stdbool.h": "c"
   }
 }

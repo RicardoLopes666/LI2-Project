@@ -1,42 +1,30 @@
-20 20
-qbnjtjmsfmkdophomalr
-lgdhctmionqojjgbrspf
-tlldjrsqjgmgacbhoeqi
-eerjabfjsdjqrnntpimh
-aahklmecbldspndqpomg
-srmaqebgkqnjklmngctd
-fcatgrdkbolamiqrjeng
-ilednckpoqjrdifhlbha
-jppihffstscbrkrjbmgd
-bgjorqlghrkmdseainnt
-klpfiohamdsregehhdrf
-smkcfbtgeialqnjihpsk
-gfhmnihbebdkcqnpksal
-mtmkospnecqhkdieqjfm
-cmibnajfgsrpnosmslnq
-aornscpeahgtlbijmmqc
-mqscjdklpaffchjnerin
-fngsmhrclobafeckeijo
-oempnnbrckhsibadfqqj
-rjtrldomkeqpsdacpkdp
-20 20
-QBN#TJM#F#KD#PHO#ALR
-L#DHCT#IONQ#J#GBRSP#
-TL#D#RSQJ#MGACB#OE#I
-E#R#ABF#SDJQ#N#TP#MH
-#AHK#MEC#L#SP#DQ#O#G
-SR#AQEB#K#NJ#LM#GCTD
-FCATG#DKBOL#MIQRJ#N#
-I#E#NCKP#Q#RD#F#LBHA
-#P#IHF#ST#CBRK#J#MG#
-BGJO#QL#HR#M#SEAIN#T
-K#P#IO#AM#S#EG#H#DRF
-#MKCF#TG#IALQ#J#HPS#
-GF#M#IH#EBD#CQNPK#AL
-#TM#OS#N#C#HKD#EQJF#
-C#IB#AJFG#R#NOSM#L#Q
-AO#NS#PE#HGTL#I#M#QC
-MQS#JD#LPA#F#H#NERI#
-#NGSMHR#L#BAFECK#IJO
-OE#P#N#RCKH#IB#DFQ#J
-#JTRL#OM#E#PS#AC#KD#
+5 5
+ecadc
+dcdec
+bddce
+cdeeb
+accbb
+5 5
+ecadc
+#cdec
+bddce
+cdeeb
+accbb
+5 5
+ecadc
+#cdec
+bDdce
+cdeeb
+accbb
+5 5
+ECadc
+#Cdec
+BD#ce
+c#eeb
+accbb
+5 5
+ECAD#
+#CDE#
+BD#CE
+C#E##
+AC#BB
