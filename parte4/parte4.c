@@ -253,6 +253,7 @@ int jogoResolvido(TABELA aux)
     return 1;
 }
 
+// Função responsável ver se existe uma solução
 bool encontraSolucao(TABELA tab, int l, int c)
 {
 
@@ -311,7 +312,12 @@ TABELA resolve(TABELA t)
     // Aplica-se o comando 'a' repetidamente até ele não fazer mais alterações
     aplicaA(&aux);
 
-    if (!jogoResolvido(aux) && !encontraSolucao(aux, 0, 0))
+    bool estaResolvido = jogoResolvido(aux);
+    if (estaResolvido)
+        return aux;
+    encontraSolucao(aux, 0, 0);
+    estaResolvido = jogoResolvido(aux);
+    if (!estaResolvido)
     {
         freeTabela(aux);
         return NULL;
